@@ -1,0 +1,242 @@
+/* Restock Suggestions Page Styles */
+.restockContainer {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.restockHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.restockHeader h1 {
+  font-size: 1.8rem;
+  margin-bottom: var(--spacing-xs);
+  color: var(--dark-color);
+}
+
+.restockHeader p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+/* Summary Cards */
+.summaryCards {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.summaryCard {
+  flex: 1;
+  min-width: 200px;
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.summaryIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.criticalIcon {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.totalIcon {
+  background-color: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+
+.summaryContent h3 {
+  font-size: 1.8rem;
+  margin: 0;
+  color: var(--dark-color);
+}
+
+.summaryContent p {
+  margin: 0;
+  color: #666;
+}
+
+/* Table Controls */
+.restockCard {
+  margin-bottom: var(--spacing-lg);
+}
+
+.tableControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.selectAllContainer {
+  display: flex;
+  align-items: center;
+}
+
+.selectAllLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.checkbox {
+  margin-right: var(--spacing-xs);
+  width: 16px;
+  height: 16px;
+}
+
+.sortContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.sortLabel {
+  font-size: 0.9rem;
+  color: var(--dark-color);
+}
+
+.sortSelect {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  background-color: white;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 0.8em;
+}
+
+.sortSelect:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Table Cell Styling */
+.productName {
+  font-weight: 500;
+}
+
+.skuText {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.2rem;
+}
+
+.stockCell {
+  font-weight: 600;
+}
+
+.criticalStock {
+  color: #c0392b;
+}
+
+.lowStock {
+  color: #e67e22;
+}
+
+.mediumStock {
+  color: #f39c12;
+}
+
+/* Priority Badge Styling */
+.priorityCell {
+  display: flex;
+}
+
+.priorityBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  width: fit-content;
+}
+
+.priority1 {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.priority2 {
+  background-color: rgba(243, 156, 18, 0.15);
+  color: #d35400;
+}
+
+.priority3 {
+  background-color: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+
+.priority4 {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .restockContainer {
+    padding: var(--spacing-md);
+  }
+  
+  .restockHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .headerActions {
+    width: 100%;
+  }
+  
+  .headerActions button {
+    width: 100%;
+  }
+  
+  .summaryCards {
+    flex-direction: column;
+  }
+  
+  .tableControls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .sortContainer {
+    width: 100%;
+  }
+  
+  .sortSelect {
+    flex: 1;
+  }
+}

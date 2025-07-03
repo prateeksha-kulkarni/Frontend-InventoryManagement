@@ -1,0 +1,133 @@
+/* Table Component Styles */
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-bottom: var(--spacing-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background-color: white;
+}
+
+.tableHeader {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.tableHeaderCell {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--dark-color);
+  white-space: nowrap;
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableRow:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.tableCell {
+  padding: var(--spacing-md);
+  vertical-align: middle;
+}
+
+/* Status indicators */
+.statusCell {
+  display: flex;
+  align-items: center;
+}
+
+.statusIndicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.statusLow {
+  background-color: var(--danger-color);
+}
+
+.statusMedium {
+  background-color: var(--warning-color);
+}
+
+.statusGood {
+  background-color: var(--secondary-color);
+}
+
+/* Clickable rows */
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Loading state */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty state */
+.emptyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  color: #666;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tableHeaderCell,
+  .tableCell {
+    padding: var(--spacing-sm);
+  }
+  
+  .table {
+    font-size: 0.85rem;
+  }
+}

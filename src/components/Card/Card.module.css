@@ -1,0 +1,69 @@
+/* Card Component Styles */
+.card {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeader {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.cardSubtitle {
+  margin-top: var(--spacing-xs);
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.cardBody {
+  padding: var(--spacing-md);
+  flex: 1;
+}
+
+.cardFooter {
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Card variations */
+.cardCompact .cardHeader,
+.cardCompact .cardBody,
+.cardCompact .cardFooter {
+  padding: var(--spacing-sm);
+}
+
+.cardBorderless {
+  border: none;
+  box-shadow: none;
+}
+
+.cardHoverable {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cardHoverable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: var(--spacing-sm);
+  }
+}

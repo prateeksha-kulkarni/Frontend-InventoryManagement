@@ -1,0 +1,184 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Card from '../../components/Card/Card';
+import Table from '../../components/Table/Table';
+import Button from '../../components/Button/Button';
+import Input from '../../components/Input/Input';
+import styles from './Dashboard.module.css';
+import AddProductModal from '../AddProduct/AddProductModal';
+import axios from '../../services/axiosConfig'
+import authService from '../../services/authService';
+
+const Dashboard = () => {
+  const [inventoryData, setInventoryData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const categories = ['ELECTRONICS', 'CLOTHING', 'FOOD', 'HOME_GOODS', 'OFFICE_SUPPLIES'];
+
+  const columns = [
+    { header: 'Product Name', accessor: 'name' },
+    { header: 'Category', accessor: 'category' },
+    { header: 'Quantity', accessor: 'quantity' },
+    { header: 'Threshold', accessor: 'threshold' },
+    {
+      header: 'Status',
+      render: (row) => (
+        <div className={styles.statusCell}>
+          <span
+            className={`${styles.statusIndicator} ${
+              row.status === 'LOW_STOCK'
+                ? styles.statusLow
+                : row.status === 'REORDER_SOON'
+                ? styles.statusMedium
+                : styles.statusGood
+            }`}
+          ></span>
+          {row.status.replace('_', ' ')}
+        </div>
+      ),
+    },
+    {
+      header: 'Actions',
+      render: (row) => (
+        <div className={styles.actionButtons}>
+          <Button
+            variant="outline"
+            size="small"
+            onClick={() => handleAdjustStock(row)}
+          >
+            Adjust
+          </Button>
+          <Button
+            variant="outline"
+            size="small"
+            onClick={() => handleTransfer(row)}
+          >
+            Transfer
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  useEffect(() => {
+    fetchInventory();
+  }, []);
+
+  const fetchInventory = async () => {
+    setIsLoading(true);
+    try {
+      const user = authService.getCurrentUser();
+      const storeId = user?.storeId || user?.location || 1;
+      const response = await axios.get(`/api/products/read/${storeId}`);
+      setInventoryData(response.data);
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filteredData = inventoryData.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory ? item.category === filterCategory : true;
+    return matchesSearch && matchesCategory;
+  });
+
+  const handleAddClick = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleAddSubmit = async (newProduct) => {
+    try {
+      const user = authService.getCurrentUser();
+      const storeId = user?.storeId || user?.location || 1;
+      const response = await axios.post('/api/products/add', {
+        ...newProduct,
+        storeId: storeId,
+      });
+
+      console.log('Product added:', response.data);
+      setIsModalOpen(false);
+
+      // ✅ Refresh product list
+      const refreshed = await axios.get(`/api/products/read/${storeId}`);
+      setInventoryData(refreshed.data);
+
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
+  };
+
+  const handleAdjustStock = (product) => {
+    navigate('/stock-adjustment', { state: { product } });
+  };
+
+  const handleTransfer = (product) => {
+    console.log('Transfer product:', product);
+  };
+
+  return (
+    <div className={styles.dashboardContainer}>
+      <div className={styles.dashboardHeader}>
+        <h1>Inventory Dashboard</h1>
+        <p>Current stock levels and product information</p>
+      </div>
+
+      <div className={styles.filterSection}>
+        <Card className={styles.filterCard}>
+          <div className={styles.filterControls}>
+            <div className={styles.searchInput}>
+              <Input
+                type="search"
+                placeholder="Search by product name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className={styles.categoryFilter}>
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className={styles.categorySelect}
+              >
+                <option value="">All Categories</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <Card className={styles.inventoryCard}>
+        <Table
+          columns={columns}
+          data={filteredData}
+          isLoading={isLoading}
+          emptyMessage="No inventory items found matching your criteria."
+        />
+      </Card>
+
+      <div className={styles.dashboardActions}>
+        <Button variant="primary" onClick={handleAddClick}>
+          Add New Product
+        </Button>
+        <Button variant="secondary" onClick={() => console.log('View restock suggestions')}>
+          View Restock Suggestions
+        </Button>
+      </div>
+
+      <AddProductModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleAddSubmit}
+      />
+    </div>
+  );
+};
+
+export default Dashboard;

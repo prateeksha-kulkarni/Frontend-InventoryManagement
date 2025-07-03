@@ -1,0 +1,133 @@
+/* Dashboard Page Styles */
+.dashboardContainer {
+  padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboardHeader {
+  margin-bottom: var(--spacing-lg);
+}
+
+.dashboardHeader h1 {
+  font-size: 1.8rem;
+  margin-bottom: var(--spacing-xs);
+  color: var(--dark-color);
+}
+
+.dashboardHeader p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.filterSection {
+  margin-bottom: var(--spacing-md);
+}
+
+.filterCard {
+  padding: var(--spacing-md);
+}
+
+.filterControls {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 2;
+  min-width: 250px;
+}
+
+.categoryFilter {
+  flex: 1;
+  min-width: 150px;
+}
+
+.categorySelect {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  background-color: white;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1em;
+}
+
+.categorySelect:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.inventoryCard {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Status cell styling */
+.statusCell {
+  display: flex;
+  align-items: center;
+}
+
+.statusIndicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.statusLow {
+  background-color: var(--danger-color);
+}
+
+.statusMedium {
+  background-color: var(--warning-color);
+}
+
+.statusGood {
+  background-color: var(--secondary-color);
+}
+
+/* Action buttons */
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.dashboardActions {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: var(--spacing-md);
+  }
+  
+  .filterControls {
+    flex-direction: column;
+  }
+  
+  .searchInput,
+  .categoryFilter {
+    width: 100%;
+  }
+  
+  .dashboardActions {
+    flex-direction: column;
+  }
+  
+  .dashboardActions button {
+    width: 100%;
+  }
+}
