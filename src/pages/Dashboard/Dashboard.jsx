@@ -23,7 +23,7 @@ const Dashboard = () => {
     { header: 'Product Name', accessor: 'name' },
     { header: 'Category', accessor: 'category' },
     { header: 'Quantity', accessor: 'quantity' },
-    { header: 'Threshold', accessor: 'threshold' },
+    { header: 'Threshold', accessor: 'minThreshold' },
     {
       header: 'Status',
       render: (row) => (
@@ -72,8 +72,8 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const user = authService.getCurrentUser();
-      const storeId = user?.storeId || user?.location || 1;
-      const response = await axios.get(`/api/products/read/${storeId}`);
+      const storeId = user?.storeId;
+      const response = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(response.data);
     } catch (error) {
       console.error('Error fetching inventory:', error);
@@ -94,7 +94,7 @@ const Dashboard = () => {
   const handleAddSubmit = async (newProduct) => {
     try {
       const user = authService.getCurrentUser();
-      const storeId = user?.storeId || user?.location || 1;
+      const storeId = user?.storeId ;
       const response = await axios.post('/api/products/add', {
         ...newProduct,
         storeId: storeId,
@@ -104,7 +104,7 @@ const Dashboard = () => {
       setIsModalOpen(false);
 
       // ✅ Refresh product list
-      const refreshed = await axios.get(`/api/products/read/${storeId}`);
+      const refreshed = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(refreshed.data);
 
     } catch (error) {
@@ -117,7 +117,7 @@ const Dashboard = () => {
   };
 
   const handleTransfer = (product) => {
-    console.log('Transfer product:', product);
+    navigate('/transfer', { state: { product } });
   };
 
   return (
@@ -182,3 +182,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
