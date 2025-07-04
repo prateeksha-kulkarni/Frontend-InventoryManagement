@@ -91,7 +91,10 @@ const authService = {
     }
 
     const data = await response.json(); // expects { token, role, storeId, location }
+    console.log("🔐 Login Response Data:", data);
+
     const user = {
+      userId: data.userId,
       username: credentials.username,
       name: data.name || credentials.username,
       role: (data.role || '').toUpperCase(),
@@ -99,6 +102,8 @@ const authService = {
       location: data.location || '',
       storeId: data.storeId || ''
     };
+
+    console.log("👤 Final User Stored:", user);
 
     // Store token and user info
     localStorage.setItem('token', data.token);

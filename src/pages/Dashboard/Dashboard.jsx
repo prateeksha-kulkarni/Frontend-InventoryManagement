@@ -20,8 +20,14 @@ const Dashboard = () => {
   const categories = ['ELECTRONICS', 'CLOTHING', 'FOOD', 'HOME_GOODS', 'OFFICE_SUPPLIES'];
 
   const columns = [
-    { header: 'Product Name', accessor: 'name' },
-    { header: 'Category', accessor: 'category' },
+    {
+      header: 'Product Name',
+      render: (row) => row.product?.name || 'N/A'
+    },
+    {
+      header: 'Category',
+      render: (row) => row.product?.category || 'N/A'
+    },
     { header: 'Quantity', accessor: 'quantity' },
     { header: 'Threshold', accessor: 'minThreshold' },
     {
@@ -83,10 +89,15 @@ const Dashboard = () => {
   };
 
   const filteredData = inventoryData.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory ? item.category === filterCategory : true;
+    const productName = item.product?.name || '';
+    const productCategory = item.product?.category || '';
+
+    const matchesSearch = productName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory ? productCategory === filterCategory : true;
+
     return matchesSearch && matchesCategory;
   });
+
 
   const handleAddClick = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -103,7 +114,7 @@ const Dashboard = () => {
       console.log('Product added:', response.data);
       setIsModalOpen(false);
 
-      // ✅ Refresh product list
+      // Refresh product list
       const refreshed = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(refreshed.data);
 

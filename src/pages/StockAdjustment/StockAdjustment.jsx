@@ -17,19 +17,18 @@ const StockAdjustment = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    productName: passedProduct?.name || '',
+   productName: passedProduct?.product?.name || '',
     adjustmentType: 'add',
     quantity: '',
     reason: '',
-    notes: ''
   });
 
   const [errors, setErrors] = useState({});
   const [showMissingInventoryModal, setShowMissingInventoryModal] = useState(false);
 
   const reasons = {
-    add: ['New Shipment', 'Return from Customer', 'Inventory Count Correction', 'Transfer from Another Store', 'Other'],
-    remove: ['Sale', 'Damaged', 'Expired', 'Transfer to Another Store', 'Theft/Loss', 'Inventory Count Correction', 'Other']
+    add: ['New Shipment', 'Return from Customer', 'Inventory Count Correction'],
+    remove: ['Sale', 'Damaged', 'Expired', 'Theft/Loss', 'Inventory Count Correction']
   };
 
   const handleInputChange = (e) => {
@@ -85,12 +84,22 @@ const StockAdjustment = () => {
     setIsLoading(true);
 
     try {
-      const { productName, quantity, adjustmentType } = formData;
-      const url = `/api/inventory/adjust/${encodeURIComponent(productName)}?quantity=${quantity}&type=${adjustmentType}&storeId=${storeId}`;
+      const { productName, quantity, adjustmentType, reason } = formData;
+
+      const url = `/api/inventory/adjust/${encodeURIComponent(productName)}`;
 
       console.log("Calling API:", url);
+      console.log("🧠 Submitting adjustment with userId:", user?.userId);
+      console.log("📦 productName:", productName);
+      await axios.put(url, {
+        quantity,
+        type: adjustmentType.toUpperCase(),
+        storeId,
+        userId: user.userId,
+        reason
+      });
 
-      await axios.put(url);
+
 
       alert('Stock adjustment completed successfully!');
       navigate('/dashboard');
@@ -113,7 +122,7 @@ const StockAdjustment = () => {
     <div className={styles.adjustmentContainer}>
       <div className={styles.adjustmentHeader}>
         <h1>Stock Adjustment</h1>
-        <p>Add or remove items from inventory</p>
+        <p>Adjust quantity of items in current store</p>
       </div>
 
       <Card className={styles.adjustmentCard}>
@@ -197,15 +206,15 @@ const StockAdjustment = () => {
             {errors.reason && <div className={styles.fieldError}>{errors.reason}</div>}
           </div>
 
-          <Input
-            label="Notes (Optional)"
-            type="textarea"
-            name="notes"
-            value={formData.notes}
-            onChange={handleInputChange}
-            placeholder="Any notes..."
-            disabled={isLoading}
-          />
+{/*           <Input */}
+{/*             label="Notes (Optional)" */}
+{/*             type="textarea" */}
+{/*             name="notes" */}
+{/*             value={formData.notes} */}
+{/*             onChange={handleInputChange} */}
+{/*             placeholder="Any notes..." */}
+{/*             disabled={isLoading} */}
+{/*           /> */}
 
           <div className={styles.formActions}>
             <Button type="button" variant="outline" onClick={() => navigate('/dashboard')} disabled={isLoading}>
