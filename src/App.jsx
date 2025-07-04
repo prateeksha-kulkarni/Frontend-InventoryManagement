@@ -16,6 +16,7 @@ import PurchaseOrder from './pages/PurchaseOrder/PurchaseOrder';
 import Analytics from './pages/Analytics/Analytics';
 import UserRegistration from './pages/UserRegistration/UserRegistration';
 import StoreSetup from './pages/StoreSetup/StoreSetup';
+import InventoryDashboard from './pages/InventoryDashboard/InventoryDashboard';
 
 // Layout components
 import Layout from './components/Layout/Layout';
@@ -46,7 +47,6 @@ const App = () => {
         <Routes>
           {/* Public route */}
           <Route path="/login" element={<Login />} />
-
           {/* Protected routes */}
           <Route path="/" element={
             <ProtectedRoute>
@@ -62,7 +62,6 @@ const App = () => {
                 <StockAdjustment />
               </ProtectedRoute>
             } />
-
             <Route path="transfer" element={
               <ProtectedRoute requiredRole="Manager">
                 <Transfer />
@@ -89,7 +88,7 @@ const App = () => {
 
             <Route path="analytics" element={
               <ProtectedRoute requiredRole="Analyst">
-                <Analytics />
+                <InventoryDashboard/>
               </ProtectedRoute>
             } />
 

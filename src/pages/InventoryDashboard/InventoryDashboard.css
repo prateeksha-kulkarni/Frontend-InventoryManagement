@@ -1,0 +1,94 @@
+.dashboard-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  background-color: #fdfdfd;
+}
+
+.dashboard-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filters {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-item label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.filter-item input,
+.filter-item select,
+.filter-item button {
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.filter-item button {
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-item button:hover {
+  background-color: #000;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.report-table th,
+.report-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.report-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.status-overstock {
+  color: orange;
+  font-weight: bold;
+}
+
+.status-healthy {
+  color: green;
+  font-weight: bold;
+}
+
+.status-stockout {
+  color: red;
+  font-weight: bold;
+}
+
+.no-data {
+  margin-top: 30px;
+  color: #777;
+  font-size: 15px;
+}
