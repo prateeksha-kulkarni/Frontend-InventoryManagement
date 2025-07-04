@@ -1,5 +1,5 @@
-/* Login Page Styles */
-.loginContainer {
+/* Verify OTP Page Styles */
+.verifyOTPContainer {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -8,7 +8,7 @@
   padding: var(--spacing-md);
 }
 
-.loginWrapper {
+.verifyOTPWrapper {
   width: 100%;
   max-width: 450px;
   animation: fadeIn 0.5s ease-in-out;
@@ -25,41 +25,41 @@
   }
 }
 
-.loginHeader {
+.verifyOTPHeader {
   text-align: center;
   margin-bottom: var(--spacing-lg);
   color: white;
 }
 
-.loginHeader h1 {
+.verifyOTPHeader h1 {
   font-size: 2rem;
   margin-bottom: var(--spacing-xs);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.loginHeader p {
+.verifyOTPHeader p {
   font-size: 1rem;
   opacity: 0.9;
 }
 
-.loginCard {
+.verifyOTPCard {
   padding: var(--spacing-lg);
 }
 
-.loginTitle {
+.verifyOTPTitle {
   font-size: 1.5rem;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   text-align: center;
   color: var(--dark-color);
 }
 
-.loginForm {
+.verifyOTPForm {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
 }
 
-.loginInfo {
+.verifyOTPInfo {
   background-color: rgba(52, 152, 219, 0.1);
   color: var(--primary-color);
   padding: var(--spacing-sm);
@@ -67,10 +67,6 @@
   margin-bottom: var(--spacing-md);
   text-align: center;
   font-size: 0.9rem;
-}
-
-.loginInfo p {
-  margin: 0.25rem 0;
 }
 
 .errorMessage {
@@ -83,68 +79,56 @@
   font-size: 0.9rem;
 }
 
-.roleSelector {
+.successMessage {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: var(--success-color);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
   margin-bottom: var(--spacing-md);
-}
-
-.roleSelector > label {
-  display: block;
-  margin-bottom: var(--spacing-xs);
-  font-weight: 500;
-  color: var(--dark-color);
-}
-
-.roleOptions {
-  display: flex;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-}
-
-.roleOption {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: var(--spacing-xs) 0;
-}
-
-.roleOption input[type="radio"] {
-  margin-right: var(--spacing-xs);
-}
-
-.roleOption span {
-  font-size: 0.95rem;
-}
-
-.forgotPasswordLink {
   text-align: center;
-  margin-top: var(--spacing-md);
+  font-size: 0.9rem;
 }
 
-.forgotPasswordLink a {
+.resendOTPLink {
+  text-align: center;
+  margin-top: var(--spacing-sm);
+}
+
+.resendOTPLink a {
   color: var(--primary-color);
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.2s ease;
 }
 
-.forgotPasswordLink a:hover {
+.resendOTPLink a:hover {
   color: var(--primary-dark-color);
   text-decoration: underline;
 }
 
+.backToLoginLink {
+  text-align: center;
+  margin-top: var(--spacing-sm);
+}
 
+.backToLoginLink a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.backToLoginLink a:hover {
+  color: var(--primary-dark-color);
+  text-decoration: underline;
+}
 
 @media (max-width: 480px) {
-  .loginWrapper {
+  .verifyOTPWrapper {
     max-width: 100%;
   }
 
-  .loginHeader h1 {
+  .verifyOTPHeader h1 {
     font-size: 1.75rem;
-  }
-
-  .roleOptions {
-    flex-direction: column;
-    gap: var(--spacing-xs);
   }
 }
