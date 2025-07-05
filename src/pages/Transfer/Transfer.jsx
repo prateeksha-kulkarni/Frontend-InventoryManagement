@@ -6,6 +6,8 @@ import Input from '../../components/Input/Input';
 import styles from './Transfer.module.css';
 import axios from '../../services/axiosConfig';
 import authService from '../../services/authService';
+import { toast } from 'react-toastify';
+
 
 const Transfer = () => {
   const navigate = useNavigate();
@@ -23,8 +25,35 @@ const Transfer = () => {
   const [errors, setErrors] = useState({});
   const [requestSent, setRequestSent] = useState(false);
   const [pendingTransfers, setPendingTransfers] = useState([]);
+  const [transferHistory, setTransferHistory] = useState([]);
   const user = authService.getCurrentUser();
   const currentStoreName = user?.location || '';
+  const [historyStatus, setHistoryStatus] = useState('All');
+  const [historySearch, setHistorySearch] = useState('');
+  const [historyPage, setHistoryPage] = useState(1);
+  const rowsPerPage = 10;
+  const [productQuery, setProductQuery] = useState('');
+  const [productSuggestions, setProductSuggestions] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Fetch pending transfers for this store (as destination)
+  const fetchPendingTransfers = useCallback(async (storeId) => {
+    try {
+      const res = await axios.get(`/api/transfers/to/${storeId}?status=REQUESTED`);
+      setPendingTransfers(res.data);
+    } catch (err) {
+      setPendingTransfers([]);
+    }
+  }, []);
+
+  const fetchTransferHistory = useCallback(async (storeId) => {
+    try {
+      const res = await axios.get(`/api/transfers/history/${storeId}`);
+      setTransferHistory(res.data);
+    } catch (error) {
+      console.error('Failed to fetch transfer history', error);
+    }
+  }, []);
 
   // Fetch products and stores (mock implementation)
   useEffect(() => {
@@ -63,6 +92,7 @@ const Transfer = () => {
         }));
         // Fetch pending transfers for this store (as destination)
         fetchPendingTransfers(currentStoreId);
+        fetchTransferHistory(currentStoreId);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -70,17 +100,23 @@ const Transfer = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [fetchPendingTransfers, fetchTransferHistory]);
 
-  // Fetch pending transfers for this store (as destination)
-  const fetchPendingTransfers = useCallback(async (storeId) => {
-    try {
-      const res = await axios.get(`/api/transfers/to/${storeId}?status=REQUESTED`);
-      setPendingTransfers(res.data);
-    } catch (err) {
-      setPendingTransfers([]);
-    }
-  }, []);
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (productQuery.length < 2) {
+        setProductSuggestions([]);
+        return;
+      }
+      try {
+        const res = await axios.get(`/api/products/search?query=${productQuery}`);
+        setProductSuggestions(res.data);
+      } catch (err) {
+        console.error("Product search error", err);
+      }
+    };
+    fetchSuggestions();
+  }, [productQuery]);
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -112,7 +148,7 @@ const Transfer = () => {
     }
     
     if (!formData.destinationStoreId) {
-      newErrors.destinationStoreId = 'Please select a destination store';
+      newErrors.destinationStoreId = 'Please select a store';
     }
     
     if (formData.sourceStoreId === formData.destinationStoreId) {
@@ -125,7 +161,7 @@ const Transfer = () => {
     
     // Check if quantity is not more than current stock
     if (formData.productId && formData.quantity) {
-      const product = availableProducts.find(p => p && p.id && p.id.toString() === formData.productId);
+      const product = selectedProduct || products.find(p => p && p.id && p.id.toString() === formData.productId);
       if (product && parseInt(formData.quantity) > product.currentStock) {
         newErrors.quantity = `Cannot transfer more than current stock (${product.currentStock})`;
       }
@@ -150,24 +186,25 @@ const Transfer = () => {
         requestedBy: { username: user.username }
       };
       await axios.post('/api/transfers', payload);
+      toast.success('Transfer request sent successfully');
       setRequestSent(true);
-      fetchPendingTransfers(formData.destinationStoreId);
+      fetchPendingTransfers(formData.sourceStoreId);
+      fetchTransferHistory(formData.sourceStoreId);
       setTimeout(() => setRequestSent(false), 3000);
-      navigate('/dashboard');
+      document.getElementById('pendingTransfers')?.scrollIntoView({ behavior: 'smooth' });
+      // navigate('/dashboard');
     } catch (error) {
+      toast.error('Failed to process transfer request');
       setErrors({ submit: 'Failed to process transfer request. Please try again.' });
     } finally {
       setIsLoading(false);
     }
   };
-
   const handleAccept = async (transferId) => {
     try {
-      // Fetch the transfer entity
       const res = await axios.get(`/api/transfers/${transferId}`);
       const transfer = res.data;
-      transfer.status = 'APPROVED';
-      // Ensure only IDs are sent for associations
+      transfer.status = 'COMPLETED';
       const payload = {
         ...transfer,
         fromStore: { storeId: transfer.fromStore?.storeId || transfer.fromStore?.id },
@@ -177,10 +214,24 @@ const Transfer = () => {
         approvedBy: { username: user.username }
       };
       await axios.put(`/api/transfers/${transferId}`, payload);
+      toast.success('Transfer approved and inventory updated');
       fetchPendingTransfers(formData.sourceStoreId);
-      alert('Transfer accepted and inventories updated!');
+      fetchTransferHistory(formData.sourceStoreId);
     } catch (err) {
-      alert('Failed to accept transfer.');
+        const errorMessage =
+          err.response?.data?.message || 'Failed to accept transfer.';
+        alert(errorMessage);
+      }
+  };
+
+  const handleReject = async (transferId) => {
+    try {
+      await axios.put(`/api/transfers/${transferId}/reject`);
+      alert('Transfer rejected successfully');
+      fetchPendingTransfers(formData.sourceStoreId); // Refresh the list
+      fetchTransferHistory(formData.sourceStoreId); // Refresh the history
+    } catch (err) {
+      alert('Failed to reject transfer: ' + (err.response?.data || err.message));
     }
   };
 
@@ -198,21 +249,65 @@ const Transfer = () => {
   console.log('Inventory:', inventory);
   console.log('Available products:', availableProducts);
 
-  // Get selected product details
-  const selectedProduct = formData.productId
-    ? availableProducts.find(p => p && p.id && p.id.toString() === formData.productId)
-    : null;
-
-  // Get store names
-  const getStoreName = (storeId) => {
-    if (!storeId) return '';
-    const store = stores.find(
-      s =>
-        (s.id && s.id.toString() === storeId.toString()) ||
-        (s.storeId && s.storeId.toString() === storeId.toString())
+  // Helper functions for frontend mapping
+  const getProductName = (productId) => {
+    if (!productId) return '';
+    const product = products.find(
+      p =>
+        (p.productId && p.productId.toString() === productId.toString()) ||
+        (p.id && p.id.toString() === productId.toString())
     );
-    return store ? store.name : '';
+    if (product) return product.name;
+    // Try to get from transfer history
+    const historyEntry = transferHistory.find(tr => {
+      if (tr.product?.productId && tr.product.productId.toString() === productId.toString()) return true;
+      if (tr.product?.id && tr.product.id.toString() === productId.toString()) return true;
+      return false;
+    });
+    return historyEntry?.product?.name || productId;
   };
+  const getStoreName = (storeId) => {
+    const store = stores.find(s => s.storeId === storeId || s.id === storeId);
+    return store ? store.name : storeId;
+  };
+
+  // Helper for status badge
+  const getStatusBadge = (status) => {
+    const colorMap = {
+      COMPLETED: '#27ae60',
+      REJECTED: '#e74c3c',
+      REQUESTED: '#2980d9',
+    };
+    return (
+      <span style={{
+        background: colorMap[status] || '#bdc3c7',
+        color: '#fff',
+        borderRadius: '12px',
+        padding: '0.2em 0.7em',
+        fontSize: '0.85em',
+        fontWeight: 600,
+        letterSpacing: '0.03em',
+        display: 'inline-block',
+      }}>{status.charAt(0) + status.slice(1).toLowerCase()}</span>
+    );
+  };
+
+  // Sort transfer history by timestamp descending before filtering/pagination
+  const sortedTransferHistory = [...transferHistory].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const filteredHistory = sortedTransferHistory.filter(tr => {
+    const statusMatch = historyStatus === 'All' || tr.status === historyStatus;
+    const search = historySearch.toLowerCase();
+    const product = tr.product?.name?.toLowerCase() || '';
+    const from = tr.fromStore?.name?.toLowerCase() || '';
+    const to = tr.toStore?.name?.toLowerCase() || '';
+    return statusMatch && (
+      product.includes(search) || from.includes(search) || to.includes(search)
+    );
+  });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredHistory.length / rowsPerPage);
+  const paginatedHistory = filteredHistory.slice((historyPage-1)*rowsPerPage, historyPage*rowsPerPage);
 
   return (
     <div className={styles.transferContainer}>
@@ -221,28 +316,42 @@ const Transfer = () => {
         <p>Transfer products between store locations</p>
       </div>
 
-      <Card className={styles.transferCard}>
+      {/* Transfer Form Card */}
+      <Card className={styles.transferCard} style={{ marginBottom: '24px' }}>
         <form onSubmit={handleSubmit} className={styles.transferForm}>
           {errors.submit && <div className={styles.errorMessage}>{errors.submit}</div>}
           
-          <div className={styles.formGroup}>
-            <label htmlFor="productId" className={styles.label}>Select Product</label>
-            <select
-              id="productId"
-              name="productId"
-              value={formData.productId}
-              onChange={handleInputChange}
-              className={`${styles.select} ${errors.productId ? styles.inputError : ''}`}
-              disabled={isLoading}
-            >
-              <option value="">-- Select a product --</option>
-              {availableProducts.map(product => (
-                <option key={product.id} value={product.id}>
-                  {product.name} ({product.sku}) - Available: {product.currentStock}
-                </option>
-              ))}
-            </select>
-            {errors.productId && <div className={styles.fieldError}>{errors.productId}</div>}
+          {/* Product Autocomplete Input */}
+          <div className={styles.formGroup} style={{ position: 'relative' }}>
+            <label htmlFor="productSearch" className={styles.label}>Search Product</label>
+            <input
+              type="text"
+              id="productSearch"
+              name="productSearch"
+              value={productQuery}
+              onChange={(e) => {
+                setProductQuery(e.target.value);
+                setSelectedProduct(null); // reset selection
+                setFormData(prev => ({ ...prev, productId: '' }));
+              }}
+              className={styles.input}
+              placeholder="Type product name..."
+              autoComplete="off"
+            />
+            {productSuggestions.length > 0 && !selectedProduct && (
+              <ul className={styles.suggestionsList}>
+                {productSuggestions.map(p => (
+                  <li key={p.productId} className={styles.suggestionItem} onClick={() => {
+                    setSelectedProduct(p);
+                    setProductQuery(p.name);
+                    setFormData(prev => ({ ...prev, productId: p.productId }));
+                    setProductSuggestions([]);
+                  }}>
+                    {p.name} ({p.sku})
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {selectedProduct && (
@@ -271,24 +380,7 @@ const Transfer = () => {
 
           <div className={styles.storeSelectionContainer}>
             <div className={styles.formGroup}>
-              <label htmlFor="sourceStoreId" className={styles.label}>Source Store</label>
-              <input
-                type="text"
-                id="sourceStoreId"
-                name="sourceStoreId"
-                value={getStoreName(formData.sourceStoreId)}
-                className={styles.select}
-                disabled
-              />
-              {errors.sourceStoreId && <div className={styles.fieldError}>{errors.sourceStoreId}</div>}
-            </div>
-
-            <div className={styles.transferArrow}>
-              <span>→</span>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="destinationStoreId" className={styles.label}>Destination Store</label>
+              <label htmlFor="destinationStoreId" className={styles.label}>Requesting From</label>
               <select
                 id="destinationStoreId"
                 name="destinationStoreId"
@@ -297,7 +389,7 @@ const Transfer = () => {
                 className={`${styles.select} ${errors.destinationStoreId ? styles.inputError : ''}`}
                 disabled={isLoading}
               >
-                <option value="">-- Select a destination store --</option>
+                <option value="">-- Select a store --</option>
                 {stores.filter(store => store.id !== formData.sourceStoreId && store.storeId !== formData.sourceStoreId).map(store => (
                   <option key={store.id || store.storeId} value={store.id || store.storeId}>
                     {store.name}
@@ -309,7 +401,7 @@ const Transfer = () => {
           </div>
 
           <Input
-            label="Quantity to Transfer"
+            label="Required Quantity"
             type="number"
             id="quantity"
             name="quantity"
@@ -337,7 +429,10 @@ const Transfer = () => {
             <div className={styles.transferSummary}>
               <h3>Transfer Summary</h3>
               <p>
-                Transfer <strong>{formData.quantity}</strong> units of <strong>{selectedProduct?.name}</strong> from <strong>{getStoreName(formData.sourceStoreId)}</strong> to <strong>{getStoreName(formData.destinationStoreId)}</strong>.
+                Request <p>
+  Request <strong>{formData.quantity}</strong> units of <strong>{selectedProduct?.name}</strong> from <strong>{getStoreName(formData.destinationStoreId)}</strong> to <strong>{getStoreName(formData.sourceStoreId)}</strong>.
+</p>
+.
               </p>
             </div>
           )}
@@ -356,16 +451,19 @@ const Transfer = () => {
               variant="primary"
               disabled={isLoading}
             >
-              {isLoading ? 'Processing...' : 'Submit Transfer'}
+              {isLoading ? 'Processing...' : 'Request Transfer'}
             </Button>
           </div>
         </form>
         {requestSent && (
           <div className={styles.successMessage}>Request sent!</div>
         )}
-        {/* Pending Transfers UI */}
-        <div className={styles.pendingTransfersSection}>
-          <h3>Pending Transfer Requests to Your Store</h3>
+      </Card>
+
+      {/* Pending Requests Card */}
+      <Card className={styles.transferCard} style={{ marginBottom: '24px' }}>
+        <div id="pendingTransfers" className={styles.pendingTransfersSection}>
+          <h3>Pending Requests</h3>
           {pendingTransfers.length === 0 ? (
             <div>No pending requests.</div>
           ) : (
@@ -373,20 +471,90 @@ const Transfer = () => {
               {pendingTransfers.map(tr => (
                 <li key={tr.transferId} className={styles.pendingTransferItem}>
                   <div>
-                    <strong>Product:</strong> {tr.product?.name || tr.product?.productId}<br/>
+                    <strong>Product:</strong> {tr.product?.name || getProductName(tr.productId)}<br/>
                     <strong>Quantity:</strong> {tr.quantity}<br/>
-                    <strong>From Store:</strong> {tr.fromStore?.name || tr.fromStore?.storeId}
+                    <strong>From Store:</strong> {tr.fromStore?.name || getStoreName(tr.fromStoreId)}
                   </div>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    onClick={() => handleAccept(tr.transferId)}
-                  >
-                    Accept
-                  </Button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Button
+                      type="button"
+                      variant="primary"
+                      onClick={() => handleAccept(tr.transferId)}
+                    >
+                      Accept
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="danger"
+                      onClick={() => handleReject(tr.transferId)}
+                    >
+                      Reject
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>
+          )}
+        </div>
+      </Card>
+
+      {/* Transfer History Card */}
+      <Card className={styles.transferCard}>
+        <div className={styles.transferHistorySection}>
+          <h3>Transfer History</h3>
+          {/* Filter & Search Controls */}
+          <div className={styles.historyFilterBar}>
+            <select value={historyStatus} onChange={e => { setHistoryStatus(e.target.value); setHistoryPage(1); }} className={styles.historySelect}>
+              <option value="All">All</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="REQUESTED">Requested</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Search product or store..."
+              value={historySearch}
+              onChange={e => { setHistorySearch(e.target.value); setHistoryPage(1); }}
+              className={styles.historySearchInput}
+            />
+          </div>
+          {filteredHistory.length === 0 ? (
+            <p>No past transfers found.</p>
+          ) : (
+            <>
+              <table className={styles.transferHistoryTable + ' ' + styles.enhancedHistoryTable}>
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>From Store</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Requested By</th>
+                    <th>Approved By</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedHistory.map((tr) => (
+                    <tr key={tr.transferId}>
+                      <td>{tr.product?.name}</td>
+                      <td>{tr.fromStore?.name}</td>
+                      <td>{tr.quantity}</td>
+                      <td>{getStatusBadge(tr.status)}</td>
+                      <td>{tr.requestedBy?.name || '-'}</td>
+                      <td>{tr.approvedBy?.name || '-'}</td>
+                      <td>{new Date(tr.timestamp).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {/* Pagination Controls */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+                <Button type="button" variant="outline" disabled={historyPage === 1} onClick={() => setHistoryPage(p => Math.max(1, p-1))}>Prev</Button>
+                <span>Page {historyPage} of {totalPages}</span>
+                <Button type="button" variant="outline" disabled={historyPage === totalPages} onClick={() => setHistoryPage(p => Math.min(totalPages, p+1))}>Next</Button>
+              </div>
+            </>
           )}
         </div>
       </Card>
