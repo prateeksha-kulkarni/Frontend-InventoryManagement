@@ -1,0 +1,58 @@
+
+.LowStockPageContainer {
+  padding: var(--spacing-lg);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.LowStockPageHeader {
+  margin-bottom: var(--spacing-lg);
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.h1 {
+  font-size: 1.8rem;
+  margin-bottom: var(--spacing-xs);
+  color: var(--dark-color);
+}
+
+.p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.LowStockPageCard {
+  padding: var(--spacing-lg);
+}
+
+.LowStockPageForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.statusCell {
+  display: flex;
+  align-items: center;
+}
+
+.statusIndicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.statusLow {
+  background-color: red;
+}
+
+.statusMedium {
+  background-color: orange;
+}
+
+.statusGood {
+  background-color: green;
+} 

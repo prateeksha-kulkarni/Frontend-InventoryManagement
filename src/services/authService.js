@@ -74,7 +74,7 @@
 // export default authService;
 
 
-const API_URL = 'http://localhost:8081/api/auth';
+const API_URL = 'http://localhost:8080/api/auth';
 
 const authService = {
   // Login user and store JWT token

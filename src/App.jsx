@@ -19,7 +19,7 @@ import StoreSetup from './pages/StoreSetup/StoreSetup';
 
 // Layout components
 import Layout from './components/Layout/Layout';
-
+import LowStockPage from './pages/LowStock/LowStock';
 // Import global styles
 import './assets/styles/global.css';
 
@@ -104,6 +104,14 @@ const App = () => {
                 <StoreSetup />
               </ProtectedRoute>
             } />
+             <Route
+           path="low-stock-alerts"
+           element={
+              <ProtectedRoute>
+              <LowStockPage />
+              </ProtectedRoute>
+                }
+          />
           </Route>
 
           {/* Catch-all route */}
