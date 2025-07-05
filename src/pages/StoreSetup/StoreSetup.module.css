@@ -1,0 +1,77 @@
+.storeSetupContainer {
+  padding: 1.5rem;
+}
+
+.storeSetupHeader {
+  margin-bottom: 1.5rem;
+}
+
+.storeSetupHeader h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.storeSetupHeader p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.formCard {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.storesCard {
+  padding: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.75rem;
+}
+
+.storeForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.formActions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.errorMessage {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #c62828;
+}
+
+.successMessage {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #2e7d32;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .storeForm {
+    grid-template-columns: 1fr;
+  }
+  
+  .formActions {
+    grid-column: 1;
+  }
+}
