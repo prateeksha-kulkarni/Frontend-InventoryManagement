@@ -131,3 +131,43 @@
     width: 100%;
   }
 }
+.lowStockSection {
+  margin-top: 2rem;
+  padding: 1rem 0;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #cc3300;
+}
+
+.lowStockCard {
+  border: 1px solid #ffe5e5;
+  background-color: #fff6f6;
+}
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  
+}
+
+.notificationArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  cursor: pointer;
+  
+}
+.notificationLabel {
+  font-size: 0.85rem;
+  
+   font-weight: bold;
+  color: #333;
+  margin: 0;
+  color: #cc3300;
+}

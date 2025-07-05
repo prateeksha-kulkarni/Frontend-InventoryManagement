@@ -1,0 +1,21 @@
+/* NotificationIcon.module.css */
+.notificationWrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.bellIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 2px 6px;
+}
