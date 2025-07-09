@@ -3,6 +3,8 @@ import Card from '../../components/Card/Card';
 import Table from '../../components/Table/Table';
 import Input from '../../components/Input/Input';
 import styles from './ChangeLog.module.css';
+import axios from 'axios';
+import authService from '../../services/authService';
 
 const ChangeLog = () => {
   const [logData, setLogData] = useState([]);
@@ -14,7 +16,6 @@ const ChangeLog = () => {
     dateTo: ''
   });
 
-  // Table columns configuration
   const columns = [
     {
       header: 'Timestamp',
@@ -32,19 +33,14 @@ const ChangeLog = () => {
     {
       header: 'Product',
       accessor: 'productName',
-      render: (row) => (
-        <div>
-          <div>{row.productName}</div>
-          <div className={styles.skuText}>SKU: {row.sku}</div>
-        </div>
-      )
+      render: (row) => <div>{row.productName}</div>
     },
     {
       header: 'Action',
       accessor: 'action',
       render: (row) => {
         let actionClass = '';
-        
+
         switch (row.action) {
           case 'Added':
             actionClass = styles.actionAdded;
@@ -61,7 +57,7 @@ const ChangeLog = () => {
           default:
             actionClass = '';
         }
-        
+
         return (
           <div className={`${styles.actionCell} ${actionClass}`}>
             <span className={styles.actionBadge}>{row.action}</span>
@@ -94,112 +90,63 @@ const ChangeLog = () => {
     }
   ];
 
-  // Action types for filter
   const actionTypes = ['Added', 'Removed', 'Transferred', 'Adjusted'];
 
-  // Fetch log data (mock implementation)
   useEffect(() => {
     const fetchLogData = async () => {
       setIsLoading(true);
       try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock data
-        const mockData = [
-          {
-            id: 1,
-            timestamp: new Date(2023, 5, 15, 9, 30).toISOString(),
-            productName: 'Laptop',
-            sku: 'ELEC-001',
-            action: 'Added',
-            details: 'New shipment received',
-            quantity: 10,
-            userName: 'John Doe',
-            userRole: 'Manager'
-          },
-          {
-            id: 2,
-            timestamp: new Date(2023, 5, 15, 10, 45).toISOString(),
-            productName: 'Smartphone',
-            sku: 'ELEC-002',
-            action: 'Removed',
-            details: 'Sold to customer',
-            quantity: -2,
-            userName: 'Jane Smith',
-            userRole: 'Associate'
-          },
-          {
-            id: 3,
-            timestamp: new Date(2023, 5, 16, 14, 20).toISOString(),
-            productName: 'T-shirt',
-            sku: 'CLTH-001',
+        const user = authService.getCurrentUser();
+        const token = authService.getToken();
+        const storeId = user?.storeId;
+        const userId = user?.userId;
+
+        const headers = {
+          Authorization: `Bearer ${token}`
+        };
+
+        const [transferRes, adjustmentRes] = await Promise.all([
+          axios.get('http://localhost:8081/api/transfers/logs', { headers }),
+          axios.get('http://localhost:8081/api/stock-adjustments', { headers })
+        ]);
+
+        const transfers = transferRes.data
+          .filter((item) =>
+            item.fromStore?.storeId === storeId || item.toStore?.storeId === storeId
+          )
+          .map((item) => ({
+            id: item.transferId,
+            timestamp: item.timestamp,
+            productName: item.product?.name || 'Unknown',
             action: 'Transferred',
-            details: 'Transferred to North Branch',
-            quantity: -5,
-            userName: 'Mike Johnson',
+            details: `From ${item.fromStore?.name || 'N/A'} to ${item.toStore?.name || 'N/A'}`,
+            quantity: item.fromStore?.storeId === storeId
+              ? -Math.abs(item.quantity)
+              : Math.abs(item.quantity),
+            userName: item.requestedBy?.name || 'Unknown',
             userRole: 'Manager'
-          },
-          {
-            id: 4,
-            timestamp: new Date(2023, 5, 17, 11, 15).toISOString(),
-            productName: 'Coffee',
-            sku: 'FOOD-002',
+          }));
+
+        const adjustments = adjustmentRes.data
+          .filter((item) => item.user?.userId === userId)
+          .map((item) => ({
+            id: item.adjustmentId,
+            timestamp: item.timestamp,
+            productName: item.inventory?.product?.name || 'Unknown',
             action: 'Adjusted',
-            details: 'Inventory count correction',
-            quantity: -3,
-            userName: 'Sarah Williams',
-            userRole: 'Analyst'
-          },
-          {
-            id: 5,
-            timestamp: new Date(2023, 5, 17, 16, 30).toISOString(),
-            productName: 'Desk Lamp',
-            sku: 'HOME-001',
-            action: 'Added',
-            details: 'Return from customer',
-            quantity: 1,
-            userName: 'Jane Smith',
-            userRole: 'Associate'
-          },
-          {
-            id: 6,
-            timestamp: new Date(2023, 5, 18, 9, 0).toISOString(),
-            productName: 'Jeans',
-            sku: 'CLTH-002',
-            action: 'Adjusted',
-            details: 'Damaged inventory',
-            quantity: -2,
-            userName: 'John Doe',
+            details: item.reason || 'Adjustment',
+            quantity: item.changeType === 'ADD' ? Math.abs(item.quantityChange) : -Math.abs(item.quantityChange),
+            userName: item.user?.name || 'Unknown',
             userRole: 'Manager'
-          },
-          {
-            id: 7,
-            timestamp: new Date(2023, 5, 18, 14, 45).toISOString(),
-            productName: 'Notebook',
-            sku: 'OFFC-001',
-            action: 'Transferred',
-            details: 'Transferred from East Branch',
-            quantity: 15,
-            userName: 'Mike Johnson',
-            userRole: 'Manager'
-          },
-          {
-            id: 8,
-            timestamp: new Date(2023, 5, 19, 10, 30).toISOString(),
-            productName: 'Cereal',
-            sku: 'FOOD-001',
-            action: 'Removed',
-            details: 'Expired product',
-            quantity: -4,
-            userName: 'Sarah Williams',
-            userRole: 'Analyst'
-          }
-        ];
-        
-        setLogData(mockData);
+          }));
+
+        const combinedLogs = [...transfers, ...adjustments].sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        );
+
+        setLogData(combinedLogs);
       } catch (error) {
-        console.error('Error fetching log data:', error);
+        console.error('Error fetching logs:', error);
       } finally {
         setIsLoading(false);
       }
@@ -208,32 +155,27 @@ const ChangeLog = () => {
     fetchLogData();
   }, []);
 
-  // Handle filter changes
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
-  // Apply filters to log data
-  const filteredData = logData.filter(item => {
-    // Search term filter (product name, SKU, details, user)
-    const matchesSearch = filters.searchTerm === '' || 
+  const filteredData = logData.filter((item) => {
+    const matchesSearch =
+      filters.searchTerm === '' ||
       item.productName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      item.sku.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       item.details.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
       item.userName.toLowerCase().includes(filters.searchTerm.toLowerCase());
-    
-    // Action type filter
+
     const matchesAction = filters.actionType === '' || item.action === filters.actionType;
-    
-    // Date range filter
+
     const itemDate = new Date(item.timestamp);
     const matchesDateFrom = filters.dateFrom === '' || itemDate >= new Date(filters.dateFrom);
     const matchesDateTo = filters.dateTo === '' || itemDate <= new Date(`${filters.dateTo}T23:59:59`);
-    
+
     return matchesSearch && matchesAction && matchesDateFrom && matchesDateTo;
   });
 
@@ -249,13 +191,13 @@ const ChangeLog = () => {
           <div className={styles.searchInput}>
             <Input
               type="search"
-              placeholder="Search by product, SKU, details or user"
+              placeholder="Search by product, details or user"
               name="searchTerm"
               value={filters.searchTerm}
               onChange={handleFilterChange}
             />
           </div>
-          
+
           <div className={styles.filterGroup}>
             <div className={styles.filterItem}>
               <label htmlFor="actionType" className={styles.filterLabel}>Action Type</label>
@@ -267,12 +209,12 @@ const ChangeLog = () => {
                 className={styles.filterSelect}
               >
                 <option value="">All Actions</option>
-                {actionTypes.map(action => (
+                {actionTypes.map((action) => (
                   <option key={action} value={action}>{action}</option>
                 ))}
               </select>
             </div>
-            
+
             <div className={styles.filterItem}>
               <label htmlFor="dateFrom" className={styles.filterLabel}>From Date</label>
               <input
@@ -284,7 +226,7 @@ const ChangeLog = () => {
                 className={styles.filterDate}
               />
             </div>
-            
+
             <div className={styles.filterItem}>
               <label htmlFor="dateTo" className={styles.filterLabel}>To Date</label>
               <input

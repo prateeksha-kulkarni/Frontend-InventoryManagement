@@ -12,6 +12,7 @@ import NotificationIcon from '../../components/Notification/Notification';
 
 const Dashboard = () => {
   const [inventoryData, setInventoryData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
@@ -36,13 +37,12 @@ const Dashboard = () => {
       render: (row) => (
         <div className={styles.statusCell}>
           <span
-            className={`${styles.statusIndicator} ${
-              row.status === 'LOW_STOCK'
-                ? styles.statusLow
-                : row.status === 'REORDER_SOON'
+            className={`${styles.statusIndicator} ${row.status === 'LOW_STOCK'
+              ? styles.statusLow
+              : row.status === 'REORDER_SOON'
                 ? styles.statusMedium
                 : styles.statusGood
-            }`}
+              }`}
           ></span>
           {row.status.replace('_', ' ')}
         </div>
@@ -89,6 +89,7 @@ const Dashboard = () => {
       const storeId = user?.storeId;
       const response = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(response.data);
+      setFilteredData(response.data);
     } catch (error) {
       console.error('Error fetching inventory:', error);
     } finally {
@@ -96,24 +97,53 @@ const Dashboard = () => {
     }
   };
 
-  const filteredData = inventoryData.filter(item => {
-    const productName = item.product?.name || '';
-    const productCategory = item.product?.category || '';
+  useEffect(() => {
+    const newFiltered = inventoryData.filter(item => {
+      const productName = item.product?.name?.toLowerCase() || '';
+      const productCategory = item.product?.category || '';
+      const search = searchTerm.toLowerCase();
 
-    const matchesSearch = productName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory ? productCategory === filterCategory : true;
+      // Match if search term is in product name OR in category
+      const matchesSearch =
+        productName.includes(search) ||
+        productCategory.toLowerCase().includes(search);
 
-    return matchesSearch && matchesCategory;
-  });
+      const matchesCategory = filterCategory
+        ? productCategory === filterCategory
+        : true;
 
+      return matchesSearch && matchesCategory;
+    });
+    setFilteredData(newFiltered);
+  }, [inventoryData, searchTerm, filterCategory]);
 
   const handleAddClick = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+  const handleSearch = async (term) => {
+    setSearchTerm(term);
+    if (term.length >= 1) {
+      setIsLoading(true);
+      try {
+        const user = authService.getCurrentUser();
+        const storeId = user?.storeId || user?.location || 1;
+        const response = await axios.get(`/api/inventory/search?query=${term}&storeId=${storeId}`);
+        setInventoryData(response.data);
+        console.log('Search results:', response.data);
+      } catch (error) {
+        console.error('Error searching products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      fetchInventory();
+    }
+  };
+
   const handleAddSubmit = async (newProduct) => {
     try {
       const user = authService.getCurrentUser();
-      const storeId = user?.storeId ;
+      const storeId = user?.storeId;
       const response = await axios.post('/api/products/add', {
         ...newProduct,
         storeId: storeId,
@@ -122,8 +152,8 @@ const Dashboard = () => {
       console.log('Product added:', response.data);
       setIsModalOpen(false);
 
-      // Refresh product list
-      const refreshed = await axios.get(`/api/inventory/store/${storeId}`);
+
+      const refreshed = await axios.get(`/api/products/read/${storeId}`);
       setInventoryData(refreshed.data);
 
     } catch (error) {
@@ -188,7 +218,7 @@ const Dashboard = () => {
                 type="search"
                 placeholder="Search by product name"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
             <div className={styles.categoryFilter}>
