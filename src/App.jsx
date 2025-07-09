@@ -309,6 +309,7 @@ import PurchaseOrder from './pages/PurchaseOrder/PurchaseOrder';
 import Analytics from './pages/Analytics/Analytics';
 import UserRegistration from './pages/UserRegistration/UserRegistration';
 import StoreSetup from './pages/StoreSetup/StoreSetup';
+import InventoryDashboard from './pages/InventoryDashboard/InventoryDashboard';
 import LowStockPage from './pages/LowStock/LowStock';
 
 // Layout component
@@ -336,6 +337,7 @@ const App = () => {
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
+
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -349,27 +351,21 @@ const App = () => {
               </ProtectedRoute>
             }
           >
+
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
 
-            <Route
-              path="stock-adjustment"
-              element={
-                <ProtectedRoute requiredRole="Manager">
-                  <StockAdjustment />
-                </ProtectedRoute>
-              }
-            />
 
-            <Route
-              path="transfer"
-              element={
-                <ProtectedRoute requiredRole="Manager">
-                  <Transfer />
-                </ProtectedRoute>
-              }
-            />
-
+            <Route path="stock-adjustment" element={
+              <ProtectedRoute requiredRole="Manager">
+                <StockAdjustment />
+              </ProtectedRoute>
+            } />
+            <Route path="transfer" element={
+              <ProtectedRoute requiredRole="Manager">
+                <Transfer />
+              </ProtectedRoute>
+            } />
             <Route
               path="change-log"
               element={
@@ -397,14 +393,11 @@ const App = () => {
               }
             />
 
-            <Route
-              path="analytics"
-              element={
-                <ProtectedRoute requiredRole="Analyst">
-                  <Analytics />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="analytics" element={
+              <ProtectedRoute requiredRole="Analyst">
+                <InventoryDashboard/>
+              </ProtectedRoute>
+            } />
 
             <Route
               path="user-registration"
