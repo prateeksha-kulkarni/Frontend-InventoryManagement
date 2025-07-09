@@ -236,7 +236,7 @@ const Dashboard = () => {
           </div>
         </Card>
       </div>
-
+      
       <Card className={styles.inventoryCard}>
         <Table
           columns={columns}
@@ -245,7 +245,7 @@ const Dashboard = () => {
           emptyMessage="No inventory items found matching your criteria."
         />
       </Card>
-
+        
       <div className={styles.dashboardActions}>
         <Button variant="primary" onClick={handleAddClick}>
           Add New Product
