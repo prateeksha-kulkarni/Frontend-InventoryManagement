@@ -130,6 +130,15 @@ const Layout = () => {
                 <span className={styles.navIcon}>🏪</span>
                 <span className={styles.navText}>Store Setup</span>
               </NavLink>
+                <NavLink 
+              to="/low-stock-alerts" 
+            className={({ isActive }) => 
+              `${styles.navLink} ${isActive ? styles.activeLink : ''}`
+                }
+           >
+             <span className={styles.navIcon}>⚠️</span>
+              <span className={styles.navText}>Low Stock</span>
+          </NavLink>
             </>
           )}
         </nav>

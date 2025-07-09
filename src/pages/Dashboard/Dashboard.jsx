@@ -8,6 +8,7 @@ import styles from './Dashboard.module.css';
 import AddProductModal from '../AddProduct/AddProductModal';
 import axios from '../../services/axiosConfig'
 import authService from '../../services/authService';
+import NotificationIcon from '../../components/Notification/Notification';
 
 const Dashboard = () => {
   const [inventoryData, setInventoryData] = useState([]);
@@ -64,6 +65,13 @@ const Dashboard = () => {
             onClick={() => handleTransfer(row)}
           >
             Transfer
+          </Button>
+          <Button
+            variant="outline"
+            size="small"
+            onClick={() => handleRemove(row)}
+          >
+            Remove
           </Button>
         </div>
       ),
@@ -160,14 +168,48 @@ const Dashboard = () => {
   const handleTransfer = (product) => {
     navigate('/transfer', { state: { product } });
   };
+ const handleRemove = async (row) => {
+   const confirmDelete = window.confirm(
+    `Are you sure you want to delete the product "${row.product?.name}"?`
+  );
+
+  if (!confirmDelete) {
+    return; // user cancelled
+  }
+  try {
+    await axios.post(`/api/products/delete`, row.product); // send full product
+
+    setInventoryData(prev =>
+      prev.filter(item => item.product?.productId !== row.product?.productId)
+    );
+
+    console.log('Product deleted');
+  } catch (error) {
+    console.error('Delete failed:', error);
+  }
+};
 
   return (
-    <div className={styles.dashboardContainer}>
+      <div className={styles.dashboardContainer}>
       <div className={styles.dashboardHeader}>
+        <div>
         <h1>Inventory Dashboard</h1>
         <p>Current stock levels and product information</p>
+        </div>
+        <div className={styles.notificationArea}>
+         <h2 className={styles.notificationLabel}>Low Stock</h2>
+        <NotificationIcon
+          
+           count={filteredData.filter(item => item.status === 'LOW_STOCK').length}
+      //    onClick={() => {
+      //   const lowStockSection = document.querySelector(`.${styles.lowStockSection}`);
+      //   lowStockSection?.scrollIntoView({ behavior: 'smooth' });
+      // }}
+         onClick={() => navigate('/low-stock-alerts')}
+       />
+        
+       </div>
       </div>
-
       <div className={styles.filterSection}>
         <Card className={styles.filterCard}>
           <div className={styles.filterControls}>
