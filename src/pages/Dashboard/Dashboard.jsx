@@ -8,9 +8,11 @@ import styles from './Dashboard.module.css';
 import AddProductModal from '../AddProduct/AddProductModal';
 import axios from '../../services/axiosConfig'
 import authService from '../../services/authService';
+import NotificationIcon from '../../components/Notification/Notification';
 
 const Dashboard = () => {
   const [inventoryData, setInventoryData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
@@ -20,22 +22,27 @@ const Dashboard = () => {
   const categories = ['ELECTRONICS', 'CLOTHING', 'FOOD', 'HOME_GOODS', 'OFFICE_SUPPLIES'];
 
   const columns = [
-    { header: 'Product Name', accessor: 'name' },
-    { header: 'Category', accessor: 'category' },
+    {
+      header: 'Product Name',
+      render: (row) => row.product?.name || 'N/A'
+    },
+    {
+      header: 'Category',
+      render: (row) => row.product?.category || 'N/A'
+    },
     { header: 'Quantity', accessor: 'quantity' },
-    { header: 'Threshold', accessor: 'threshold' },
+    { header: 'Threshold', accessor: 'minThreshold' },
     {
       header: 'Status',
       render: (row) => (
         <div className={styles.statusCell}>
           <span
-            className={`${styles.statusIndicator} ${
-              row.status === 'LOW_STOCK'
-                ? styles.statusLow
-                : row.status === 'REORDER_SOON'
+            className={`${styles.statusIndicator} ${row.status === 'LOW_STOCK'
+              ? styles.statusLow
+              : row.status === 'REORDER_SOON'
                 ? styles.statusMedium
                 : styles.statusGood
-            }`}
+              }`}
           ></span>
           {row.status.replace('_', ' ')}
         </div>
@@ -59,6 +66,13 @@ const Dashboard = () => {
           >
             Transfer
           </Button>
+          <Button
+            variant="outline"
+            size="small"
+            onClick={() => handleRemove(row)}
+          >
+            Remove
+          </Button>
         </div>
       ),
     },
@@ -72,9 +86,10 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       const user = authService.getCurrentUser();
-      const storeId = user?.storeId || user?.location || 1;
-      const response = await axios.get(`/api/products/read/${storeId}`);
+      const storeId = user?.storeId;
+      const response = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(response.data);
+      setFilteredData(response.data);
     } catch (error) {
       console.error('Error fetching inventory:', error);
     } finally {
@@ -82,19 +97,53 @@ const Dashboard = () => {
     }
   };
 
-  const filteredData = inventoryData.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory ? item.category === filterCategory : true;
-    return matchesSearch && matchesCategory;
-  });
+  useEffect(() => {
+    const newFiltered = inventoryData.filter(item => {
+      const productName = item.product?.name?.toLowerCase() || '';
+      const productCategory = item.product?.category || '';
+      const search = searchTerm.toLowerCase();
+
+      // Match if search term is in product name OR in category
+      const matchesSearch =
+        productName.includes(search) ||
+        productCategory.toLowerCase().includes(search);
+
+      const matchesCategory = filterCategory
+        ? productCategory === filterCategory
+        : true;
+
+      return matchesSearch && matchesCategory;
+    });
+    setFilteredData(newFiltered);
+  }, [inventoryData, searchTerm, filterCategory]);
 
   const handleAddClick = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+  const handleSearch = async (term) => {
+    setSearchTerm(term);
+    if (term.length >= 1) {
+      setIsLoading(true);
+      try {
+        const user = authService.getCurrentUser();
+        const storeId = user?.storeId || user?.location || 1;
+        const response = await axios.get(`/api/inventory/search?query=${term}&storeId=${storeId}`);
+        setInventoryData(response.data);
+        console.log('Search results:', response.data);
+      } catch (error) {
+        console.error('Error searching products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      fetchInventory();
+    }
+  };
+
   const handleAddSubmit = async (newProduct) => {
     try {
       const user = authService.getCurrentUser();
-      const storeId = user?.storeId || user?.location || 1;
+      const storeId = user?.storeId;
       const response = await axios.post('/api/products/add', {
         ...newProduct,
         storeId: storeId,
@@ -103,7 +152,7 @@ const Dashboard = () => {
       console.log('Product added:', response.data);
       setIsModalOpen(false);
 
-      // ✅ Refresh product list
+
       const refreshed = await axios.get(`/api/products/read/${storeId}`);
       setInventoryData(refreshed.data);
 
@@ -117,16 +166,50 @@ const Dashboard = () => {
   };
 
   const handleTransfer = (product) => {
-    console.log('Transfer product:', product);
+    navigate('/transfer', { state: { product } });
   };
+ const handleRemove = async (row) => {
+   const confirmDelete = window.confirm(
+    `Are you sure you want to delete the product "${row.product?.name}"?`
+  );
+
+  if (!confirmDelete) {
+    return; // user cancelled
+  }
+  try {
+    await axios.post(`/api/products/delete`, row.product); // send full product
+
+    setInventoryData(prev =>
+      prev.filter(item => item.product?.productId !== row.product?.productId)
+    );
+
+    console.log('Product deleted');
+  } catch (error) {
+    console.error('Delete failed:', error);
+  }
+};
 
   return (
-    <div className={styles.dashboardContainer}>
+      <div className={styles.dashboardContainer}>
       <div className={styles.dashboardHeader}>
+        <div>
         <h1>Inventory Dashboard</h1>
         <p>Current stock levels and product information</p>
+        </div>
+        <div className={styles.notificationArea}>
+         <h2 className={styles.notificationLabel}>Low Stock</h2>
+        <NotificationIcon
+          
+           count={filteredData.filter(item => item.status === 'LOW_STOCK').length}
+      //    onClick={() => {
+      //   const lowStockSection = document.querySelector(`.${styles.lowStockSection}`);
+      //   lowStockSection?.scrollIntoView({ behavior: 'smooth' });
+      // }}
+         onClick={() => navigate('/low-stock-alerts')}
+       />
+        
+       </div>
       </div>
-
       <div className={styles.filterSection}>
         <Card className={styles.filterCard}>
           <div className={styles.filterControls}>
@@ -135,7 +218,7 @@ const Dashboard = () => {
                 type="search"
                 placeholder="Search by product name"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
             <div className={styles.categoryFilter}>
@@ -182,3 +265,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

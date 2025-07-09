@@ -5,32 +5,34 @@ import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import styles from './StockAdjustment.module.css';
+import authService from '../../services/authService';
 
 const StockAdjustment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const passedProduct = location.state?.product || null;
 
+  const user = authService.getCurrentUser();
+  const storeId = user?.storeId;
+
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    productName: passedProduct?.name || '',
+   productName: passedProduct?.product?.name || '',
     adjustmentType: 'add',
     quantity: '',
     reason: '',
-    notes: ''
   });
 
   const [errors, setErrors] = useState({});
+  const [showMissingInventoryModal, setShowMissingInventoryModal] = useState(false);
 
   const reasons = {
-    add: ['New Shipment', 'Return from Customer', 'Inventory Count Correction', 'Transfer from Another Store', 'Other'],
-    remove: ['Sale', 'Damaged', 'Expired', 'Transfer to Another Store', 'Theft/Loss', 'Inventory Count Correction', 'Other']
+    add: ['New Shipment', 'Return from Customer', 'Inventory Count Correction'],
+    remove: ['Sale', 'Damaged', 'Expired', 'Theft/Loss', 'Inventory Count Correction']
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Always store quantity as number
     const parsedValue = name === 'quantity' ? Number(value) : value;
 
     setFormData(prev => ({
@@ -58,7 +60,6 @@ const StockAdjustment = () => {
       newErrors.reason = 'Please select a reason';
     }
 
-    // Disallow removal beyond available stock
     if (
       formData.adjustmentType === 'remove' &&
       passedProduct &&
@@ -75,21 +76,43 @@ const StockAdjustment = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
+    if (!storeId) {
+      alert('Store ID missing from user session. Please log in again.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const { productName, quantity, adjustmentType } = formData;
+      const { productName, quantity, adjustmentType, reason } = formData;
 
-      const url = `/api/products/adjust/${encodeURIComponent(productName)}?quantity=${quantity}&type=${adjustmentType}`;
+      const url = `/api/inventory/adjust/${encodeURIComponent(productName)}`;
+
       console.log("Calling API:", url);
+      console.log("🧠 Submitting adjustment with userId:", user?.userId);
+      console.log("📦 productName:", productName);
+      await axios.put(url, {
+        quantity,
+        type: adjustmentType.toUpperCase(),
+        storeId,
+        userId: user.userId,
+        reason
+      });
 
-      await axios.put(url);
+
 
       alert('Stock adjustment completed successfully!');
       navigate('/dashboard');
     } catch (error) {
       console.error('Error adjusting stock:', error);
-      setErrors({ submit: 'Failed to process stock adjustment. Please try again.' });
+      if (
+        error?.response?.data?.message === 'InventoryNotFound' ||
+        error?.response?.data?.error === 'InventoryNotFound'
+      ) {
+        setShowMissingInventoryModal(true);
+      } else {
+        setErrors({ submit: 'Failed to process stock adjustment. Please try again.' });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +122,7 @@ const StockAdjustment = () => {
     <div className={styles.adjustmentContainer}>
       <div className={styles.adjustmentHeader}>
         <h1>Stock Adjustment</h1>
-        <p>Add or remove items from inventory</p>
+        <p>Adjust quantity of items in current store</p>
       </div>
 
       <Card className={styles.adjustmentCard}>
@@ -183,15 +206,15 @@ const StockAdjustment = () => {
             {errors.reason && <div className={styles.fieldError}>{errors.reason}</div>}
           </div>
 
-          <Input
-            label="Notes (Optional)"
-            type="textarea"
-            name="notes"
-            value={formData.notes}
-            onChange={handleInputChange}
-            placeholder="Any notes..."
-            disabled={isLoading}
-          />
+{/*           <Input */}
+{/*             label="Notes (Optional)" */}
+{/*             type="textarea" */}
+{/*             name="notes" */}
+{/*             value={formData.notes} */}
+{/*             onChange={handleInputChange} */}
+{/*             placeholder="Any notes..." */}
+{/*             disabled={isLoading} */}
+{/*           /> */}
 
           <div className={styles.formActions}>
             <Button type="button" variant="outline" onClick={() => navigate('/dashboard')} disabled={isLoading}>
@@ -202,6 +225,19 @@ const StockAdjustment = () => {
             </Button>
           </div>
         </form>
+
+        {showMissingInventoryModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <h2>Product Not in Inventory</h2>
+              <p>
+                This product is not yet added to inventory for the current store. <br />
+                Please add it with a minimum threshold before adjusting quantity.
+              </p>
+              <Button onClick={() => setShowMissingInventoryModal(false)}>OK</Button>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
