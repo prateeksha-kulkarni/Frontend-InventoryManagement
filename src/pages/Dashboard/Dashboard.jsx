@@ -87,6 +87,10 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
+      if (!storeId) {
+        console.error('No store ID found for user');
+        return;
+      }
       const response = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(response.data);
       setFilteredData(response.data);
@@ -100,12 +104,16 @@ const Dashboard = () => {
   useEffect(() => {
     const newFiltered = inventoryData.filter(item => {
       const productName = item.product?.name?.toLowerCase() || '';
+      const productDescription = item.product?.description?.toLowerCase() || '';
+      const productSku = item.product?.sku?.toLowerCase() || '';
       const productCategory = item.product?.category || '';
       const search = searchTerm.toLowerCase();
 
-      // Match if search term is in product name OR in category
+      // Match if search term is in product name, description, SKU, or category
       const matchesSearch =
         productName.includes(search) ||
+        productDescription.includes(search) ||
+        productSku.includes(search) ||
         productCategory.toLowerCase().includes(search);
 
       const matchesCategory = filterCategory
@@ -126,8 +134,13 @@ const Dashboard = () => {
       setIsLoading(true);
       try {
         const user = authService.getCurrentUser();
-        const storeId = user?.storeId || user?.location || 1;
-        const response = await axios.get(`/api/inventory/search?query=${term}&storeId=${storeId}`);
+        const storeId = user?.storeId || user?.location;
+        if (!storeId) {
+          console.error('No store ID found for user');
+          return;
+        }
+        // Updated search endpoint to include name, description, and SKU
+        const response = await axios.get(`/api/inventory/search?query=${term}&storeId=${storeId}&fields=name,description,sku`);
         setInventoryData(response.data);
         console.log('Search results:', response.data);
       } catch (error) {
@@ -144,6 +157,10 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
+      if (!storeId) {
+        console.error('No store ID found for user');
+        return;
+      }
       const response = await axios.post('/api/products/add', {
         ...newProduct,
         storeId: storeId,
@@ -152,9 +169,8 @@ const Dashboard = () => {
       console.log('Product added:', response.data);
       setIsModalOpen(false);
 
-
-      const refreshed = await axios.get(`/api/products/read/${storeId}`);
-      setInventoryData(refreshed.data);
+      // Refresh the inventory data
+      await fetchInventory();
 
     } catch (error) {
       console.error('Error adding product:', error);
@@ -179,9 +195,8 @@ const Dashboard = () => {
   try {
     await axios.post(`/api/products/delete`, row.product); // send full product
 
-    setInventoryData(prev =>
-      prev.filter(item => item.product?.productId !== row.product?.productId)
-    );
+    // Refresh the inventory data instead of manually filtering
+    await fetchInventory();
 
     console.log('Product deleted');
   } catch (error) {
@@ -190,25 +205,19 @@ const Dashboard = () => {
 };
 
   return (
-      <div className={styles.dashboardContainer}>
+    <div className={styles.dashboardContainer}>
       <div className={styles.dashboardHeader}>
         <div>
-        <h1>Inventory Dashboard</h1>
-        <p>Current stock levels and product information</p>
+          <h1>Inventory Dashboard</h1>
+          <p>Current stock levels and product information</p>
         </div>
         <div className={styles.notificationArea}>
-         <h2 className={styles.notificationLabel}>Low Stock</h2>
-        <NotificationIcon
-          
-           count={filteredData.filter(item => item.status === 'LOW_STOCK').length}
-      //    onClick={() => {
-      //   const lowStockSection = document.querySelector(`.${styles.lowStockSection}`);
-      //   lowStockSection?.scrollIntoView({ behavior: 'smooth' });
-      // }}
-         onClick={() => navigate('/low-stock-alerts')}
-       />
-        
-       </div>
+          <h2 className={styles.notificationLabel}>Low Stock</h2>
+          <NotificationIcon
+            count={filteredData.filter(item => item.status === 'LOW_STOCK').length}
+            onClick={() => navigate('/low-stock-alerts')}
+          />
+        </div>
       </div>
       <div className={styles.filterSection}>
         <Card className={styles.filterCard}>
@@ -216,7 +225,7 @@ const Dashboard = () => {
             <div className={styles.searchInput}>
               <Input
                 type="search"
-                placeholder="Search by product name"
+                placeholder="Search by product name, description, or SKU"
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
               />
@@ -250,7 +259,7 @@ const Dashboard = () => {
         <Button variant="primary" onClick={handleAddClick}>
           Add New Product
         </Button>
-        <Button variant="secondary" onClick={() => console.log('View restock suggestions')}>
+          <Button variant="secondary" onClick={() => navigate('/restock-suggestions')}>
           View Restock Suggestions
         </Button>
       </div>
