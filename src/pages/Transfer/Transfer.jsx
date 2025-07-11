@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Card from '../../components/Card/Card';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 
 const Transfer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
@@ -100,6 +101,15 @@ const Transfer = () => {
       }
     };
     fetchData();
+
+    // Prefill data if redirected from AddProductModal
+    const productId = location.state?.productId;
+    if (productId && !selectedProduct) {
+      const prod = availableProducts.find(p => p.id === productId);
+      if (prod) {
+        setSelectedProduct(prod);
+      }
+    }
   }, [fetchPendingTransfers, fetchTransferHistory]);
 
   useEffect(() => {
@@ -117,6 +127,16 @@ const Transfer = () => {
     };
     fetchSuggestions();
   }, [productQuery]);
+
+  useEffect(() => {
+    if (location.state) {
+      const { productName, quantity, fromStoreId, productId } = location.state;
+      if (productName) setProductQuery(productName);
+      if (productId) setFormData(prev => ({ ...prev, productId }));
+      if (fromStoreId) setFormData(prev => ({ ...prev, destinationStoreId: fromStoreId }));
+    }
+  }, []);
+
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -429,10 +449,7 @@ const Transfer = () => {
             <div className={styles.transferSummary}>
               <h3>Transfer Summary</h3>
               <p>
-                Request <p>
-  Request <strong>{formData.quantity}</strong> units of <strong>{selectedProduct?.name}</strong> from <strong>{getStoreName(formData.destinationStoreId)}</strong> to <strong>{getStoreName(formData.sourceStoreId)}</strong>.
-</p>
-.
+                  Request <strong>{formData.quantity}</strong> units of <strong>{selectedProduct?.name}</strong> from <strong>{getStoreName(formData.destinationStoreId)}</strong> to <strong>{getStoreName(formData.sourceStoreId)}</strong>.
               </p>
             </div>
           )}

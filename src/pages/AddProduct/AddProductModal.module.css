@@ -1,3 +1,9 @@
+.heading {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -15,9 +21,9 @@
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  width: 200px;
-  max-width: 70%;
+  padding: 20px;
+  width: 180px;
+  max-width: 50%;
   animation: fadeIn 0.3s ease;
 }
 
@@ -44,7 +50,7 @@
 .formGroup {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  gap: 10px;
 }
 
 .formGroup label {
@@ -61,6 +67,7 @@
   font-size: 0.95rem;
   outline: none;
   transition: border 0.2s ease;
+  background-color: #fff; /* ✅ Add this */
 }
 
 .formGroup input:focus,
@@ -74,6 +81,40 @@
   gap: 12px;
   margin-top: 20px;
 }
+
+.transferPrompt {
+  margin-top: 20px;
+  background-color: #f5f7fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.transferPrompt p {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.transferRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.transferRow span {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 
 @keyframes fadeIn {
   from {
