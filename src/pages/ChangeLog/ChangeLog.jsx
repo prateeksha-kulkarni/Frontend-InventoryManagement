@@ -73,7 +73,7 @@ const ChangeLog = () => {
         const isNegative = row.quantity < 0;
         return (
           <div className={`${styles.quantityCell} ${isNegative ? styles.negativeQuantity : styles.positiveQuantity}`}>
-            {row.quantity > 0 ? `+${row.quantity}` : row.quantity}
+            {row.quantity}
           </div>
         );
       }
@@ -112,7 +112,8 @@ const ChangeLog = () => {
 
         const transfers = transferRes.data
           .filter((item) =>
-            item.fromStore?.storeId === storeId || item.toStore?.storeId === storeId
+            item.status === 'COMPLETED' &&
+            (item.fromStore?.storeId === storeId || item.toStore?.storeId === storeId)
           )
           .map((item) => ({
             id: item.transferId,
@@ -120,9 +121,10 @@ const ChangeLog = () => {
             productName: item.product?.name || 'Unknown',
             action: 'Transferred',
             details: `From ${item.fromStore?.name || 'N/A'} to ${item.toStore?.name || 'N/A'}`,
-            quantity: item.fromStore?.storeId === storeId
-              ? -Math.abs(item.quantity)
-              : Math.abs(item.quantity),
+            quantity:
+              item.fromStore?.storeId === storeId
+                ? -Math.abs(item.quantity)
+                : Math.abs(item.quantity),
             userName: item.requestedBy?.name || 'Unknown',
             userRole: 'Manager'
           }));
@@ -132,10 +134,13 @@ const ChangeLog = () => {
           .map((item) => ({
             id: item.adjustmentId,
             timestamp: item.timestamp,
-            productName: item.inventory?.product?.name || 'Unknown',
+            productName: item.product?.name || 'Unknown',
             action: 'Adjusted',
             details: item.reason || 'Adjustment',
-            quantity: item.changeType === 'ADD' ? Math.abs(item.quantityChange) : -Math.abs(item.quantityChange),
+            quantity:
+              item.changeType === 'ADD'
+                ? Math.abs(item.quantityChange)
+                : -Math.abs(item.quantityChange),
             userName: item.user?.name || 'Unknown',
             userRole: 'Manager'
           }));
@@ -174,7 +179,8 @@ const ChangeLog = () => {
 
     const itemDate = new Date(item.timestamp);
     const matchesDateFrom = filters.dateFrom === '' || itemDate >= new Date(filters.dateFrom);
-    const matchesDateTo = filters.dateTo === '' || itemDate <= new Date(`${filters.dateTo}T23:59:59`);
+    const matchesDateTo =
+      filters.dateTo === '' || itemDate <= new Date(`${filters.dateTo}T23:59:59`);
 
     return matchesSearch && matchesAction && matchesDateFrom && matchesDateTo;
   });
