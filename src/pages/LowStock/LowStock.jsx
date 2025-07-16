@@ -75,7 +75,7 @@ const LowStock = () => {
     <div className={styles.LowStockPageContainer}>
       <div className={styles.LowStockPageHeader}>
         <div className={styles.LowStockPageHeader}>
-          <h2>Low Stock Products</h2>
+          <h1>Low Stock Products</h1>
           <p>These products have stock levels below their minimum threshold.</p>
         </div>
 

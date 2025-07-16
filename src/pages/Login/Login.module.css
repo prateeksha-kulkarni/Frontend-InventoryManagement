@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+  /* background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%); */
   padding: var(--spacing-md);
 }
 
@@ -44,6 +44,7 @@
 
 .loginCard {
   padding: var(--spacing-lg);
+  border-radius: 25px;
 }
 
 .loginTitle {

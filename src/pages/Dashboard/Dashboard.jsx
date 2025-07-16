@@ -88,6 +88,10 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
+      if (!storeId) {
+        console.error('No store ID found for user');
+        return;
+      }
       const response = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(response.data);
       setFilteredData(response.data);
@@ -99,14 +103,18 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const newFiltered = inventoryData.filter((item) => {
-      const productName = item.product?.name?.toLowerCase() || "";
-      const productCategory = item.product?.category || "";
+    const newFiltered = inventoryData.filter(item => {
+      const productName = item.product?.name?.toLowerCase() || '';
+      const productDescription = item.product?.description?.toLowerCase() || '';
+      const productSku = item.product?.sku?.toLowerCase() || '';
+      const productCategory = item.product?.category || '';
       const search = searchTerm.toLowerCase();
 
-      // Match if search term is in product name OR in category
+      // Match if search term is in product name, description, SKU, or category
       const matchesSearch =
         productName.includes(search) ||
+        productDescription.includes(search) ||
+        productSku.includes(search) ||
         productCategory.toLowerCase().includes(search);
 
       const matchesCategory = filterCategory
@@ -127,10 +135,13 @@ const Dashboard = () => {
       setIsLoading(true);
       try {
         const user = authService.getCurrentUser();
-        const storeId = user?.storeId || user?.location || 1;
-        const response = await axios.get(
-          `/api/inventory/search?query=${term}&storeId=${storeId}`
-        );
+        const storeId = user?.storeId || user?.location;
+        if (!storeId) {
+          console.error('No store ID found for user');
+          return;
+        }
+        // Updated search endpoint to include name, description, and SKU
+        const response = await axios.get(`/api/inventory/search?query=${term}&storeId=${storeId}&fields=name,description,sku`);
         setInventoryData(response.data);
         console.log("Search results:", response.data);
       } catch (error) {
@@ -147,7 +158,11 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
-      const response = await axios.post("/api/products/add", {
+      if (!storeId) {
+        console.error('No store ID found for user');
+        return;
+      }
+      const response = await axios.post('/api/products/add', {
         ...newProduct,
         storeId: storeId,
       });
@@ -155,8 +170,9 @@ const Dashboard = () => {
       console.log("Product added:", response.data);
       setIsModalOpen(false);
 
-      const refreshed = await axios.get(`/api/products/read/${storeId}`);
-      setInventoryData(refreshed.data);
+      // Refresh the inventory data
+      await fetchInventory();
+
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -180,11 +196,8 @@ const Dashboard = () => {
   //   try {
   //     await axios.post(`/api/products/delete`, row.product); // send full product
 
-  //     setInventoryData((prev) =>
-  //       prev.filter(
-  //         (item) => item.product?.productId !== row.product?.productId
-  //       )
-  //     );
+    // Refresh the inventory data instead of manually filtering
+    //await fetchInventory();
 
   //     console.log("Product deleted");
   //   } catch (error) {
@@ -219,7 +232,7 @@ const Dashboard = () => {
             <div className={styles.searchInput}>
               <Input
                 type="search"
-                placeholder="Search by product name"
+                placeholder="Search by product name, description, or SKU"
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
               />
