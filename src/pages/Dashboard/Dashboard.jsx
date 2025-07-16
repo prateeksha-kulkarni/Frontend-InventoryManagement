@@ -197,7 +197,7 @@ const Dashboard = () => {
         <p>Current stock levels and product information</p>
         </div>
         <div className={styles.notificationArea}>
-         <h2 className={styles.notificationLabel}>Low Stock</h2>
+         {/* <h2 className={styles.notificationLabel}>Low Stock</h2> */}
         <NotificationIcon
           
            count={filteredData.filter(item => item.status === 'LOW_STOCK').length}
