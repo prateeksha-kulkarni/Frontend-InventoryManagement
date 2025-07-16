@@ -16,6 +16,8 @@ const Transfer = () => {
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [availableStock, setAvailableStock] = useState(null);
+
   const [formData, setFormData] = useState({
     productId: '',
     sourceStoreId: '',
@@ -40,7 +42,7 @@ const Transfer = () => {
   // Fetch pending transfers for this store (as destination)
   const fetchPendingTransfers = useCallback(async (storeId) => {
     try {
-      const res = await axios.get(`/api/transfers/to/${storeId}?status=REQUESTED`);
+const res = await axios.get(`/api/transfers/to/${storeId}/dto?status=REQUESTED`);
       setPendingTransfers(res.data);
     } catch (err) {
       setPendingTransfers([]);
@@ -55,6 +57,18 @@ const Transfer = () => {
       console.error('Failed to fetch transfer history', error);
     }
   }, []);
+
+  const fetchAvailableStockAtStore = async (storeId, productId) => {
+  try {
+    const res = await axios.get(`/api/inventory/store/${storeId}/product/${productId}`);
+    const inventory = res.data;
+    setAvailableStock(inventory?.quantity || 0);
+  } catch (error) {
+    console.error("Error fetching available stock:", error);
+    setAvailableStock(0);
+  }
+};
+
 
   // Fetch products and stores (mock implementation)
   useEffect(() => {
@@ -111,6 +125,15 @@ const Transfer = () => {
       }
     }
   }, [fetchPendingTransfers, fetchTransferHistory]);
+
+  useEffect(() => {
+  if (formData.destinationStoreId && formData.productId) {
+    fetchAvailableStockAtStore(formData.destinationStoreId, formData.productId);
+  } else {
+    setAvailableStock(null);
+  }
+}, [formData.destinationStoreId, formData.productId]);
+
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -186,6 +209,10 @@ const Transfer = () => {
         newErrors.quantity = `Cannot transfer more than current stock (${product.currentStock})`;
       }
     }
+    if (formData.quantity && availableStock !== null && parseInt(formData.quantity) > availableStock) {
+  newErrors.quantity = `Cannot request more than available stock (${availableStock}) at ${getStoreName(formData.destinationStoreId)}.`;
+}
+
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -374,29 +401,10 @@ const Transfer = () => {
             )}
           </div>
 
-          {selectedProduct && (
-            <div className={styles.productDetails}>
-              <div className={styles.detailItem}>
-                <span className={styles.detailLabel}>Selected Product:</span>
-                <span className={styles.detailValue}>{selectedProduct.name}</span>
-              </div>
-              <div className={styles.detailItem}>
-                <span className={styles.detailLabel}>SKU:</span>
-                <span className={styles.detailValue}>{selectedProduct.sku}</span>
-              </div>
-              <div className={styles.detailItem}>
-                <span className={styles.detailLabel}>Available Stock:</span>
-                <span className={styles.detailValue}>{selectedProduct.currentStock}</span>
-              </div>
-            </div>
-          )}
+          
 
-          {selectedProduct && (
-            <div className={styles.formGroup}>
-              <span className={styles.detailLabel}>Available Quantity:</span>
-              <span className={styles.detailValue}>{selectedProduct.currentStock}</span>
-            </div>
-          )}
+
+          
 
           <div className={styles.storeSelectionContainer}>
             <div className={styles.formGroup}>
@@ -419,6 +427,23 @@ const Transfer = () => {
               {errors.destinationStoreId && <div className={styles.fieldError}>{errors.destinationStoreId}</div>}
             </div>
           </div>
+
+          {selectedProduct && formData.destinationStoreId && (
+  <div className={styles.productDetails}>
+    <div className={styles.detailItem}>
+      <span className={styles.detailLabel}>Selected Product:</span>
+      <span className={styles.detailValue}>{selectedProduct.name}</span>
+    </div>
+    <div className={styles.detailItem}>
+      <span className={styles.detailLabel}>SKU:</span>
+      <span className={styles.detailValue}>{selectedProduct.sku}</span>
+    </div>
+    <div className={styles.detailItem}>
+      <span className={styles.detailLabel}>Available Stock at {getStoreName(formData.destinationStoreId)}:</span>
+      <span className={styles.detailValue}>{availableStock ?? 'Loading...'}</span>
+    </div>
+  </div>
+)}
 
           <Input
             label="Required Quantity"
@@ -449,7 +474,7 @@ const Transfer = () => {
             <div className={styles.transferSummary}>
               <h3>Transfer Summary</h3>
               <p>
-                  Request <strong>{formData.quantity}</strong> units of <strong>{selectedProduct?.name}</strong> from <strong>{getStoreName(formData.destinationStoreId)}</strong> to <strong>{getStoreName(formData.sourceStoreId)}</strong>.
+                  Requesting <strong>{formData.quantity}</strong> units of <strong>{selectedProduct?.name}</strong> from <strong>{getStoreName(formData.destinationStoreId)}</strong> .
               </p>
             </div>
           )}
@@ -488,7 +513,7 @@ const Transfer = () => {
               {pendingTransfers.map(tr => (
                 <li key={tr.transferId} className={styles.pendingTransferItem}>
                   <div>
-                    <strong>Product:</strong> {tr.product?.name || getProductName(tr.productId)}<br/>
+                    <strong>Product:</strong> {tr.product?.name || getProductName(tr.product?.productId || tr.productId)}<br/>
                     <strong>Quantity:</strong> {tr.quantity}<br/>
                     <strong>From Store:</strong> {tr.fromStore?.name || getStoreName(tr.fromStoreId)}
                   </div>
