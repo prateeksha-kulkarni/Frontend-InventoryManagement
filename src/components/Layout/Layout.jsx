@@ -115,7 +115,7 @@ const Layout = () => {
              <span className={styles.navIcon}>⚠️</span>
               <span className={styles.navText}>Low Stock</span>
               </NavLink>
-              
+
             </>
           )}
  
@@ -140,7 +140,7 @@ const Layout = () => {
                 <span className={styles.navIcon}>🏪</span>
                 <span className={styles.navText}>Store Setup</span>
               </NavLink>
-                <NavLink 
+                {/* <NavLink 
               to="/low-stock-alerts" 
             className={({ isActive }) => 
               `${styles.navLink} ${isActive ? styles.activeLink : ''}`
@@ -148,7 +148,7 @@ const Layout = () => {
            >
              <span className={styles.navIcon}>⚠️</span>
               <span className={styles.navText}>Low Stock</span>
-          </NavLink>
+          </NavLink> */}
             </>
           )}
         </nav>

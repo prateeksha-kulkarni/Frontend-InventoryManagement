@@ -66,13 +66,13 @@ const Dashboard = () => {
           >
             Transfer
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             size="small"
             onClick={() => handleRemove(row)}
           >
             Remove
-          </Button>
+          </Button> */}
         </div>
       ),
     },
@@ -250,9 +250,9 @@ const Dashboard = () => {
         <Button variant="primary" onClick={handleAddClick}>
           Add New Product
         </Button>
-        <Button variant="secondary" onClick={() => console.log('View restock suggestions')}>
+        {/* <Button variant="secondary" onClick={() => console.log('View restock suggestions')}>
           View Restock Suggestions
-        </Button>
+        </Button> */}
       </div>
 
       <AddProductModal
