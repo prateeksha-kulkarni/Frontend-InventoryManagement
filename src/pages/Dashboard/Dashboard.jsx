@@ -267,8 +267,10 @@ const Dashboard = () => {
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleAddSubmit}
+        storeId={authService.getCurrentUser()?.storeId}
+        reloadDashboard={fetchInventory}
       />
+
     </div>
   );
 };
