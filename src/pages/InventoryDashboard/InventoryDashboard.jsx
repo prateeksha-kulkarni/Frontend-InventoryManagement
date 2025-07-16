@@ -38,7 +38,7 @@ export default function InventoryDashboard() {
   return (
     <div className="p-8 w-full max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        📊 Inventory Reporting Dashboard
+        Inventory Analytics
       </h1>
 
       {/* Filters Row */}
@@ -47,7 +47,7 @@ export default function InventoryDashboard() {
           <label className="text-sm text-gray-600 mb-1">Start Date</label>
           <input
             type="date"
-            className="border border-gray-300 text-white rounded px-3 py-2"
+            className="border border-gray-300 text-black rounded px-3 py-2"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
@@ -56,7 +56,7 @@ export default function InventoryDashboard() {
           <label className="text-sm text-gray-600 mb-1">End Date</label>
           <input
             type="date"
-            className="border border-gray-300 text-white rounded px-3 py-2"
+            className="border border-gray-300 text-black rounded px-3 py-2"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
@@ -64,7 +64,7 @@ export default function InventoryDashboard() {
         <div className="flex flex-col">
           <label className="text-sm text-gray-600 mb-1">Store</label>
           <select
-            className="border border-gray-300 text-white rounded px-3 py-2"
+            className="border border-gray-300 text-black rounded px-3 py-2"
             value={selectedStore}
             onChange={(e) => setSelectedStore(e.target.value)}
           >
