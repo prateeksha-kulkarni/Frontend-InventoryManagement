@@ -50,7 +50,15 @@ const Layout = () => {
             <span className={styles.navIcon}>📝</span>
             <span className={styles.navText}>Change Log</span>
           </NavLink>
-
+          <NavLink 
+              to="/low-stock-alerts" 
+            className={({ isActive }) => 
+              `${styles.navLink} ${isActive ? styles.activeLink : ''}`
+                }
+           >
+             <span className={styles.navIcon}>⚠️</span>
+              <span className={styles.navText}>Low Stock</span>
+            </NavLink>
           {/* Analytics - Accessible to Analyst and higher */}
           {hasRole('Analyst') && (
             <NavLink 
@@ -106,9 +114,11 @@ const Layout = () => {
                 <span className={styles.navIcon}>📋</span>
                 <span className={styles.navText}>Purchase Orders</span>
               </NavLink> */}
+              
+
             </>
           )}
-
+ 
           {hasRole('Admin') && (
             <>
               <NavLink 
@@ -130,7 +140,7 @@ const Layout = () => {
                 <span className={styles.navIcon}>🏪</span>
                 <span className={styles.navText}>Store Setup</span>
               </NavLink>
-                <NavLink 
+                {/* <NavLink 
               to="/low-stock-alerts" 
             className={({ isActive }) => 
               `${styles.navLink} ${isActive ? styles.activeLink : ''}`
@@ -138,7 +148,7 @@ const Layout = () => {
            >
              <span className={styles.navIcon}>⚠️</span>
               <span className={styles.navText}>Low Stock</span>
-          </NavLink>
+          </NavLink> */}
             </>
           )}
         </nav>

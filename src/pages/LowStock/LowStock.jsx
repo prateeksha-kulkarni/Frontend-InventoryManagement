@@ -63,7 +63,6 @@ const LowStock = () => {
     }
   };
 
-  // 🔎 Filter only LOW_STOCK products that match category (optional)
   const filteredLowStockItems = inventoryData.filter(item => {
     const isLowStock = item.status === 'LOW_STOCK';
     const matchesCategory = filterCategory
@@ -76,7 +75,7 @@ const LowStock = () => {
     <div className={styles.LowStockPageContainer}>
       <div className={styles.LowStockPageHeader}>
         <div className={styles.LowStockPageHeader}>
-          <h2>Low Stock Products</h2>
+          <h1>Low Stock Products</h1>
           <p>These products have stock levels below their minimum threshold.</p>
         </div>
 
