@@ -215,6 +215,8 @@
     padding: 1rem 0.75rem;
     font-size: 1rem;
     text-align: left;
+    white-space: nowrap;
+
   }
   
   .transferHistoryTable th {
@@ -295,6 +297,11 @@
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
   }
+  .tableWrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
   
   .suggestionsList {
     position: absolute;

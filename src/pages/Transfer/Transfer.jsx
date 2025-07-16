@@ -234,6 +234,8 @@ const res = await axios.get(`/api/transfers/to/${storeId}/dto?status=REQUESTED`)
       };
       await axios.post('/api/transfers', payload);
       toast.success('Transfer request sent successfully');
+      resetForm();
+
       setRequestSent(true);
       fetchPendingTransfers(formData.sourceStoreId);
       fetchTransferHistory(formData.sourceStoreId);
@@ -270,6 +272,20 @@ const res = await axios.get(`/api/transfers/to/${storeId}/dto?status=REQUESTED`)
         alert(errorMessage);
       }
   };
+
+  const resetForm = () => {
+  setFormData({
+    sourceStoreId: '',
+    destinationStoreId: '',
+    productId: '',
+    quantity: '',
+    notes: '',
+  });
+  setErrors({});
+  setSelectedProduct(null);
+  setAvailableStock(null);
+};
+
 
   const handleReject = async (transferId) => {
     try {
@@ -564,6 +580,8 @@ const res = await axios.get(`/api/transfers/to/${storeId}/dto?status=REQUESTED`)
             <p>No past transfers found.</p>
           ) : (
             <>
+            <div className={styles.tableWrapper}>
+
               <table className={styles.transferHistoryTable + ' ' + styles.enhancedHistoryTable}>
                 <thead>
                   <tr>
@@ -590,6 +608,8 @@ const res = await axios.get(`/api/transfers/to/${storeId}/dto?status=REQUESTED`)
                   ))}
                 </tbody>
               </table>
+              </div>
+
               {/* Pagination Controls */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
                 <Button type="button" variant="outline" disabled={historyPage === 1} onClick={() => setHistoryPage(p => Math.max(1, p-1))}>Prev</Button>
