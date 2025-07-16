@@ -87,7 +87,7 @@ const Layout = () => {
                 <span className={styles.navText}>Inter-Store Transfer</span>
               </NavLink>
 
-              <NavLink 
+              {/* <NavLink 
                 to="/restock-suggestions" 
                 className={({ isActive }) => 
                   `${styles.navLink} ${isActive ? styles.activeLink : ''}`
@@ -105,7 +105,7 @@ const Layout = () => {
               >
                 <span className={styles.navIcon}>📋</span>
                 <span className={styles.navText}>Purchase Orders</span>
-              </NavLink>
+              </NavLink> */}
             </>
           )}
 
