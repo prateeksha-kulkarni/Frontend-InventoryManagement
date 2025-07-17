@@ -90,13 +90,14 @@ const ChangeLog = () => {
     }
   ];
 
-  const actionTypes = ['Added', 'Removed', 'Transferred', 'Adjusted'];
+  const actionTypes = ['Removed', 'Transferred', 'Adjusted'];
 
   useEffect(() => {
     const fetchLogData = async () => {
       setIsLoading(true);
       try {
         const user = authService.getCurrentUser();
+        const role = authService.getRole();
         const token = authService.getToken();
         const storeId = user?.storeId;
         const userId = user?.userId;
@@ -113,7 +114,7 @@ const ChangeLog = () => {
         const transfers = transferRes.data
           .filter((item) =>
             item.status === 'COMPLETED' &&
-            (item.fromStore?.storeId === storeId || item.toStore?.storeId === storeId)
+            (role === 'ADMIN' || item.fromStore?.storeId === storeId || item.toStore?.storeId === storeId)
           )
           .map((item) => ({
             id: item.transferId,
@@ -130,7 +131,7 @@ const ChangeLog = () => {
           }));
 
         const adjustments = adjustmentRes.data
-          .filter((item) => item.user?.userId === userId)
+          .filter((item) => (role === 'ADMIN' || item.user?.userId === userId))
           .map((item) => ({
             id: item.adjustmentId,
             timestamp: item.timestamp,

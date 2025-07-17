@@ -482,6 +482,11 @@ const authService = {
   getToken: () => {
     return localStorage.getItem('token');
   },
+  getRole: () => {
+    const user = authService.getCurrentUser();
+    if (!user) return false;
+    return user.role;
+  },
 
   // 🔍 Role check with hierarchy
   hasRole: (requiredRole) => {
