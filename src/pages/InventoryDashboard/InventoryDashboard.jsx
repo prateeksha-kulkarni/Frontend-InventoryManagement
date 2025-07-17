@@ -99,6 +99,7 @@ export default function InventoryDashboard() {
                 <th className="border px-4 py-2">Min Threshold</th>
                 <th className="border px-4 py-2">Stock Status</th>
                 <th className="border px-4 py-2">Turnover Rate</th>
+                <th className="border px-4 py-2">Sales Turnover Rate</th>
               </tr>
             </thead>
             <tbody>
@@ -109,18 +110,22 @@ export default function InventoryDashboard() {
                   <td className="border px-4 py-2 text-center">{item.quantity}</td>
                   <td className="border px-4 py-2 text-center">{item.minThreshold}</td>
                   <td
-                    className={`border px-4 py-2 text-center font-semibold ${
-                      getStatusClass(item.stockStatus)
-                    }`}
+                    className={`border px-4 py-2 text-center font-semibold ${getStatusClass(
+                      item.stockStatus
+                    )}`}
                   >
                     {item.stockStatus}
                   </td>
                   <td className="border px-4 py-2 text-center">
                     {item.turnoverRate.toFixed(2)}
                   </td>
+                  <td className="border px-4 py-2 text-center">
+                    {item.salesTurnoverRate?.toFixed(2)}
+                  </td>
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       ) : (
