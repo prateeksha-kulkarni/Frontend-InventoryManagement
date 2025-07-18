@@ -24,6 +24,7 @@ import UserRegistration from './pages/UserRegistration/UserRegistration';
 import StoreSetup from './pages/StoreSetup/StoreSetup';
 import InventoryDashboard from './pages/InventoryDashboard/InventoryDashboard';
 import LowStockPage from './pages/LowStock/LowStock';
+import Navbar from './components/Navbar/Navbar';
 
 // Layout component
 import Layout from './components/Layout/Layout';
@@ -49,6 +50,7 @@ const App = () => {
       <Router>
         <Routes>
           {/* Public routes */}
+          <Route path="navbar" element={<Navbar />} />
           <Route path="/login" element={<Login />} />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
