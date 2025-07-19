@@ -1,20 +1,27 @@
-/* Verify OTP Page Styles */
 .verifyOTPContainer {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
-  padding: var(--spacing-md);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
 }
 
 .verifyOTPWrapper {
-  width: 100%;
-  max-width: 450px;
-  animation: fadeIn 0.5s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 400px;
+  max-width: 95%;
+  padding: 30px;
+  animation: slideIn 0.8s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes slideIn {
   from {
     opacity: 0;
     transform: translateY(-20px);
@@ -27,108 +34,92 @@
 
 .verifyOTPHeader {
   text-align: center;
-  margin-bottom: var(--spacing-lg);
-  color: white;
+  margin-bottom: 25px;
 }
 
 .verifyOTPHeader h1 {
-  font-size: 2rem;
-  margin-bottom: var(--spacing-xs);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .verifyOTPHeader p {
   font-size: 1rem;
+  color: #f0f0f0;
   opacity: 0.9;
-}
-
-.verifyOTPCard {
-  padding: var(--spacing-lg);
-}
-
-.verifyOTPTitle {
-  font-size: 1.5rem;
-  margin-bottom: var(--spacing-md);
-  text-align: center;
-  color: var(--dark-color);
 }
 
 .verifyOTPForm {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 16px;
+}
+
+.verifyOTPTitle {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #333333;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.verifyOTPInfo,
+.errorMessage,
+.successMessage {
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .verifyOTPInfo {
   background-color: rgba(52, 152, 219, 0.1);
-  color: var(--primary-color);
-  padding: var(--spacing-sm);
-  border-radius: var(--border-radius);
-  margin-bottom: var(--spacing-md);
-  text-align: center;
-  font-size: 0.9rem;
+  color: #3498db;
 }
 
 .errorMessage {
   background-color: rgba(231, 76, 60, 0.1);
-  color: var(--danger-color);
-  padding: var(--spacing-sm);
-  border-radius: var(--border-radius);
-  margin-bottom: var(--spacing-md);
-  text-align: center;
-  font-size: 0.9rem;
+  color: #e74c3c;
 }
 
 .successMessage {
   background-color: rgba(46, 204, 113, 0.1);
-  color: var(--success-color);
-  padding: var(--spacing-sm);
-  border-radius: var(--border-radius);
-  margin-bottom: var(--spacing-md);
-  text-align: center;
-  font-size: 0.9rem;
+  color: #2ecc71;
 }
 
-.resendOTPLink {
-  text-align: center;
-  margin-top: var(--spacing-sm);
-}
-
-.resendOTPLink a {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
-}
-
-.resendOTPLink a:hover {
-  color: var(--primary-dark-color);
-  text-decoration: underline;
-}
-
+.resendOTPLink,
 .backToLoginLink {
   text-align: center;
-  margin-top: var(--spacing-sm);
+  margin-top: 10px;
 }
 
+.resendOTPLink a,
 .backToLoginLink a {
-  color: var(--primary-color);
+  color: #3498db;
   text-decoration: none;
   font-size: 0.9rem;
   transition: color 0.2s ease;
 }
 
+.resendOTPLink a:hover,
 .backToLoginLink a:hover {
-  color: var(--primary-dark-color);
+  color: #21618c;
   text-decoration: underline;
 }
 
 @media (max-width: 480px) {
   .verifyOTPWrapper {
-    max-width: 100%;
+    width: 100%;
+    padding: 20px;
   }
 
   .verifyOTPHeader h1 {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
+  }
+
+  .verifyOTPTitle {
+    font-size: 1.2rem;
   }
 }
