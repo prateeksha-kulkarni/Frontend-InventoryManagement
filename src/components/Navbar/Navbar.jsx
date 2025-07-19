@@ -2,10 +2,12 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '../../context/AuthContext';
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', roles: ['Admin', 'Manager', 'Analyst', 'User'] },
-  { name: 'Analytics', href: '/analytics', roles: ['Analyst', 'Manager'] },
-  { name: 'Store transfer', href: '/transfer', roles: ['Manager'] },
-  { name: 'Change Log', href: '/change-log', roles: ['Admin', 'Manager', 'Analyst', 'User'] },
+  { name: 'Dashboard', href: '/dashboard', roles: ['Associate', 'Admin', 'MANAGER', 'Analyst'] },
+  { name: 'Analytics', href: '/analytics', roles: ['Analyst', 'Manager', "Admin"] },
+  { name: 'Store transfer', href: '/transfer', roles: ['Manager','Admin'] },
+  { name: 'Change Log', href: '/change-log', roles: ['Associate', 'Admin', 'Manager', 'Analyst'] },
+  { name: 'User Registration', href: '/user-registration', roles: ['Admin'] },
+  { name: 'Store Setup', href: '/store-setup', roles: ['Admin'] },
 ]
 
 
@@ -14,11 +16,12 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-    const { currentUser, logout, hasRole } = useAuth();
-    const filteredNavigation = navigation.filter(item =>
-  item.roles.some(role => hasRole(role))
-)
+  const { currentUser, logout, hasRole } = useAuth();
+  const filteredNavigation = navigation.filter(item =>
 
+    item.roles.some(role => hasRole(role))
+  )
+  console.log(filteredNavigation);
   return (
     <Disclosure as="nav" className="bg-gray-800">
       <div className="mx-auto max-w-8xl px-2 sm:px-6 lg:px-8">
@@ -40,23 +43,23 @@ export default function Navbar() {
                 className="h-8 w-auto"
               />
             </div>
-<div className="hidden sm:ml-6 sm:block">
-  <div className="flex space-x-4">
-    {filteredNavigation.map((item) => (
-      <a
-        key={item.name}
-        href={item.href}
-        aria-current={item.current ? 'page' : undefined}
-        className={classNames(
-          item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-          'rounded-md px-3 py-2 text-sm font-medium',
-        )}
-      >
-        {item.name}
-      </a>
-    ))}
-  </div>
-</div>
+            <div className="hidden sm:ml-6 sm:block">
+              <div className="flex space-x-4">
+                {filteredNavigation.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    aria-current={item.current ? 'page' : undefined}
+                    className={classNames(
+                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      'rounded-md px-3 py-2 text-sm font-medium',
+                    )}
+                  >
+                    {item.name}
+                  </a>
+                ))}
+              </div>
+            </div>
 
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -70,55 +73,22 @@ export default function Navbar() {
             </button>
 
             {/* Profile dropdown */}
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800">
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">Open user menu</span>
-                  <img
-                    alt=""
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className="size-8 rounded-full"
-                  />
-                </MenuButton>
+            {currentUser && (
+              <div className="px-4 py-2 text-sm text-white font-medium">
+                {currentUser.name} ({currentUser.role})
               </div>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-              >
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Your Profile
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Settings
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                  >
-                    Sign out
-                  </a>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
+            )}
+
+            <button class="bg-blue-700 hover:bg-blue-900 text-white font-bold py-1 px-3 rounded" onClick={logout}>
+              Logout
+            </button>
           </div>
         </div>
       </div>
 
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pt-2 pb-3">
-          {navigation.map((item) => (
+          {filteredNavigation.map((item) => (
             <DisclosureButton
               key={item.name}
               as="a"
