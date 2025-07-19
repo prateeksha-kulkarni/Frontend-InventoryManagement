@@ -1,315 +1,149 @@
-/*.userRegistrationContainer {*/
-/*  padding: 1.5rem;*/
-/*}*/
-
-/*.userRegistrationHeader {*/
-/*  margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.userRegistrationHeader h1 {*/
-/*  font-size: 1.8rem;*/
-/*  margin-bottom: 0.5rem;*/
-/*  color: #333;*/
-/*}*/
-
-/*.userRegistrationHeader p {*/
-/*  color: #666;*/
-/*  font-size: 1rem;*/
-/*}*/
-
-/*.formCard {*/
-/*  padding: 1.5rem;*/
-/*  margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.registrationForm {*/
-/*  display: grid;*/
-/*  grid-template-columns: 1fr 1fr;*/
-/*  gap: 1.5rem;*/
-/*}*/
-
-/*.formGroup {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  margin-bottom: 0.5rem;*/
-/*}*/
-
-/*.formGroup label {*/
-/*  margin-bottom: 0.5rem;*/
-/*  font-weight: 500;*/
-/*  color: #333;*/
-/*}*/
-
-/*.selectInput {*/
-/*  padding: 0.75rem;*/
-/*  border: 1px solid #ddd;*/
-/*  border-radius: 4px;*/
-/*  font-size: 1rem;*/
-/*  background-color: white;*/
-/*}*/
-
-/*.formActions {*/
-/*  grid-column: span 2;*/
-/*  display: flex;*/
-/*  justify-content: flex-end;*/
-/*  margin-top: 1rem;*/
-/*}*/
-
-/*.errorMessage {*/
-/*  background-color: #ffebee;*/
-/*  color: #c62828;*/
-/*  padding: 0.75rem;*/
-/*  border-radius: 4px;*/
-/*  margin-bottom: 1rem;*/
-/*  border-left: 4px solid #c62828;*/
-/*}*/
-
-/*.successMessage {*/
-/*  background-color: #e8f5e9;*/
-/*  color: #2e7d32;*/
-/*  padding: 0.75rem;*/
-/*  border-radius: 4px;*/
-/*  margin-bottom: 1rem;*/
-/*  border-left: 4px solid #2e7d32;*/
-/*}*/
-
-/*!* Location input styles *!*/
-/*.locationInputContainer {*/
-/*  display: flex;*/
-/*  gap: 0.5rem;*/
-/*  margin-bottom: 0.75rem;*/
-/*}*/
-
-/*.locationInput {*/
-/*  flex: 1;*/
-/*  padding: 0.75rem;*/
-/*  border: 1px solid #ddd;*/
-/*  border-radius: 4px;*/
-/*  font-size: 1rem;*/
-/*}*/
-
-/*.addLocationBtn {*/
-/*  min-width: 80px;*/
-/*}*/
-
-/*.locationsList {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  gap: 0.5rem;*/
-/*  margin-bottom: 1rem;*/
-/*}*/
-
-/*.locationItem {*/
-/*  display: flex;*/
-/*  justify-content: space-between;*/
-/*  align-items: center;*/
-/*  padding: 0.5rem 0.75rem;*/
-/*  background-color: #f5f5f5;*/
-/*  border-radius: 4px;*/
-/*  border-left: 3px solid #2196f3;*/
-/*}*/
-
-/*.removeLocationBtn {*/
-/*  background: none;*/
-/*  border: none;*/
-/*  color: #f44336;*/
-/*  cursor: pointer;*/
-/*  font-size: 1rem;*/
-/*  padding: 0.25rem 0.5rem;*/
-/*  border-radius: 50%;*/
-/*}*/
-
-/*.removeLocationBtn:hover {*/
-/*  background-color: rgba(244, 67, 54, 0.1);*/
-/*}*/
-
-/*.locationError {*/
-/*  color: #f44336;*/
-/*  font-size: 0.875rem;*/
-/*  margin-top: 0.25rem;*/
-/*  margin-bottom: 0.75rem;*/
-/*}*/
-
-/*!* Responsive adjustments *!*/
-/*@media (max-width: 768px) {*/
-/*  .registrationForm {*/
-/*    grid-template-columns: 1fr;*/
-/*  }*/
-
-/*  .formActions {*/
-/*    grid-column: 1;*/
-/*  }*/
-/*}*/
-
-
 .userRegistrationContainer {
-  padding: 1.5rem;
-}
-
-.userRegistrationHeader {
-  margin-bottom: 1.5rem;
-}
-
-.userRegistrationHeader h1 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
-.userRegistrationHeader p {
-  color: #666;
-  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background:linear-gradient(135deg, #e0eafc, #cfdef3);
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .formCard {
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 24px 30px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.userRegistrationHeader {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.userRegistrationHeader h1 {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.userRegistrationHeader p {
+  font-size: 14px;
+  color: #666;
 }
 
 .registrationForm {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 14px 20px;
+  margin-top: 20px;
+}
+
+.registrationForm input,
+.registrationForm select {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.5rem;
-}
-
-.formGroup label {
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #333;
-}
-
-/* Updated select input styling */
-.selectInput {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: white;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-}
-
-.selectInput:focus {
-  outline: none;
-  border-color: #2196f3;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
-}
-
-.selectInput option {
-  background-color: #fff;
-  color: #333;
-}
-
-.selectInput option:checked {
-  background-color: #e3f2fd; /* soft highlight */
-  color: #000;
-}
-
-.selectInput option:hover {
-  background-color: #f1f1f1;
-}
-
-/* Form action buttons */
-.formActions {
   grid-column: span 2;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
 }
 
-/* Feedback messages */
-.errorMessage {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #c62828;
+.selectInput {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-.successMessage {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #2e7d32;
-}
-
-/* Location input styles */
 .locationInputContainer {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.locationInput {
-  flex: 1;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .addLocationBtn {
-  min-width: 80px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
 }
 
 .locationsList {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .locationItem {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  border-left: 3px solid #2196f3;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 6px;
 }
 
 .removeLocationBtn {
-  background: none;
+  background: transparent;
   border: none;
-  color: #f44336;
+  color: red;
+  font-size: 14px;
+  margin-left: 5px;
   cursor: pointer;
-  font-size: 1rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 50%;
 }
 
-.removeLocationBtn:hover {
-  background-color: rgba(244, 67, 54, 0.1);
+.errorMessage,
+.successMessage {
+  grid-column: span 2;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.errorMessage {
+  background-color: #ffe5e5;
+  color: #b00020;
+}
+
+.successMessage {
+  background-color: #e0ffe5;
+  color: #007e33;
 }
 
 .locationError {
-  color: #f44336;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  margin-bottom: 0.75rem;
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
-/* Responsive adjustments */
+.formActions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
   .registrationForm {
     grid-template-columns: 1fr;
   }
 
-  .formActions {
-    grid-column: 1;
+  .formCard {
+    padding: 20px;
+    max-height: 95vh;
   }
 }

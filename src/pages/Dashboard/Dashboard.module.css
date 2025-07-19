@@ -113,20 +113,20 @@
   .dashboardContainer {
     padding: var(--spacing-md);
   }
-  
+
   .filterControls {
     flex-direction: column;
   }
-  
+
   .searchInput,
   .categoryFilter {
     width: 100%;
   }
-  
+
   .dashboardActions {
     flex-direction: column;
   }
-  
+
   .dashboardActions button {
     width: 100%;
   }
@@ -152,7 +152,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1.5rem;
-  
+
 }
 
 .notificationArea {
@@ -161,12 +161,12 @@
   align-items: center;
   gap: 0.2rem;
   cursor: pointer;
-  
+
 }
 
 .notificationLabel {
   font-size: 0.85rem;
-  
+
    font-weight: bold;
   color: #333;
   margin: 0;

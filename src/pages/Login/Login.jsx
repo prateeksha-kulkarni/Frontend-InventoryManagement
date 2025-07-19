@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
-import Card from '../../components/Card/Card';
 import styles from './Login.module.css';
-import bgImage from '../../assets/images/Store.jpg'; // Adjust the path as necessary
+import logo from '../../assets/images/logo.png';
+
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
-    role: 'Associate'
+    role: 'Associate',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,66 +29,62 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
       await login(credentials);
       navigate('/dashboard');
     } catch (err) {
       setError('Invalid credentials. Please try again.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-      <div className={styles.loginContainer} style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 'var(--spacing-md)',
-      }}>
-        <div className={styles.loginWrapper}>
-          <div className={styles.loginHeader}>
-            <h1>Inventory Management System</h1>
-            <p>Store-level inventory control and management</p>
+      <div className={styles.loginContainer}>
+        <div className={styles.loginBox}>
+          {/* Logo Section */}
+          <div className={styles.logoWrapper}>
+            <div className={styles.logoCircle}>
+              <img src={logo} alt="Logo" className={styles.logoImage} />
+            </div>
           </div>
 
-          <Card className={styles.loginCard}>
-            <h2 className={styles.loginTitle}>Login</h2>
+          {/* Form Section */}
+          <div className={styles.formWrapper}>
+            <h2 className={styles.title}>Login</h2>
+            {error && <div className={styles.error}>{error}</div>}
 
-            {error && <div className={styles.errorMessage}>{error}</div>}
+            <form onSubmit={handleSubmit} className={styles.form}>
 
-            <form onSubmit={handleSubmit} className={styles.loginForm}>
-              <Input
-                  label="Username"
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={credentials.username}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter any username"
-              />
+              {/* Username */}
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Username</label>
+                <Input
+                    type="text"
+                    name="username"
+                    placeholder="Enter your Username"
+                    value={credentials.username}
+                    onChange={handleChange}
+                    required
+                />
+              </div>
 
-              <Input
-                  label="Password"
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={credentials.password}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter any password"
-              />
+              {/* Password */}
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Password</label>
+                <Input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your Password"
+                    value={credentials.password}
+                    onChange={handleChange}
+                    required
+                />
+              </div>
 
+              {/* Role Selection (4 Roles) */}
               <div className={styles.roleSelector}>
-                <label>Login as:</label>
+                <label className={styles.label}>Login as:</label>
                 <div className={styles.roleOptions}>
                   {['Associate', 'Analyst', 'Manager', 'Admin'].map(role => (
                       <label key={role} className={styles.roleOption}>
@@ -105,24 +101,20 @@ const Login = () => {
                 </div>
               </div>
 
-              <Button
-                  type="submit"
-                  variant="primary"
-                  fullWidth
-                  disabled={loading}
-              >
-                {loading ? 'Logging in...' : 'Login'}
+              {/* Sign In Button */}
+              <Button type="submit" fullWidth disabled={loading} className={styles.signInButton}>
+                {loading ? 'Logging in...' : 'Sign In'}
               </Button>
 
-              <div className={styles.forgotPasswordLink}>
-                <Link to="/forgot-password">Forgot Password?</Link>
+              {/* Forgot Password */}
+              <div className={styles.forgotPassword}>
+                <a href="/forgot-password">Forgot Password?</a>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
       </div>
   );
 };
 
 export default Login;
-

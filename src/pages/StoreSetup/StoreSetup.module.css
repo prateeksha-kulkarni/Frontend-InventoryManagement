@@ -1,43 +1,72 @@
 .storeSetupContainer {
-  padding: 1.5rem;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0eafc, #cfdef3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .storeSetupHeader {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .storeSetupHeader h1 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
 .storeSetupHeader p {
-  color: #666;
   font-size: 1rem;
+  color: #5f6f81;
 }
 
-.formCard {
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+.formCard, .storesCard {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
 }
 
-.storesCard {
-  padding: 1.5rem;
+.formCard:hover, .storesCard:hover {
+  transform: translateY(-4px);
 }
 
 .sectionTitle {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin-bottom: 1.5rem;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.75rem;
+  color: #34495e;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 .storeForm {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+}
+
+.storeForm input,
+.storeForm select,
+.storeForm textarea {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s;
+}
+
+.storeForm input:focus,
+.storeForm select:focus,
+.storeForm textarea:focus {
+  border-color: #5c9ded;
+  outline: none;
 }
 
 .formActions {
@@ -47,31 +76,61 @@
   margin-top: 1rem;
 }
 
+.formActions button {
+  padding: 0.7rem 1.4rem;
+  font-size: 1rem;
+  background-color: #5c9ded;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.formActions button:hover {
+  background-color: #417cd4;
+}
+
 .errorMessage {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 0.75rem;
-  border-radius: 4px;
+  background-color: #ffe5e5;
+  color: #d32f2f;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 5px solid #d32f2f;
   margin-bottom: 1rem;
-  border-left: 4px solid #c62828;
+  font-size: 0.95rem;
 }
 
 .successMessage {
-  background-color: #e8f5e9;
+  background-color: #e0f8e9;
   color: #2e7d32;
-  padding: 0.75rem;
-  border-radius: 4px;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 5px solid #2e7d32;
   margin-bottom: 1rem;
-  border-left: 4px solid #2e7d32;
+  font-size: 0.95rem;
 }
 
-/* Responsive adjustments */
+/* Responsive layout */
 @media (max-width: 768px) {
   .storeForm {
     grid-template-columns: 1fr;
   }
-  
+
   .formActions {
     grid-column: 1;
+    justify-content: center;
+  }
+
+  .formCard, .storesCard {
+    padding: 1.5rem;
+  }
+
+  .storeSetupHeader h1 {
+    font-size: 1.6rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
   }
 }
