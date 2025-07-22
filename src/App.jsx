@@ -56,6 +56,7 @@ const App = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/ana-test" element={<InventoryDashboard/>}/>
 
           {/* Protected routes inside layout */}
           <Route
@@ -109,7 +110,7 @@ const App = () => {
             />
 
             <Route path="analytics" element={
-              <ProtectedRoute requiredRole="Analyst">
+              <ProtectedRoute requiredRole="Manager">
                 <InventoryDashboard/>
               </ProtectedRoute>
             } />
@@ -144,6 +145,7 @@ const App = () => {
 
           {/* Catch-all route */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
+
         </Routes>
       </Router>
     </AuthProvider>
