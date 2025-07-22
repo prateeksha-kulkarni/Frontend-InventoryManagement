@@ -12,6 +12,10 @@
   transition: all 0.3s ease;
   overflow-y: auto;
   z-index: 100;
+  position: sticky;
+  top: 0; /* distance from top when it becomes sticky*/
+   height: 100vh; /*optional: full height */ 
+
 }
 
 .sidebarClosed {
