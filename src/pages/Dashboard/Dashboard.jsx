@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import Table from "../../components/Table/Table";
 import Button from "../../components/Button/Button";
-import Input from "../../components/Input/Input";
 import styles from "./Dashboard.module.css";
 import AddProductModal from "../AddProduct/AddProductModal";
 import axios from "../../services/axiosConfig";
 import authService from "../../services/authService";
 import NotificationIcon from "../../components/Notification/Notification";
 import { useAuth } from "../../context/AuthContext";
+import Input from "../../components/Ui/Search";
+import AddProduct from "../../components/Ui/Button";
+import ShadDropdown from "../../components/Ui/ShadDropdown";
 
 const Dashboard = () => {
   const [inventoryData, setInventoryData] = useState([]);
@@ -45,13 +47,12 @@ const Dashboard = () => {
       render: (row) => (
         <div className={styles.statusCell}>
           <span
-            className={`${styles.statusIndicator} ${
-              row.status === "LOW_STOCK"
-                ? styles.statusLow
-                : row.status === "REORDER_SOON"
+            className={`${styles.statusIndicator} ${row.status === "LOW_STOCK"
+              ? styles.statusLow
+              : row.status === "REORDER_SOON"
                 ? styles.statusMedium
                 : styles.statusGood
-            }`}
+              }`}
           ></span>
           {row.status.replace("_", " ")}
         </div>
@@ -196,8 +197,8 @@ const Dashboard = () => {
   //   try {
   //     await axios.post(`/api/products/delete`, row.product); // send full product
 
-    // Refresh the inventory data instead of manually filtering
-    //await fetchInventory();
+  // Refresh the inventory data instead of manually filtering
+  //await fetchInventory();
 
   //     console.log("Product deleted");
   //   } catch (error) {
@@ -207,26 +208,8 @@ const Dashboard = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <div className={styles.dashboardHeader}>
-        <div>
-          <h1>Inventory Dashboard</h1>
-          <p>Current stock levels and product information</p>
-        </div>
-        <div className={styles.notificationArea}>
-          {/* <h2 className={styles.notificationLabel}>Low Stock</h2> */}
-          <NotificationIcon
-            count={
-              filteredData.filter((item) => item.status === "LOW_STOCK").length
-            }
-            //    onClick={() => {
-            //   const lowStockSection = document.querySelector(`.${styles.lowStockSection}`);
-            //   lowStockSection?.scrollIntoView({ behavior: 'smooth' });
-            // }}
-            onClick={() => navigate("/low-stock-alerts")}
-          />
-        </div>
-      </div>
-      <div className={styles.filterSection}>
+
+      <div className={styles.seamlessSearchTable}>
         <Card className={styles.filterCard}>
           <div className={styles.filterControls}>
             <div className={styles.searchInput}>
@@ -237,48 +220,38 @@ const Dashboard = () => {
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
-            <div className={styles.categoryFilter}>
-              <select
+            {(hasRole("Manager") || hasRole("Admin")) && (
+              <div className={styles.addProductButton}>
+                <AddProduct variant="primary" onClick={handleAddClick}>
+                  Add Product
+                </AddProduct>
+              </div>
+            )}
+            <div>
+              <ShadDropdown
+                items={categories}
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className={styles.categorySelect}
-              >
-                <option value="">All Categories</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
+                placeholder="All Categories"
+              />
             </div>
           </div>
         </Card>
-      </div>
 
-      <Card className={styles.inventoryCard}>
         <Table
           columns={columns}
           data={filteredData}
           isLoading={isLoading}
           emptyMessage="No inventory items found matching your criteria."
         />
-      </Card>
 
-      <div className={styles.dashboardActions}>
-        {(hasRole("Manager") || hasRole("Admin")) && (
-          <Button variant="primary" onClick={handleAddClick}>
-            Add New Product
-          </Button>
-        )}
       </div>
-
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         storeId={authService.getCurrentUser()?.storeId}
         reloadDashboard={fetchInventory}
       />
-
     </div>
   );
 };
