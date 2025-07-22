@@ -5,13 +5,13 @@ import Input from '../../components/Input/Input';
 import Card from '../../components/Card/Card';
 import styles from './VerifyOTP.module.css';
 import authService from '../../services/authService';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const VerifyOTP = () => {
     if (!storedEmail) {
       navigate('/forgot-password');
     } else {
-      setEmail(storedEmail.toLowerCase()); // force lowercase for consistency
+      setEmail(storedEmail.toLowerCase());
     }
   }, [navigate]);
 
@@ -31,27 +31,21 @@ const VerifyOTP = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
-
-    console.log("📨 Email:", email);
-    console.log("🔢 OTP entered:", otp);
 
     try {
       const result = await authService.verifyOTP(email, otp);
-      console.log("✅ Backend response:", result);
 
       if (result.valid || result.message?.toLowerCase().includes("verified")) {
-        setSuccess('OTP verified successfully!');
+        toast.success('✅ OTP verified successfully!');
         setTimeout(() => {
           navigate('/reset-password');
         }, 1500);
       } else {
-        setError(result.message || 'Invalid OTP. Please try again.');
+        toast.error(result.message || '❌ Invalid OTP. Please try again.');
       }
     } catch (err) {
       console.error("❌ Error verifying OTP:", err);
-      setError(err.message || 'Verification failed. Please try again.');
+      toast.error(err.message || '❌ Verification failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -59,17 +53,11 @@ const VerifyOTP = () => {
 
   return (
       <div className={styles.verifyOTPContainer}>
-        <div className={styles.verifyOTPWrapper}>
-          <div className={styles.verifyOTPHeader}>
-            <h1>Inventory Management System</h1>
-            <p>Verify OTP</p>
-          </div>
+        <ToastContainer position="top-right" autoClose={3000} />
 
+        <div className={styles.verifyOTPWrapper}>
           <Card className={styles.verifyOTPCard}>
             <h2 className={styles.verifyOTPTitle}>Enter OTP</h2>
-
-            {error && <div className={styles.errorMessage}>{error}</div>}
-            {success && <div className={styles.successMessage}>{success}</div>}
 
             <p className={styles.verifyOTPInfo}>
               Please enter the 6-digit OTP sent to your email address.

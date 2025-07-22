@@ -1,27 +1,206 @@
-/* Global CSS Variables */
+/*!* Global CSS Variables *!*/
+/*:root {*/
+/*  --primary-color: #3498db;*/
+/*  --primary-dark: #2980b9;*/
+/*  --secondary-color: #2ecc71;*/
+/*  --secondary-dark: #27ae60;*/
+/*  --danger-color: #e74c3c;*/
+/*  --warning-color: #f39c12;*/
+/*  --light-color: #f5f5f5;*/
+/*  --dark-color: #333;*/
+/*  --text-color: #444;*/
+/*  --border-color: #ddd;*/
+/*  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+/*  --border-radius: 4px;*/
+/*  --spacing-xs: 0.25rem;*/
+/*  --spacing-sm: 0.5rem;*/
+/*  --spacing-md: 1rem;*/
+/*  --spacing-lg: 1.5rem;*/
+/*  --spacing-xl: 2rem;*/
+/*  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+/*  --primary-dark-color: #21618C;*/
+/*}*/
+
+/*!* Reset and Base Styles *!*/
+/** {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  box-sizing: border-box;*/
+/*}*/
+
+/*body {*/
+/*  font-family: var(--font-family);*/
+/*  color: var(--text-color);*/
+/*  background-color: var(--light-color);*/
+/*  line-height: 1.6;*/
+/*  font-family: "Montserrat", sans-serif;*/
+/*}*/
+
+/*a {*/
+/*  text-decoration: none;*/
+/*  color: var(--primary-color);*/
+/*}*/
+
+/*a:hover {*/
+/*  color: var(--primary-dark);*/
+/*}*/
+
+/*!* Container *!*/
+/*.container {*/
+/*  width: 100%;*/
+/*  max-width: 1200px;*/
+/*  margin: 0 auto;*/
+/*  padding: 0 var(--spacing-md);*/
+/*}*/
+
+/*!* Utility Classes *!*/
+/*.text-center {*/
+/*  text-align: center;*/
+/*}*/
+
+/*.text-right {*/
+/*  text-align: right;*/
+/*}*/
+
+/*.text-left {*/
+/*  text-align: left;*/
+/*}*/
+
+/*.mt-1 {*/
+/*  margin-top: var(--spacing-sm);*/
+/*}*/
+
+/*.mt-2 {*/
+/*  margin-top: var(--spacing-md);*/
+/*}*/
+
+/*.mt-3 {*/
+/*  margin-top: var(--spacing-lg);*/
+/*}*/
+
+/*.mb-1 {*/
+/*  margin-bottom: var(--spacing-sm);*/
+/*}*/
+
+/*.mb-2 {*/
+/*  margin-bottom: var(--spacing-md);*/
+/*}*/
+
+/*.mb-3 {*/
+/*  margin-bottom: var(--spacing-lg);*/
+/*}*/
+
+/*.p-1 {*/
+/*  padding: var(--spacing-sm);*/
+/*}*/
+
+/*.p-2 {*/
+/*  padding: var(--spacing-md);*/
+/*}*/
+
+/*.p-3 {*/
+/*  padding: var(--spacing-lg);*/
+/*}*/
+
+/*!* Flexbox utilities *!*/
+/*.flex {*/
+/*  display: flex;*/
+/*}*/
+
+/*.flex-col {*/
+/*  flex-direction: column;*/
+/*}*/
+
+/*.justify-between {*/
+/*  justify-content: space-between;*/
+/*}*/
+
+/*.justify-center {*/
+/*  justify-content: center;*/
+/*}*/
+
+/*.items-center {*/
+/*  align-items: center;*/
+/*}*/
+
+/*.flex-wrap {*/
+/*  flex-wrap: wrap;*/
+/*}*/
+
+/*.gap-1 {*/
+/*  gap: var(--spacing-sm);*/
+/*}*/
+
+/*.gap-2 {*/
+/*  gap: var(--spacing-md);*/
+/*}*/
+
+/*!* Grid utilities *!*/
+/*.grid {*/
+/*  display: grid;*/
+/*}*/
+
+/*.grid-cols-2 {*/
+/*  grid-template-columns: repeat(2, 1fr);*/
+/*}*/
+
+/*.grid-cols-3 {*/
+/*  grid-template-columns: repeat(3, 1fr);*/
+/*}*/
+
+/*.grid-cols-4 {*/
+/*  grid-template-columns: repeat(4, 1fr);*/
+/*}*/
+
+/*!* Responsive utilities *!*/
+/*@media (max-width: 768px) {*/
+/*  .grid-cols-4 {*/
+/*    grid-template-columns: repeat(2, 1fr);*/
+/*  }*/
+/*  */
+/*  .grid-cols-3 {*/
+/*    grid-template-columns: repeat(2, 1fr);*/
+/*  }*/
+/*}*/
+
+/*@media (max-width: 480px) {*/
+/*  .grid-cols-2, */
+/*  .grid-cols-3, */
+/*  .grid-cols-4 {*/
+/*    grid-template-columns: 1fr;*/
+/*  }*/
+/*}*/
+
+
+
+/* ===============================
+   Global CSS Variables
+================================= */
 :root {
   --primary-color: #3498db;
   --primary-dark: #2980b9;
+  --primary-dark-color: #21618C;
   --secondary-color: #2ecc71;
   --secondary-dark: #27ae60;
   --danger-color: #e74c3c;
   --warning-color: #f39c12;
-  --light-color: #f5f5f5;
+  --light-color: #f9fafb;
   --dark-color: #333;
-  --text-color: #444;
+  --text-color: #374151;
   --border-color: #ddd;
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --border-radius: 4px;
+  --border-radius: 12px;
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
-  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  --primary-dark-color: #21618C;
+  --font-family: "Montserrat", sans-serif;
 }
 
-/* Reset and Base Styles */
+/* ===============================
+   Reset and Base Styles
+================================= */
 * {
   margin: 0;
   padding: 0;
@@ -30,22 +209,22 @@
 
 body {
   font-family: var(--font-family);
-  color: var(--text-color);
   background-color: var(--light-color);
+  color: var(--text-color);
   line-height: 1.6;
-  font-family: "Montserrat", sans-serif;
 }
 
 a {
   text-decoration: none;
   color: var(--primary-color);
 }
-
 a:hover {
   color: var(--primary-dark);
 }
 
-/* Container */
+/* ===============================
+   Utility Classes
+================================= */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -53,120 +232,170 @@ a:hover {
   padding: 0 var(--spacing-md);
 }
 
-/* Utility Classes */
-.text-center {
-  text-align: center;
-}
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
 
-.text-right {
-  text-align: right;
-}
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
 
-.text-left {
-  text-align: left;
-}
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
 
-.mt-1 {
-  margin-top: var(--spacing-sm);
-}
+.p-1 { padding: var(--spacing-sm); }
+.p-2 { padding: var(--spacing-md); }
+.p-3 { padding: var(--spacing-lg); }
 
-.mt-2 {
-  margin-top: var(--spacing-md);
-}
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
 
-.mt-3 {
-  margin-top: var(--spacing-lg);
-}
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.items-center { align-items: center; }
 
-.mb-1 {
-  margin-bottom: var(--spacing-sm);
-}
+.gap-1 { gap: var(--spacing-sm); }
+.gap-2 { gap: var(--spacing-md); }
 
-.mb-2 {
-  margin-bottom: var(--spacing-md);
-}
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
 
-.mb-3 {
-  margin-bottom: var(--spacing-lg);
-}
-
-.p-1 {
-  padding: var(--spacing-sm);
-}
-
-.p-2 {
-  padding: var(--spacing-md);
-}
-
-.p-3 {
-  padding: var(--spacing-lg);
-}
-
-/* Flexbox utilities */
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
-.gap-1 {
-  gap: var(--spacing-sm);
-}
-
-.gap-2 {
-  gap: var(--spacing-md);
-}
-
-/* Grid utilities */
-.grid {
-  display: grid;
-}
-
-.grid-cols-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid-cols-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.grid-cols-4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-/* Responsive utilities */
 @media (max-width: 768px) {
-  .grid-cols-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .grid-cols-3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 480px) {
-  .grid-cols-2, 
-  .grid-cols-3, 
-  .grid-cols-4 {
-    grid-template-columns: 1fr;
-  }
+/* ===============================
+   Heading Styles
+================================= */
+.heading {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.subheading {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.bodyText {
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* ===============================
+   Button Styles
+================================= */
+.primaryButton {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3), 0 2px 4px rgba(37, 99, 235, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.primaryButton:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-dark-color) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4), 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.primaryButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ===============================
+   Card Styles
+================================= */
+.card {
+  background: #fff;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow);
+}
+
+/* ===============================
+   Reset Password Container
+================================= */
+.resetPasswordContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--light-color);
+  color: var(--text-color);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.resetPasswordContainer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05), transparent),
+  radial-gradient(circle at 80% 70%, rgba(99, 102, 241, 0.03), transparent),
+  radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.02), transparent);
+  pointer-events: none;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.8; transform: translateY(-10px); }
+}
+
+/* ===============================
+   Toastify Overrides (optional)
+================================= */
+.Toastify__toast {
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.Toastify__toast--success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border-left: 4px solid #16a34a;
+}
+
+.Toastify__toast--error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border-left: 4px solid #dc2626;
+}
+
+.Toastify__toast--info {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--text-color);
+  border-left: 4px solid var(--primary-color);
+}
+
+
+:root {
+  --border-radius: 10px;
+  --primary-color: #3b82f6; /* Tailwind blue-500 */
+  --text-color: #1f2937;    /* Tailwind gray-800 */
 }

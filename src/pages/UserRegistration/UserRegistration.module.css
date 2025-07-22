@@ -1,315 +1,489 @@
-/*.userRegistrationContainer {*/
-/*  padding: 1.5rem;*/
-/*}*/
-
-/*.userRegistrationHeader {*/
-/*  margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.userRegistrationHeader h1 {*/
-/*  font-size: 1.8rem;*/
-/*  margin-bottom: 0.5rem;*/
-/*  color: #333;*/
-/*}*/
-
-/*.userRegistrationHeader p {*/
-/*  color: #666;*/
-/*  font-size: 1rem;*/
-/*}*/
-
-/*.formCard {*/
-/*  padding: 1.5rem;*/
-/*  margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.registrationForm {*/
-/*  display: grid;*/
-/*  grid-template-columns: 1fr 1fr;*/
-/*  gap: 1.5rem;*/
-/*}*/
-
-/*.formGroup {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  margin-bottom: 0.5rem;*/
-/*}*/
-
-/*.formGroup label {*/
-/*  margin-bottom: 0.5rem;*/
-/*  font-weight: 500;*/
-/*  color: #333;*/
-/*}*/
-
-/*.selectInput {*/
-/*  padding: 0.75rem;*/
-/*  border: 1px solid #ddd;*/
-/*  border-radius: 4px;*/
-/*  font-size: 1rem;*/
-/*  background-color: white;*/
-/*}*/
-
-/*.formActions {*/
-/*  grid-column: span 2;*/
-/*  display: flex;*/
-/*  justify-content: flex-end;*/
-/*  margin-top: 1rem;*/
-/*}*/
-
-/*.errorMessage {*/
-/*  background-color: #ffebee;*/
-/*  color: #c62828;*/
-/*  padding: 0.75rem;*/
-/*  border-radius: 4px;*/
-/*  margin-bottom: 1rem;*/
-/*  border-left: 4px solid #c62828;*/
-/*}*/
-
-/*.successMessage {*/
-/*  background-color: #e8f5e9;*/
-/*  color: #2e7d32;*/
-/*  padding: 0.75rem;*/
-/*  border-radius: 4px;*/
-/*  margin-bottom: 1rem;*/
-/*  border-left: 4px solid #2e7d32;*/
-/*}*/
-
-/*!* Location input styles *!*/
-/*.locationInputContainer {*/
-/*  display: flex;*/
-/*  gap: 0.5rem;*/
-/*  margin-bottom: 0.75rem;*/
-/*}*/
-
-/*.locationInput {*/
-/*  flex: 1;*/
-/*  padding: 0.75rem;*/
-/*  border: 1px solid #ddd;*/
-/*  border-radius: 4px;*/
-/*  font-size: 1rem;*/
-/*}*/
-
-/*.addLocationBtn {*/
-/*  min-width: 80px;*/
-/*}*/
-
-/*.locationsList {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  gap: 0.5rem;*/
-/*  margin-bottom: 1rem;*/
-/*}*/
-
-/*.locationItem {*/
-/*  display: flex;*/
-/*  justify-content: space-between;*/
-/*  align-items: center;*/
-/*  padding: 0.5rem 0.75rem;*/
-/*  background-color: #f5f5f5;*/
-/*  border-radius: 4px;*/
-/*  border-left: 3px solid #2196f3;*/
-/*}*/
-
-/*.removeLocationBtn {*/
-/*  background: none;*/
-/*  border: none;*/
-/*  color: #f44336;*/
-/*  cursor: pointer;*/
-/*  font-size: 1rem;*/
-/*  padding: 0.25rem 0.5rem;*/
-/*  border-radius: 50%;*/
-/*}*/
-
-/*.removeLocationBtn:hover {*/
-/*  background-color: rgba(244, 67, 54, 0.1);*/
-/*}*/
-
-/*.locationError {*/
-/*  color: #f44336;*/
-/*  font-size: 0.875rem;*/
-/*  margin-top: 0.25rem;*/
-/*  margin-bottom: 0.75rem;*/
-/*}*/
-
-/*!* Responsive adjustments *!*/
-/*@media (max-width: 768px) {*/
-/*  .registrationForm {*/
-/*    grid-template-columns: 1fr;*/
-/*  }*/
-
-/*  .formActions {*/
-/*    grid-column: 1;*/
-/*  }*/
-/*}*/
-
-
+/* Main container with animated background matching login */
 .userRegistrationContainer {
-  padding: 1.5rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  animation: backgroundShift 15s ease-in-out infinite;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
+@keyframes backgroundShift {
+  0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  33% { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
+  66% { background: linear-gradient(135deg, #667eea 0%, #8b5fbf 100%); }
+}
+
+/* Main form wrapper matching login section */
+.formWrapper {
+  background: #ffffff;
+  border-radius: 25px;
+  padding: 40px 35px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+  animation: slideInUp 0.8s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+@keyframes slideInUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Registration title matching login */
 .userRegistrationHeader {
-  margin-bottom: 1.5rem;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .userRegistrationHeader h1 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  color: #333;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #2d3748;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .userRegistrationHeader p {
-  color: #666;
-  font-size: 1rem;
-}
-
-.formCard {
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.registrationForm {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.5rem;
-}
-
-.formGroup label {
-  margin-bottom: 0.5rem;
+  color: #718096;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: #333;
 }
 
-/* Updated select input styling */
-.selectInput {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: white;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-}
-
-.selectInput:focus {
-  outline: none;
-  border-color: #2196f3;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
-}
-
-.selectInput option {
-  background-color: #fff;
-  color: #333;
-}
-
-.selectInput option:checked {
-  background-color: #e3f2fd; /* soft highlight */
-  color: #000;
-}
-
-.selectInput option:hover {
-  background-color: #f1f1f1;
-}
-
-/* Form action buttons */
-.formActions {
-  grid-column: span 2;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-/* Feedback messages */
+/* Error and success messages matching login */
 .errorMessage {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #c62828;
+  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+  color: #c53030;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  border-left: 3px solid #c53030;
+  box-shadow: 0 2px 8px rgba(197, 48, 48, 0.1);
+  animation: slideInUp 0.5s ease-out;
 }
 
 .successMessage {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #2e7d32;
+  background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+  color: #22543d;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  border-left: 3px solid #22543d;
+  box-shadow: 0 2px 8px rgba(34, 84, 61, 0.1);
+  animation: slideInUp 0.5s ease-out;
 }
 
-/* Location input styles */
+/* Form layout */
+.registrationForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Form groups matching login input style */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: #2d3748;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+  height: 48px;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.formGroup input::placeholder {
+  color: #a0aec0;
+}
+
+.formGroup select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.formGroup select option {
+  background-color: #ffffff;
+  color: #2d3748;
+  padding: 12px;
+}
+
+/* Password container matching login */
+.passwordContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordContainer input {
+  flex: 1;
+  padding-right: 48px;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eyeButton:hover {
+  color: #4a5568;
+  background-color: #f7fafc;
+}
+
+/* Generate Password Button */
+.generatePasswordBtn {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #4a5568;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.generatePasswordBtn:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  color: #2d3748;
+  transform: translateY(-1px);
+}
+
+/* Location handling styles */
 .locationInputContainer {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: 12px;
+  margin-top: 12px;
+  align-items: flex-end;
 }
 
 .locationInput {
   flex: 1;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: #2d3748;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  outline: none;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.locationInput:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
 }
 
 .addLocationBtn {
-  min-width: 80px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 12px;
+  color: #ffffff;
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 48px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.addLocationBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
 }
 
 .locationsList {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .locationItem {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  border-left: 3px solid #2196f3;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.85rem;
+  animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s ease;
+}
+
+.locationItem:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .removeLocationBtn {
-  background: none;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   border: none;
-  color: #f44336;
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 0.25rem 0.5rem;
+  color: white;
+  font-size: 12px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
+  margin-left: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-weight: bold;
 }
 
 .removeLocationBtn:hover {
-  background-color: rgba(244, 67, 54, 0.1);
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .locationError {
-  color: #f44336;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  margin-bottom: 0.75rem;
+  color: #c53030;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 6px;
 }
 
-/* Responsive adjustments */
+/* Submit container matching login button */
+.submitContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.registerBtn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.registerBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.6s;
+}
+
+.registerBtn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.registerBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+.registerBtn:active {
+  transform: translateY(0);
+}
+
+.registerBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.emailNote {
+  font-size: 0.8rem;
+  color: #718096;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Full-width store select */
+.formGroup:has(select[name="store"]) {
+  grid-column: 1 / -1;
+}
+
+/* RegEx validation indicator */
+.regexCheck {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  color: #718096;
+  pointer-events: none;
+  background-color: #ffffff;
+  padding: 0 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .userRegistrationContainer {
+    padding: 15px;
+  }
+}
+
 @media (max-width: 768px) {
-  .registrationForm {
-    grid-template-columns: 1fr;
+  .userRegistrationContainer {
+    padding: 15px;
   }
 
-  .formActions {
+  .formWrapper {
+    padding: 35px 25px;
+    max-width: 500px;
+  }
+
+  .userRegistrationHeader h1 {
+    font-size: 2rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .formGroup:has(select[name="store"]) {
     grid-column: 1;
+  }
+
+  .locationInputContainer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .addLocationBtn {
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .userRegistrationContainer {
+    padding: 10px;
+  }
+
+  .formWrapper {
+    padding: 30px 20px;
+  }
+
+  .userRegistrationHeader h1 {
+    font-size: 1.8rem;
+  }
+
+  .registrationForm {
+    gap: 16px;
+  }
+
+  .formRow {
+    gap: 12px;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .generatePasswordBtn,
+  .locationInput {
+    height: 44px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .addLocationBtn {
+    height: 44px;
+    padding: 10px 16px;
+  }
+
+  .registerBtn {
+    padding: 12px;
   }
 }

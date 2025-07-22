@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import Card from '../../components/Card/Card';
-import Button from '../../components/Button/Button';
-import Input from '../../components/Input/Input';
+import { Eye, EyeOff, Key, Plus, X } from 'lucide-react';
 import styles from './UserRegistration.module.css';
 import axios from '../../services/axiosConfig';
 
 const UserRegistration = () => {
   const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
     username: '',
-    name: '',
+    role: '',
     password: '',
-    role: 'Associate',
-    location: '',
-    locations: [],
-    phone_number: '',
-    email: ''
+    phoneNumber: '',
+    email: '',
+    stores: [''] // Changed to array for multiple stores
   });
+
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [newLocation, setNewLocation] = useState('');
   const [stores, setStores] = useState([]);
 
-  // Fetch stores on component mount
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -32,26 +30,8 @@ const UserRegistration = () => {
         console.error('Error fetching stores:', error);
       }
     };
-
     fetchStores();
   }, []);
-
-  // Effect to handle role changes
-  useEffect(() => {
-    if (formData.role === 'Analyst') {
-      // For Analyst role, ensure locations array is initialized
-      setFormData(prev => ({
-        ...prev,
-        location: '', // Clear single location field
-      }));
-    } else {
-      // For other roles, use single location and clear locations array
-      setFormData(prev => ({
-        ...prev,
-        locations: [],
-      }));
-    }
-  }, [formData.role]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,31 +41,166 @@ const UserRegistration = () => {
     }));
   };
 
-  // Handle new location input change
-  const handleNewLocationChange = (e) => {
-    setNewLocation(e.target.value);
+  const handleStoreChange = (index, value) => {
+    const newStores = [...formData.stores];
+    newStores[index] = value;
+    setFormData(prev => ({
+      ...prev,
+      stores: newStores
+    }));
   };
 
-  // Add a new location to the locations array
-  const addLocation = () => {
-    if (newLocation === '') return;
+  const getAvailableStores = (currentIndex) => {
+    // Only filter for analysts with multiple stores
+    if (formData.role === 'analyst') {
+      const selectedStores = formData.stores.filter((store, index) =>
+          index !== currentIndex && store.trim() !== ''
+      );
+      return stores.filter(store => !selectedStores.includes(store.name));
+    }
+    // For other roles, return all stores
+    return stores;
+  };
 
-    // Check if the location is already in the array
-    if (formData.locations.includes(newLocation)) return;
+  const addStore = () => {
+    if (formData.role === 'analyst') {
+      setFormData(prev => ({
+        ...prev,
+        stores: [...prev.stores, '']
+      }));
+    }
+  };
+
+  const removeStore = (index) => {
+    if (formData.role === 'analyst' && formData.stores.length > 1) {
+      const newStores = formData.stores.filter((_, i) => i !== index);
+      setFormData(prev => ({
+        ...prev,
+        stores: newStores
+      }));
+    }
+  };
+
+  const generatePassword = () => {
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    const allChars = lowercase + uppercase + numbers + symbols;
+    let password = '';
+
+    // Ensure at least one character from each category
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += symbols[Math.floor(Math.random() * symbols.length)];
+
+    // Fill the rest randomly (total length: 12)
+    for (let i = 4; i < 12; i++) {
+      password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+
+    // Shuffle the password
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
 
     setFormData(prev => ({
       ...prev,
-      locations: [...prev.locations, newLocation]
+      password: password
     }));
-    setNewLocation(''); // Clear the input after adding
   };
 
-  // Remove a location from the locations array
-  const removeLocation = (indexToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      locations: prev.locations.filter((_, index) => index !== indexToRemove)
-    }));
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const validateForm = async () => {
+    // First name validation: only letters, no spaces, no special characters, no numbers
+    const nameRegex = /^[A-Za-z]+$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    const phoneRegex = /^\d{10}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.firstName.trim()) {
+      setError("First name is required.");
+      return false;
+    }
+
+    if (!nameRegex.test(formData.firstName.trim())) {
+      setError("First name must contain only letters, no spaces, special characters, or numbers.");
+      return false;
+    }
+
+    // Last name validation (optional but if provided, should not have special characters or spaces)
+    if (formData.lastName.trim() && !nameRegex.test(formData.lastName.trim())) {
+      setError("Last name must contain only letters, no spaces or special characters.");
+      return false;
+    }
+
+    if (!formData.username.trim()) {
+      setError("Username is required.");
+      return false;
+    }
+
+    if (!formData.role) {
+      setError("Please select a role.");
+      return false;
+    }
+
+    // Analyst role validation - must have at least 2 stores
+    if (formData.role === 'analyst') {
+      const validStores = formData.stores.filter(store => store.trim() !== '');
+      if (validStores.length < 2) {
+        setError("Analyst role requires at least 2 stores to be selected.");
+        return false;
+      }
+    }
+
+    if (!passwordRegex.test(formData.password)) {
+      setError("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
+      return false;
+    }
+
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      setError("Phone number must be exactly 10 digits.");
+      return false;
+    }
+
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address.");
+      return false;
+    }
+
+    // Check for duplicate phone number and email in database
+    try {
+      const checkRes = await axios.get(`/api/users/check-duplicate`, {
+        params: {
+          username: formData.username,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber
+        }
+      });
+
+      if (checkRes.data.usernameExists) {
+        setError('Username already exists.');
+        return false;
+      }
+
+      if (checkRes.data.emailExists) {
+        setError('Email already exists.');
+        return false;
+      }
+
+      if (checkRes.data.phoneExists) {
+        setError('Phone number already exists.');
+        return false;
+      }
+    } catch (err) {
+      setError('Error checking for duplicates. Please try again.');
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -94,35 +209,42 @@ const UserRegistration = () => {
     setError('');
     setSuccessMessage('');
 
-    // Validate that Analyst role has at least 2 store assignments
-    if (formData.role === 'Analyst' && formData.locations.length < 2) {
-      setError('Analyst role requires at least 2 store assignments.');
+    if (!(await validateForm())) {
       setIsLoading(false);
       return;
     }
 
     try {
-      // Prepare data for submission
-      const dataToSubmit = { ...formData, role: formData.role.toUpperCase() };
-      // For Analyst role, use the locations array
-      if (formData.role === 'Analyst') {
-        dataToSubmit.location = formData.locations.join(', ');
-      }
-      const response = await axios.post('/api/users/register', dataToSubmit);
+      const dataToSubmit = {
+        ...formData,
+        name: formData.lastName.trim()
+            ? `${formData.firstName} ${formData.lastName}`
+            : formData.firstName,
+        phone_number: formData.phoneNumber,
+        location: formData.role === 'analyst'
+            ? formData.stores.filter(store => store.trim() !== '').join(',')
+            : formData.stores[0],
+        role: formData.role.toUpperCase(),
+        stores: formData.stores.filter(store => store.trim() !== '')
+      };
+
+      await axios.post('/api/users/register', dataToSubmit);
       setSuccessMessage(`User ${formData.username} has been successfully registered.`);
 
-      // Reset form after successful submission
+      // Send email to user (placeholder for actual email service)
+      console.log('Email would be sent to:', formData.email);
+
+      // Reset form
       setFormData({
+        firstName: '',
+        lastName: '',
         username: '',
-        name: '',
+        role: '',
         password: '',
-        role: 'Associate',
-        location: '',
-        locations: [],
-        phone_number: '',
-        email: ''
+        phoneNumber: '',
+        email: '',
+        stores: ['']
       });
-      setNewLocation('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to register user. Please try again.');
       console.error(err);
@@ -132,171 +254,206 @@ const UserRegistration = () => {
   };
 
   return (
-    <div className={styles.userRegistrationContainer}>
-      <div className={styles.userRegistrationHeader}>
-        <h1>User Registration</h1>
-        <p>Add new users to the system</p>
-      </div>
+      <div className={styles.userRegistrationContainer}>
+        <div className={styles.formWrapper}>
+          {error && <div className={styles.errorMessage}>{error}</div>}
+          {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
-      <Card className={styles.formCard}>
-        {error && <div className={styles.errorMessage}>{error}</div>}
-        {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
-
-        <form onSubmit={handleSubmit} className={styles.registrationForm}>
-          <Input
-            label="Username"
-            type="text"
-            id="username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-            placeholder="Enter username"
-          />
-
-          <Input
-            label="Name"
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            placeholder="Enter full name"
-          />
-
-          <Input
-            label="Password"
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            placeholder="Enter password"
-          />
-
-          <div className={styles.formGroup}>
-            <label htmlFor="role">Role</label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className={styles.selectInput}
-              required
-            >
-              <option value="Associate">Associate</option>
-              <option value="Analyst">Analyst</option>
-              <option value="Manager">Manager</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-
-          {formData.role === 'Analyst' ? (
-            <div className={styles.formGroup}>
-              <label>Store Assignments (at least 2 required)</label>
-              <div className={styles.locationInputContainer}>
-                <select
-                  value={newLocation}
-                  onChange={handleNewLocationChange}
-                  className={styles.locationInput}
-                >
-                  <option value="">Select a store</option>
-                  {stores.map(store => (
-                    <option key={store.id} value={store.name}>
-                      {store.name}
-                    </option>
-                  ))}
-                </select>
-                <Button 
-                  type="button" 
-                  variant="secondary" 
-                  onClick={addLocation}
-                  className={styles.addLocationBtn}
-                >
-                  Add
-                </Button>
+          <form onSubmit={handleSubmit} className={styles.registrationForm}>
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="firstName">First Name *</label>
+                <input
+                    id="firstName"
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter first name"
+                />
               </div>
 
-              {formData.locations.length > 0 && (
-                <div className={styles.locationsList}>
-                  {formData.locations.map((loc, index) => (
-                    <div key={index} className={styles.locationItem}>
-                      <span>{loc}</span>
-                      <button 
-                        type="button" 
-                        onClick={() => removeLocation(index)}
-                        className={styles.removeLocationBtn}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {formData.locations.length < 2 && (
-                <div className={styles.locationError}>
-                  At least 2 store assignments are required for Analyst role
-                </div>
-              )}
+              <div className={styles.formGroup}>
+                <label htmlFor="lastName">Last Name</label>
+                <input
+                    id="lastName"
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    placeholder="Enter last name (optional)"
+                />
+              </div>
             </div>
-          ) : (
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="username">Username</label>
+                <input
+                    id="username"
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="role">Role</label>
+                <select
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    required
+                >
+                  <option value="">Select a role</option>
+                  <option value="associate">Associate</option>
+                  <option value="analyst">Analyst</option>
+                  <option value="manager">Manager</option>
+                </select>
+              </div>
+            </div>
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="password">Password</label>
+                <div className={styles.passwordContainer}>
+                  <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                  />
+                  <button
+                      type="button"
+                      className={styles.eyeButton}
+                      onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>&nbsp;</label>
+                <button
+                    type="button"
+                    className={styles.generatePasswordBtn}
+                    onClick={generatePassword}
+                >
+                  <Key size={16} />
+                  Generate password
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="phoneNumber">Phone number</label>
+                <input
+                    id="phoneNumber"
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter 10-digit phone number"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="email">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+              </div>
+            </div>
+
             <div className={styles.formGroup}>
-              <label htmlFor="location">Store Assignment</label>
-              <select
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className={styles.selectInput}
-                required
-              >
-                <option value="">Select a store</option>
-                {stores.map(store => (
-                  <option key={store.id} value={store.name}>
-                    {store.name}
-                  </option>
-                ))}
-              </select>
+              <label>
+                {formData.role === 'analyst' ? 'Stores (minimum 2 required)' : 'Store'}
+              </label>
+
+              {formData.role === 'analyst' ? (
+                  // Multiple stores for analyst
+                  formData.stores.map((store, index) => (
+                      <div key={index} className={styles.storeRow}>
+                        <select
+                            name={`store-${index}`}
+                            value={store}
+                            onChange={(e) => handleStoreChange(index, e.target.value)}
+                            required={index === 0 || (formData.role === 'analyst' && index === 1)}
+                        >
+                          <option value="">Select a store</option>
+                          {getAvailableStores(index).map(storeOption => (
+                              <option key={storeOption.id} value={storeOption.name}>
+                                {storeOption.name}
+                              </option>
+                          ))}
+                        </select>
+
+                        {formData.stores.length > 1 && (
+                            <button
+                                type="button"
+                                className={styles.removeStoreBtn}
+                                onClick={() => removeStore(index)}
+                            >
+                              <X size={16} />
+                            </button>
+                        )}
+
+                        {index === formData.stores.length - 1 && (
+                            <button
+                                type="button"
+                                className={styles.addStoreBtn}
+                                onClick={addStore}
+                            >
+                              <Plus size={16} />
+                            </button>
+                        )}
+                      </div>
+                  ))
+              ) : (
+                  // Single store for associate and manager
+                  <select
+                      name="store"
+                      value={formData.stores[0] || ''}
+                      onChange={(e) => handleStoreChange(0, e.target.value)}
+                      required
+                  >
+                    <option value="">Select a store</option>
+                    {stores.map(storeOption => (
+                        <option key={storeOption.id} value={storeOption.name}>
+                          {storeOption.name}
+                        </option>
+                    ))}
+                  </select>
+              )}
             </div>
-          )}
 
-          <Input
-            label="Phone Number"
-            type="tel"
-            id="phone_number"
-            name="phone_number"
-            value={formData.phone_number}
-            onChange={handleChange}
-            required
-            placeholder="Enter phone number"
-          />
+            <div className={styles.submitContainer}>
+              <button
+                  type="submit"
+                  className={styles.registerBtn}
+                  disabled={isLoading}
+              >
+                {isLoading ? 'Registering...' : 'Register User'}
+              </button>
 
-          <Input
-            label="Email"
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            placeholder="Enter email address"
-          />
-
-          <div className={styles.formActions}>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Registering...' : 'Register User'}
-            </Button>
-          </div>
-        </form>
-      </Card>
-    </div>
+            </div>
+          </form>
+        </div>
+      </div>
   );
 };
 
