@@ -6,6 +6,7 @@ const navigation = [
   { name: 'Analytics', href: '/analytics', roles: ['Analyst', 'Manager', "Admin"] },
   { name: 'Store transfer', href: '/transfer', roles: ['Manager','Admin'] },
   { name: 'Change Log', href: '/change-log', roles: ['Associate', 'Admin', 'Manager', 'Analyst'] },
+  // { name: '', href: '/change-log', roles: ['Associate', 'Admin', 'Manager', 'Analyst'] },
   { name: 'User Registration', href: '/user-registration', roles: ['Admin'] },
   { name: 'Store Setup', href: '/store-setup', roles: ['Admin'] },
 ]

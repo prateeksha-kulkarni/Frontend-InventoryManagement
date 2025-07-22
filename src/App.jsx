@@ -30,14 +30,14 @@ import Navbar from './components/Navbar/Navbar';
 import Layout from './components/Layout/Layout';
 
 // Protected Route component
-const ProtectedRoute = ({ children, requiredRole }) => {
+const ProtectedRoute = ({ children, requiredRoles = [] }) => {
   const { isAuthenticated, hasRole } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && !hasRole(requiredRole)) {
+  if (requiredRoles.length > 0 && !requiredRoles.some(role => hasRole(role))) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -72,19 +72,19 @@ const App = () => {
 
 
             <Route path="stock-adjustment" element={
-              <ProtectedRoute requiredRole="Manager">
+              <ProtectedRoute requiredRoles={["Manager","Admin","Associate","Analyst"]}>
                 <StockAdjustment />
               </ProtectedRoute>
             } />
             <Route path="transfer" element={
-              <ProtectedRoute requiredRole="Manager">
+              <ProtectedRoute requiredRoles={["Manager","Admin"]}>
                 <Transfer />
               </ProtectedRoute>
             } />
             <Route
               path="change-log"
               element={
-                <ProtectedRoute requiredRole="Associate">
+                <ProtectedRoute requiredRoles={["Manager","Admin","Associate","Analyst"]}>
                   <ChangeLog />
                 </ProtectedRoute>
               }
@@ -99,17 +99,8 @@ const App = () => {
               }
             />
 
-            <Route
-              path="purchase-order"
-              element={
-                <ProtectedRoute requiredRole="Manager">
-                  <PurchaseOrder />
-                </ProtectedRoute>
-              }
-            />
-
             <Route path="analytics" element={
-              <ProtectedRoute requiredRole="Analyst">
+              <ProtectedRoute requiredRoles={["Manager","Admin","Analyst"]}>
                 <InventoryDashboard/>
               </ProtectedRoute>
             } />
@@ -117,7 +108,7 @@ const App = () => {
             <Route
               path="user-registration"
               element={
-                <ProtectedRoute requiredRole="Admin">
+                <ProtectedRoute requiredRoles={["Admin"]}>
                   <UserRegistration />
                 </ProtectedRoute>
               }
@@ -126,7 +117,7 @@ const App = () => {
             <Route
               path="store-setup"
               element={
-                <ProtectedRoute requiredRole="Admin">
+                <ProtectedRoute requiredRoles={["Admin"]}>
                   <StoreSetup />
                 </ProtectedRoute>
               }
@@ -135,7 +126,7 @@ const App = () => {
             <Route
               path="low-stock-alerts"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute requiredRoles={["Manager", "Admin", "Analyst"]}>
                   <LowStockPage />
                 </ProtectedRoute>
               }
