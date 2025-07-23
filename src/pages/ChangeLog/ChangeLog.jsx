@@ -168,6 +168,7 @@ const ChangeLog = () => {
               <h2 className="text-3xl font-semibold text-gray-900">Change Log</h2>
             </div>
             <div className="max-w-sm w-full">
+              <div className="h-4"></div>
               <Input
                 type="search"
                 placeholder="Search by product, details or user"
