@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, use } from 'react';
 import authService from '../services/authService';
 
 // Create the authentication context
@@ -45,13 +45,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Check if user has specific role
-  const hasRole = (role) => {
-    if (!currentUser || !currentUser.role) return false;
-    const rolesHierarchy = ['ASSOCIATE', 'ANALYST', 'MANAGER', 'ADMIN'];
-    const userIndex = rolesHierarchy.indexOf(currentUser.role.toUpperCase());
-    const requiredIndex = rolesHierarchy.indexOf(role.toUpperCase());
-    return userIndex >= requiredIndex;
-  };
+const hasRole = (role) => {
+  if (!role || !currentUser || !currentUser.role) return false;
+  return currentUser.role.toUpperCase() === role.toUpperCase();
+};
 
   // Value object that will be passed to consumers
   const value = {
