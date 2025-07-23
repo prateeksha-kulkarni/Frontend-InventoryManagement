@@ -1,77 +1,440 @@
 .storeSetupContainer {
-  padding: 1.5rem;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0eafc, #cfdef3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.storeSetupContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+          radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .storeSetupHeader {
-  margin-bottom: 1.5rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  animation: slideDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .storeSetupHeader h1 {
   font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  color: #333;
+  margin-bottom: 0.8rem;
+  color: #2c3e50;
+  font-weight: 700;
+  letter-spacing: -1px;
+  position: relative;
+}
+
+.storeSetupHeader h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 2px;
+  animation: expandWidth 0.8s ease-out 0.5s both;
+}
+
+@keyframes expandWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: 80px;
+  }
 }
 
 .storeSetupHeader p {
-  color: #666;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-top: 1rem;
+}
+
+.formCard, .storesCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow:
+          0 20px 40px rgba(0, 0, 0, 0.08),
+          0 1px 3px rgba(0, 0, 0, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
+  animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .formCard {
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  animation-delay: 0.2s;
+  animation-fill-mode: both;
 }
 
 .storesCard {
-  padding: 1.5rem;
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+}
+
+.formCard:hover, .storesCard:hover {
+  transform: translateY(-8px);
+  box-shadow:
+          0 30px 60px rgba(0, 0, 0, 0.12),
+          0 4px 12px rgba(0, 0, 0, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .sectionTitle {
-  font-size: 1.4rem;
-  margin-bottom: 1.5rem;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.75rem;
+  font-size: 0.8rem;
+  margin-bottom: 2rem;
+  color: #1f2937;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 2px;
+  animation: slideRight 0.6s ease-out 0.3s both;
+}
+
+@keyframes slideRight {
+  from {
+    width: 0;
+  }
+  to {
+    width: 60px;
+  }
 }
 
 .storeForm {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 2rem;
+}
+
+.storeForm > * {
+  animation: fadeIn 0.6s ease-out backwards;
+}
+
+.storeForm > *:nth-child(1) { animation-delay: 0.1s; }
+.storeForm > *:nth-child(2) { animation-delay: 0.2s; }
+.storeForm > *:nth-child(3) { animation-delay: 0.3s; }
+
+.storeForm input,
+.storeForm select,
+.storeForm textarea {
+  padding: 1rem 1.2rem;
+  font-size: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  color: #374151;
+}
+
+.storeForm input:focus,
+.storeForm select:focus,
+.storeForm textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: rgba(255, 255, 255, 1);
+  box-shadow:
+          0 0 0 3px rgba(102, 126, 234, 0.1),
+          0 8px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.storeForm input:hover,
+.storeForm select:hover,
+.storeForm textarea:hover {
+  border-color: #d1d5db;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .formActions {
   grid-column: span 2;
   display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.formActions button {
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.formActions button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.7s;
+}
+
+.formActions button:hover::before {
+  left: 100%;
+}
+
+.formActions button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5a6fd8, #6b46c1);
+}
+
+.formActions button:active {
+  transform: translateY(-1px);
+}
+
+.formActions button:disabled {
+  background: linear-gradient(135deg, #9ca3af, #6b7280);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(156, 163, 175, 0.2);
+}
+
+.formActions button:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(156, 163, 175, 0.2);
 }
 
 .errorMessage {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #c62828;
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  color: #dc2626;
+  padding: 1.2rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+  animation: slideUp 0.5s ease-out;
+  position: relative;
+}
+
+.errorMessage::before {
+  content: '⚠️';
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+}
+
+.errorMessage {
+  padding-left: 3rem;
 }
 
 .successMessage {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #2e7d32;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  color: #16a34a;
+  padding: 1.2rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #bbf7d0;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.1);
+  animation: slideUp 0.5s ease-out;
+  position: relative;
 }
 
-/* Responsive adjustments */
+.successMessage::before {
+  content: '✅';
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+}
+
+.successMessage {
+  padding-left: 3rem;
+}
+
+/* Enhanced form labels */
+.storeForm label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+/* Table enhancements for when it loads */
+.storesCard table {
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+/* Responsive layout */
 @media (max-width: 768px) {
+  .storeSetupContainer {
+    padding: 1.5rem;
+  }
+
   .storeForm {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
-  
+
   .formActions {
     grid-column: 1;
+    justify-content: center;
+  }
+
+  .formCard, .storesCard {
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+  }
+
+  .storeSetupHeader h1 {
+    font-size: 2.2rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
+
+  .formActions button {
+    width: 100%;
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .storeSetupContainer {
+    padding: 1rem;
+  }
+
+  .formCard, .storesCard {
+    padding: 1.5rem;
+  }
+
+  .storeSetupHeader h1 {
+    font-size: 2rem;
+  }
+
+  .storeForm input,
+  .storeForm select,
+  .storeForm textarea {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Loading animation for when the page loads */
+.storeSetupContainer > * {
+  animation-fill-mode: both;
+}
+
+/* Floating decorative elements */
+.storeSetupContainer::after {
+  content: '';
+  position: fixed;
+  top: 10%;
+  right: -50px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1), transparent);
+  animation: floatSlow 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-30px) translateX(-20px);
+    opacity: 0.3;
   }
 }

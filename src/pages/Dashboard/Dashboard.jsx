@@ -70,6 +70,13 @@ const Dashboard = () => {
         >
           Adjust
         </Button>
+        <Button
+          variant="outline"
+          size="small"
+          onClick={() => handleRemove(row)}
+        >
+          Remove
+        </Button>
       </div>
     ),
   };
@@ -185,25 +192,23 @@ const Dashboard = () => {
   // const handleTransfer = (product) => {
   //   navigate("/transfer", { state: { product } });
   // // };
-  // const handleRemove = async (row) => {
-  //   const confirmDelete = window.confirm(
-  //     `Are you sure you want to delete the product "${row.product?.name}"?`
-  //   );
+ 
+  const handleRemove = async (row) => {
+  const confirmDelete = window.confirm(
+    `Are you sure you want to delete the product "${row.product?.name}"?`
+  );
 
-  //   if (!confirmDelete) {
-  //     return; // user cancelled
-  //   }
-  //   try {
-  //     await axios.post(`/api/products/delete`, row.product); // send full product
+  if (!confirmDelete) return;
 
-    // Refresh the inventory data instead of manually filtering
-    //await fetchInventory();
+  try {
+    await axios.delete(`/api/products/delete/${encodeURIComponent(row.product.name)}`);
 
-  //     console.log("Product deleted");
-  //   } catch (error) {
-  //     console.error("Delete failed:", error);
-  //   }
-  // };
+    await fetchInventory();
+    console.log("Product deleted");
+  } catch (error) {
+    console.error("Delete failed:", error);
+  }
+};
 
   return (
     <div className={styles.dashboardContainer}>
