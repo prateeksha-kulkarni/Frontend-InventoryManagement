@@ -5,13 +5,16 @@ import Table from "../../components/Table/Table";
 import Button from "../../components/Button/Button";
 import styles from "./Dashboard.module.css";
 import AddProductModal from "../AddProduct/AddProductModal";
-import StockAdjustmentModal from "../StockAdjustment/StockAdjustmentModal"; // NEW IMPORT
+import StockAdjustmentModal from "../StockAdjustment/StockAdjustmentModal";
 import axios from "../../services/axiosConfig";
 import authService from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
 import Input from "../../components/Ui/Search";
 import AddProduct from "../../components/Ui/Button";
 import ShadDropdown from "../../components/Ui/ShadDropdown";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FiPackage } from "react-icons/fi";
 
 const Dashboard = () => {
   const [inventoryData, setInventoryData] = useState([]);
@@ -20,11 +23,16 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false); // NEW STATE
-  const [selectedProduct, setSelectedProduct] = useState(null); // NEW STATE
+  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [storeName, setStoreName] = useState("");
 
   const navigate = useNavigate();
   const { hasRole } = useAuth();
+
+  // Toast Helpers
+  const notifySuccess = (msg) => toast.success(msg, { autoClose: 3000 });
+  const notifyError = (msg) => toast.error(msg, { autoClose: 3000 });
 
   const categories = [
     "ELECTRONICS",
@@ -35,20 +43,9 @@ const Dashboard = () => {
   ];
 
   const baseColumns = [
-    {
-      header: "Product Name",
-      render: (row) => row.product?.name || "N/A",
-    },
-
-    {
-        header: "SKU",
-        render: (row) => row.product?.sku || "N/A",
-    },
-
-    {
-      header: "Category",
-      render: (row) => row.product?.category || "N/A",
-    },
+    { header: "Product Name", render: (row) => row.product?.name || "N/A" },
+    { header: "SKU", render: (row) => row.product?.sku || "N/A" },
+    { header: "Category", render: (row) => row.product?.category || "N/A" },
     { header: "Quantity", accessor: "quantity" },
     { header: "Threshold", accessor: "minThreshold" },
     {
@@ -77,6 +74,7 @@ const Dashboard = () => {
         <Button
           variant="outline"
           size="small"
+          className="bg-blue-600 hover:bg-blue-700 text-white"
           onClick={() => handleAdjustStock(row)}
         >
           Adjust
@@ -90,6 +88,7 @@ const Dashboard = () => {
       ? [...baseColumns, actionsColumn]
       : baseColumns;
 
+  // Fetch inventory data
   useEffect(() => {
     fetchInventory();
   }, []);
@@ -99,27 +98,29 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
-      if (!storeId) {
-        console.error("No store ID found for user");
-        return;
-      }
+      if (!storeId) return notifyError("No store ID found for user.");
+
       const response = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(response.data);
       setFilteredData(response.data);
+
+      const storeRes = await axios.get(`/api/stores/${storeId}`);
+      setStoreName(storeRes.data?.name || "Store");
     } catch (error) {
-      console.error("Error fetching inventory:", error);
+      notifyError("Failed to fetch inventory.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Filter data on search/filter
   useEffect(() => {
+    const search = searchTerm.toLowerCase();
     const newFiltered = inventoryData.filter((item) => {
       const productName = item.product?.name?.toLowerCase() || "";
       const productDescription = item.product?.description?.toLowerCase() || "";
       const productSku = item.product?.sku?.toLowerCase() || "";
       const productCategory = item.product?.category || "";
-      const search = searchTerm.toLowerCase();
 
       const matchesSearch =
         productName.includes(search) ||
@@ -143,7 +144,6 @@ const Dashboard = () => {
     setSelectedProduct(product);
     setIsAdjustModalOpen(true);
   };
-
   const handleCloseAdjustModal = () => {
     setSelectedProduct(null);
     setIsAdjustModalOpen(false);
@@ -156,17 +156,14 @@ const Dashboard = () => {
       try {
         const user = authService.getCurrentUser();
         const storeId = user?.storeId || user?.location;
-        if (!storeId) {
-          console.error("No store ID found for user");
-          return;
-        }
+        if (!storeId) return notifyError("No store ID found for user.");
+
         const response = await axios.get(
           `/api/inventory/search?query=${term}&storeId=${storeId}&fields=name,description,sku`
         );
         setInventoryData(response.data);
-        console.log("Search results:", response.data);
       } catch (error) {
-        console.error("Error searching products:", error);
+        notifyError("Search failed. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -179,25 +176,27 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
-      if (!storeId) {
-        console.error("No store ID found for user");
-        return;
-      }
-      const response = await axios.post("/api/products/add", {
-        ...newProduct,
-        storeId: storeId,
-      });
+      if (!storeId) return notifyError("No store ID found for user.");
 
-      console.log("Product added:", response.data);
+      await axios.post("/api/products/add", { ...newProduct, storeId });
+      notifySuccess("Product added successfully!");
       setIsAddModalOpen(false);
       await fetchInventory();
     } catch (error) {
-      console.error("Error adding product:", error);
+      notifyError("Failed to add product.");
     }
   };
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="bg-gray-50 min-h-screen text-gray-700 p-4">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-semibold flex items-center gap-2">
+          <FiPackage className="text-black-600 h-8 w-8" />
+          Inventory Dashboard
+        </h1>
+      </div>
+
       <div className={styles.seamlessSearchTable}>
         <Card className={styles.filterCard}>
           <div className={styles.filterControls}>
@@ -211,7 +210,11 @@ const Dashboard = () => {
             </div>
             {(hasRole("Manager") || hasRole("Admin")) && (
               <div className={styles.addProductButton}>
-                <AddProduct variant="primary" onClick={handleAddClick}>
+                <AddProduct
+                  variant="primary"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={handleAddClick}
+                >
                   Add Product
                 </AddProduct>
               </div>
@@ -227,12 +230,14 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        <Table
-          columns={columns}
-          data={filteredData}
-          isLoading={isLoading}
-          emptyMessage="No inventory items found matching your criteria."
-        />
+        <Card className="mt-4 rounded-lg shadow-sm p-2">
+          <Table
+            columns={columns}
+            data={filteredData}
+            isLoading={isLoading}
+            emptyMessage="No inventory items found matching your criteria."
+          />
+        </Card>
       </div>
 
       {/* Add Product Modal */}
@@ -252,6 +257,17 @@ const Dashboard = () => {
           reloadDashboard={fetchInventory}
         />
       )}
+
+      {/* Toast Notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
-import ShadDropdown from "../../components/Ui/ShadDropdown"; // Use your ShadDropdown
+import ShadDropdown from "../../components/Ui/ShadDropdown";
 import styles from "./AddProductModal.module.css";
 import axios from "../../services/axiosConfig";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +33,10 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
     "OFFICE_SUPPLIES",
   ];
 
+  // Toast Helpers
+  const notifySuccess = (msg) => toast.success(msg, { autoClose: 3000 });
+  const notifyError = (msg) => toast.error(msg, { autoClose: 3000 });
+
   useEffect(() => {
     if (!isOpen) {
       setForm({ name: "", sku: "", threshold: "", category: "" });
@@ -55,7 +59,6 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
     setChecking(true);
     try {
       const { sku, threshold } = form;
-
       const productRes = await axios.get(`/api/products`);
       const matchingProduct = productRes.data.find(
         (p) => p.sku.trim().toLowerCase() === sku.trim().toLowerCase()
@@ -63,7 +66,6 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
 
       if (matchingProduct) {
         const inventoryRes = await axios.get(`/api/inventory`);
-
         const alreadyExistsInThisStore = inventoryRes.data.some(
           (inv) =>
             inv.product?.productId === matchingProduct.productId &&
@@ -71,8 +73,7 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
         );
 
         if (alreadyExistsInThisStore) {
-          setError("This product already exists in this store's inventory.");
-          toast.error("This product already exists in this store.");
+          notifyError("This product already exists in this store.");
           setChecking(false);
           return;
         }
@@ -95,7 +96,7 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
           });
           reloadDashboard();
           onClose();
-          toast.success("Product added successfully!");
+          notifySuccess("Product added successfully!");
         }
       } else {
         const createdProduct = await axios.post("/api/products", {
@@ -114,11 +115,10 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
 
         reloadDashboard();
         onClose();
-        toast.success("New product created and added to inventory!");
+        notifySuccess("New product created and added to inventory!");
       }
     } catch (err) {
-      console.error("Error while checking/adding product:", err);
-      toast.error("Something went wrong. Try again.");
+      notifyError("Something went wrong. Try again.");
       setError("Something went wrong. Try again.");
     } finally {
       setChecking(false);
@@ -174,12 +174,12 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
           onChange={handleChange}
           placeholder="Enter threshold"
         />
-       <ShadDropdown
-         items={categoryItems}
-         value={form.category}
-         onChange={handleCategoryChange}
-         placeholder="Select category"
-       />
+        <ShadDropdown
+          items={categoryItems}
+          value={form.category}
+          onChange={handleCategoryChange}
+          placeholder="Select category"
+        />
       </div>
 
       {/* Error Display */}
@@ -205,7 +205,9 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
               onClick={async () => {
                 try {
                   const product = await axios.get(`/api/products`);
-                  const matched = product.data.find((p) => p.sku === form.sku);
+                  const matched = product.data.find(
+                    (p) => p.sku === form.sku
+                  );
                   await axios.post("/api/inventory", {
                     product: { productId: matched.productId },
                     store: { storeId },
@@ -214,14 +216,10 @@ function AddProductModal({ isOpen, onClose, storeId, reloadDashboard }) {
                   });
                   reloadDashboard();
                   onClose();
-                  toast.success("New inventory entry added!");
+                  notifySuccess("New product added!");
                 } catch (err) {
-                  console.error(
-                    "Error while skipping transfer and creating inventory",
-                    err
-                  );
                   setError("Couldn't skip transfer, try again");
-                  toast.error("Couldn't skip transfer, try again");
+                  notifyError("Couldn't skip transfer, try again");
                 }
               }}
             >
