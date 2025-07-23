@@ -3,6 +3,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Modal from 'react-modal';
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 Modal.setAppElement('#root');
 
 // Global styles
@@ -139,6 +142,8 @@ const App = () => {
 
         </Routes>
       </Router>
+      <ToastContainer position="top-right" autoClose={3000} />
+
     </AuthProvider>
   );
 };

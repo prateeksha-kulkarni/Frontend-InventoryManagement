@@ -150,7 +150,7 @@ const TransferModal = ({ isOpen, onClose }) => {
       }
 
       await axios.post('/api/transfers', payload)
-      toast.success('Transfer request sent successfully.')
+      toast.success('Transfer request sent successfully!')
       resetForm()
       setRequestSent(true)
       setTimeout(() => setRequestSent(false), 3000)
