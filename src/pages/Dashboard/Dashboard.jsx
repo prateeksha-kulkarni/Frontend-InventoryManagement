@@ -5,9 +5,9 @@ import Table from "../../components/Table/Table";
 import Button from "../../components/Button/Button";
 import styles from "./Dashboard.module.css";
 import AddProductModal from "../AddProduct/AddProductModal";
+import StockAdjustmentModal from "../StockAdjustment/StockAdjustmentModal"; // NEW IMPORT
 import axios from "../../services/axiosConfig";
 import authService from "../../services/authService";
-import NotificationIcon from "../../components/Notification/Notification";
 import { useAuth } from "../../context/AuthContext";
 import Input from "../../components/Ui/Search";
 import AddProduct from "../../components/Ui/Button";
@@ -19,7 +19,10 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false); // NEW STATE
+  const [selectedProduct, setSelectedProduct] = useState(null); // NEW STATE
+
   const navigate = useNavigate();
   const { hasRole } = useAuth();
 
@@ -36,6 +39,12 @@ const Dashboard = () => {
       header: "Product Name",
       render: (row) => row.product?.name || "N/A",
     },
+
+    {
+        header: "SKU",
+        render: (row) => row.product?.sku || "N/A",
+    },
+
     {
       header: "Category",
       render: (row) => row.product?.category || "N/A",
@@ -47,12 +56,13 @@ const Dashboard = () => {
       render: (row) => (
         <div className={styles.statusCell}>
           <span
-            className={`${styles.statusIndicator} ${row.status === "LOW_STOCK"
-              ? styles.statusLow
-              : row.status === "REORDER_SOON"
+            className={`${styles.statusIndicator} ${
+              row.status === "LOW_STOCK"
+                ? styles.statusLow
+                : row.status === "REORDER_SOON"
                 ? styles.statusMedium
                 : styles.statusGood
-              }`}
+            }`}
           ></span>
           {row.status.replace("_", " ")}
         </div>
@@ -90,7 +100,7 @@ const Dashboard = () => {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
       if (!storeId) {
-        console.error('No store ID found for user');
+        console.error("No store ID found for user");
         return;
       }
       const response = await axios.get(`/api/inventory/store/${storeId}`);
@@ -104,14 +114,13 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const newFiltered = inventoryData.filter(item => {
-      const productName = item.product?.name?.toLowerCase() || '';
-      const productDescription = item.product?.description?.toLowerCase() || '';
-      const productSku = item.product?.sku?.toLowerCase() || '';
-      const productCategory = item.product?.category || '';
+    const newFiltered = inventoryData.filter((item) => {
+      const productName = item.product?.name?.toLowerCase() || "";
+      const productDescription = item.product?.description?.toLowerCase() || "";
+      const productSku = item.product?.sku?.toLowerCase() || "";
+      const productCategory = item.product?.category || "";
       const search = searchTerm.toLowerCase();
 
-      // Match if search term is in product name, description, SKU, or category
       const matchesSearch =
         productName.includes(search) ||
         productDescription.includes(search) ||
@@ -127,8 +136,18 @@ const Dashboard = () => {
     setFilteredData(newFiltered);
   }, [inventoryData, searchTerm, filterCategory]);
 
-  const handleAddClick = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+  const handleAddClick = () => setIsAddModalOpen(true);
+  const handleCloseAddModal = () => setIsAddModalOpen(false);
+
+  const handleAdjustStock = (product) => {
+    setSelectedProduct(product);
+    setIsAdjustModalOpen(true);
+  };
+
+  const handleCloseAdjustModal = () => {
+    setSelectedProduct(null);
+    setIsAdjustModalOpen(false);
+  };
 
   const handleSearch = async (term) => {
     setSearchTerm(term);
@@ -138,11 +157,12 @@ const Dashboard = () => {
         const user = authService.getCurrentUser();
         const storeId = user?.storeId || user?.location;
         if (!storeId) {
-          console.error('No store ID found for user');
+          console.error("No store ID found for user");
           return;
         }
-        // Updated search endpoint to include name, description, and SKU
-        const response = await axios.get(`/api/inventory/search?query=${term}&storeId=${storeId}&fields=name,description,sku`);
+        const response = await axios.get(
+          `/api/inventory/search?query=${term}&storeId=${storeId}&fields=name,description,sku`
+        );
         setInventoryData(response.data);
         console.log("Search results:", response.data);
       } catch (error) {
@@ -160,55 +180,24 @@ const Dashboard = () => {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
       if (!storeId) {
-        console.error('No store ID found for user');
+        console.error("No store ID found for user");
         return;
       }
-      const response = await axios.post('/api/products/add', {
+      const response = await axios.post("/api/products/add", {
         ...newProduct,
         storeId: storeId,
       });
 
       console.log("Product added:", response.data);
-      setIsModalOpen(false);
-
-      // Refresh the inventory data
+      setIsAddModalOpen(false);
       await fetchInventory();
-
     } catch (error) {
       console.error("Error adding product:", error);
     }
   };
 
-  const handleAdjustStock = (product) => {
-    navigate("/stock-adjustment", { state: { product } });
-  };
-
-  // const handleTransfer = (product) => {
-  //   navigate("/transfer", { state: { product } });
-  // // };
-  // const handleRemove = async (row) => {
-  //   const confirmDelete = window.confirm(
-  //     `Are you sure you want to delete the product "${row.product?.name}"?`
-  //   );
-
-  //   if (!confirmDelete) {
-  //     return; // user cancelled
-  //   }
-  //   try {
-  //     await axios.post(`/api/products/delete`, row.product); // send full product
-
-  // Refresh the inventory data instead of manually filtering
-  //await fetchInventory();
-
-  //     console.log("Product deleted");
-  //   } catch (error) {
-  //     console.error("Delete failed:", error);
-  //   }
-  // };
-
   return (
     <div className={styles.dashboardContainer}>
-
       <div className={styles.seamlessSearchTable}>
         <Card className={styles.filterCard}>
           <div className={styles.filterControls}>
@@ -231,7 +220,7 @@ const Dashboard = () => {
               <ShadDropdown
                 items={categories}
                 value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
+                onChange={(value) => setFilterCategory(value)}
                 placeholder="All Categories"
               />
             </div>
@@ -244,14 +233,25 @@ const Dashboard = () => {
           isLoading={isLoading}
           emptyMessage="No inventory items found matching your criteria."
         />
-
       </div>
+
+      {/* Add Product Modal */}
       <AddProductModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
         storeId={authService.getCurrentUser()?.storeId}
         reloadDashboard={fetchInventory}
       />
+
+      {/* Stock Adjustment Modal */}
+      {isAdjustModalOpen && (
+        <StockAdjustmentModal
+          isOpen={isAdjustModalOpen}
+          onClose={handleCloseAdjustModal}
+          product={selectedProduct}
+          reloadDashboard={fetchInventory}
+        />
+      )}
     </div>
   );
 };

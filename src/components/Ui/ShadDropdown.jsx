@@ -17,7 +17,7 @@ const ShadDropdown = ({ items = [], value, onChange, placeholder = "All Categori
       {open && (
         <div
           className="fixed inset-0 bg-transparent"
-          style={{ backdropFilter: "blur(1px)", zIndex: 40 }} // reduced blur to minimum
+          style={{ backdropFilter: "blur(1px)", zIndex: 40 }}
           aria-hidden="true"
           onClick={() => setOpen(false)}
         />
@@ -54,7 +54,7 @@ const ShadDropdown = ({ items = [], value, onChange, placeholder = "All Categori
         >
           <DropdownMenu.Item
             className="px-4 py-2 cursor-pointer hover:bg-blue-700 hover:text-white"
-            onSelect={() => onChange({ target: { value: "" } })}
+            onSelect={() => onChange("")}
           >
             {placeholder}
           </DropdownMenu.Item>
@@ -62,7 +62,7 @@ const ShadDropdown = ({ items = [], value, onChange, placeholder = "All Categori
             <DropdownMenu.Item
               key={item}
               className="px-4 py-2 cursor-pointer hover:bg-blue-700 hover:text-white"
-              onSelect={() => onChange({ target: { value: item } })}
+              onSelect={() => onChange(item)}
             >
               {item}
             </DropdownMenu.Item>

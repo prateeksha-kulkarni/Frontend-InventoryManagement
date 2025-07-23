@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const AddProduct = () => {
+const AddProduct = ({ onClick }) => {
   return (
     <StyledWrapper>
-      <button type="button" className="button">
+      <button type="button" className="button" onClick={onClick}>
         <span className="button__text">Add Item</span>
         <span className="button__icon">
           <svg
@@ -15,10 +15,10 @@ const AddProduct = () => {
             strokeWidth={2}
             strokeLinejoin="round"
             strokeLinecap="round"
-            stroke="#fff" // blue-600/white icon
+            stroke="#fff"
             fill="none"
             className="svg"
-            style={{ borderRadius: '8px' }} // rounded icon
+            style={{ borderRadius: '8px' }}
           >
             <line y2={19} y1={5} x2={12} x1={12} />
             <line y2={12} y1={12} x2={19} x1={5} />
@@ -27,7 +27,7 @@ const AddProduct = () => {
       </button>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
   .button {
@@ -37,10 +37,10 @@ const StyledWrapper = styled.div`
     cursor: pointer;
     display: flex;
     align-items: center;
-    border: 1px solid #2563eb; /* blue-600 */
-    background-color: #2563eb;  /* blue-600 */
+    border: 1px solid #2563eb;
+    background-color: #2563eb;
     transition: background 0.3s, border 0.3s;
-    border-radius: 8px; /* rounded corners */
+    border-radius: 8px;
   }
 
   .button, .button__icon, .button__text {
@@ -58,27 +58,27 @@ const StyledWrapper = styled.div`
     transform: translateX(109px);
     height: 100%;
     width: 39px;
-    background-color: #2563eb; /* blue-600 */
+    background-color: #2563eb;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px; /* rounded icon background */
+    border-radius: 8px;
   }
 
   .button .svg {
     width: 30px;
     stroke: #fff;
-    border-radius: 8px; /* rounded icon */
+    border-radius: 8px;
     background: transparent;
   }
 
   .button:hover {
-    background: #1d4ed8; /* blue-700 */
-    border: 1px solid #1d4ed8; /* blue-700 */
+    background: #1d4ed8;
+    border: 1px solid #1d4ed8;
   }
 
   .button:hover .button__icon {
-    background-color: #1d4ed8; /* blue-700 */
+    background-color: #1d4ed8;
   }
 
   .button:hover .button__text {
@@ -91,11 +91,11 @@ const StyledWrapper = styled.div`
   }
 
   .button:active .button__icon {
-    background-color: #1e40af; /* blue-800 for pressed */
+    background-color: #1e40af;
   }
 
   .button:active {
-    border: 1px solid #1e40af; /* blue-800 for pressed */
+    border: 1px solid #1e40af;
   }
 `;
 
