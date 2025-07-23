@@ -164,10 +164,11 @@ const ChangeLog = () => {
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center w-full">
             <div className="flex items-center gap-2">
-              <FileText className="w-6 h-6 text-indigo-600" />
+              <FileText className="w-6 h-6" />
               <h2 className="text-3xl font-semibold">Change Log</h2>
             </div>
             <div className="max-w-sm w-full">
+              <div className="h-4"></div>
               <Input
                 type="search"
                 placeholder="Search by product, details or user"
