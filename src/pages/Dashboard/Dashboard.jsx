@@ -193,17 +193,41 @@ const Dashboard = () => {
   //   navigate("/transfer", { state: { product } });
   // // };
  
-  const handleRemove = async (row) => {
-  const confirmDelete = window.confirm(
-    `Are you sure you want to delete the product "${row.product?.name}"?`
-  );
+//   const handleRemove = async (row) => {
+//   const confirmDelete = window.confirm(
+//     `Are you sure you want to delete the product "${row.product?.name}"?`
+//   );
 
+//   if (!confirmDelete) return;
+
+//   try {
+//     await axios.delete(`/api/products/delete/${encodeURIComponent(row.product.name)}`);
+
+//     await fetchInventory();
+//     console.log("Product deleted");
+//   } catch (error) {
+//     console.error("Delete failed:", error);
+//   }
+// };
+ // Front‑end (React) – aligned with @PostMapping("/delete")
+const handleRemove = async (row) => {
+  const confirmDelete = window.confirm(
+    `Are you sure you want to delete the product “${row.product?.name}”?`
+  );
   if (!confirmDelete) return;
 
   try {
-    await axios.delete(`/api/products/delete/${encodeURIComponent(row.product.name)}`);
+    // OPTION A – send only the ID
+    await axios.post(
+      "/api/products/delete",
+      { productId: row.product.productId },          // body ➜ matches @RequestBody ProductEntity
+      { headers: { "Content-Type": "application/json" } }
+    );
 
-    await fetchInventory();
+    // OPTION B – send the whole product object
+    // await axios.post("/api/products/delete", row.product);
+
+    await fetchInventory();              // refresh the table
     console.log("Product deleted");
   } catch (error) {
     console.error("Delete failed:", error);
@@ -217,19 +241,7 @@ const Dashboard = () => {
           <h1>Inventory Dashboard</h1>
           <p>Current stock levels and product information</p>
         </div>
-        <div className={styles.notificationArea}>
-          {/* <h2 className={styles.notificationLabel}>Low Stock</h2> */}
-          <NotificationIcon
-            count={
-              filteredData.filter((item) => item.status === "LOW_STOCK").length
-            }
-            //    onClick={() => {
-            //   const lowStockSection = document.querySelector(`.${styles.lowStockSection}`);
-            //   lowStockSection?.scrollIntoView({ behavior: 'smooth' });
-            // }}
-            onClick={() => navigate("/low-stock-alerts")}
-          />
-        </div>
+        
       </div>
       <div className={styles.filterSection}>
         <Card className={styles.filterCard}>
