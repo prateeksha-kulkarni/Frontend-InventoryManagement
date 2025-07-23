@@ -164,8 +164,8 @@ const ChangeLog = () => {
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center w-full">
             <div className="flex items-center gap-2">
-              <FileText className="w-6 h-6 text-indigo-600" />
-              <h2 className="text-3xl font-semibold">Change Log</h2>
+              <FileText className="w-6 h-6 text-gray-900" />
+              <h2 className="text-3xl font-semibold text-gray-900">Change Log</h2>
             </div>
             <div className="max-w-sm w-full">
               <Input
@@ -178,7 +178,7 @@ const ChangeLog = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 text-sm">
             <div className="min-w-[180px] flex-1">
               <label className="block text-sm font-medium mb-1">Action Type</label>
               <select
@@ -219,14 +219,14 @@ const ChangeLog = () => {
         </div>
 
         <div className="mt-6 text-gray-700">
-          <Card>
+          {/* <Card> */}
             <Table
               columns={columns}
               data={filteredData}
               isLoading={isLoading}
               emptyMessage="No log entries found matching your criteria."
             />
-          </Card>
+          {/* </Card> */}
         </div>
       </Card>
     </div>
