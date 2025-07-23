@@ -252,7 +252,6 @@ const PurchaseOrder = () => {
               >
                 <option value="Draft">Draft</option>
                 <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
                 <option value="Sent">Sent</option>
               </select>
             </div>
