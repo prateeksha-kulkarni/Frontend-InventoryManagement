@@ -3,13 +3,18 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../components/Card/Card";
 import Table from "../../components/Table/Table";
 import Button from "../../components/Button/Button";
-import Input from "../../components/Input/Input";
 import styles from "./Dashboard.module.css";
 import AddProductModal from "../AddProduct/AddProductModal";
+import StockAdjustmentModal from "../StockAdjustment/StockAdjustmentModal";
 import axios from "../../services/axiosConfig";
 import authService from "../../services/authService";
-import NotificationIcon from "../../components/Notification/Notification";
 import { useAuth } from "../../context/AuthContext";
+import Input from "../../components/Ui/Search";
+import AddProduct from "../../components/Ui/Button";
+import ShadDropdown from "../../components/Ui/ShadDropdown";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FiPackage } from "react-icons/fi";
 
 const Dashboard = () => {
   const [inventoryData, setInventoryData] = useState([]);
@@ -17,9 +22,17 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [storeName, setStoreName] = useState("");
+
   const navigate = useNavigate();
   const { hasRole } = useAuth();
+
+  // Toast Helpers
+  const notifySuccess = (msg) => toast.success(msg, { autoClose: 3000 });
+  const notifyError = (msg) => toast.error(msg, { autoClose: 3000 });
 
   const categories = [
     "ELECTRONICS",
@@ -30,14 +43,9 @@ const Dashboard = () => {
   ];
 
   const baseColumns = [
-    {
-      header: "Product Name",
-      render: (row) => row.product?.name || "N/A",
-    },
-    {
-      header: "Category",
-      render: (row) => row.product?.category || "N/A",
-    },
+    { header: "Product Name", render: (row) => row.product?.name || "N/A" },
+    { header: "SKU", render: (row) => row.product?.sku || "N/A" },
+    { header: "Category", render: (row) => row.product?.category || "N/A" },
     { header: "Quantity", accessor: "quantity" },
     { header: "Threshold", accessor: "minThreshold" },
     {
@@ -66,6 +74,7 @@ const Dashboard = () => {
         <Button
           variant="outline"
           size="small"
+          className="bg-blue-600 hover:bg-blue-700 text-white"
           onClick={() => handleAdjustStock(row)}
         >
           Adjust
@@ -86,6 +95,7 @@ const Dashboard = () => {
       ? [...baseColumns, actionsColumn]
       : baseColumns;
 
+  // Fetch inventory data
   useEffect(() => {
     fetchInventory();
   }, []);
@@ -95,29 +105,30 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
-      if (!storeId) {
-        console.error('No store ID found for user');
-        return;
-      }
+      if (!storeId) return notifyError("No store ID found for user.");
+
       const response = await axios.get(`/api/inventory/store/${storeId}`);
       setInventoryData(response.data);
       setFilteredData(response.data);
+
+      const storeRes = await axios.get(`/api/stores/${storeId}`);
+      setStoreName(storeRes.data?.name || "Store");
     } catch (error) {
-      console.error("Error fetching inventory:", error);
+      notifyError("Failed to fetch inventory.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Filter data on search/filter
   useEffect(() => {
-    const newFiltered = inventoryData.filter(item => {
-      const productName = item.product?.name?.toLowerCase() || '';
-      const productDescription = item.product?.description?.toLowerCase() || '';
-      const productSku = item.product?.sku?.toLowerCase() || '';
-      const productCategory = item.product?.category || '';
-      const search = searchTerm.toLowerCase();
+    const search = searchTerm.toLowerCase();
+    const newFiltered = inventoryData.filter((item) => {
+      const productName = item.product?.name?.toLowerCase() || "";
+      const productDescription = item.product?.description?.toLowerCase() || "";
+      const productSku = item.product?.sku?.toLowerCase() || "";
+      const productCategory = item.product?.category || "";
 
-      // Match if search term is in product name, description, SKU, or category
       const matchesSearch =
         productName.includes(search) ||
         productDescription.includes(search) ||
@@ -133,8 +144,17 @@ const Dashboard = () => {
     setFilteredData(newFiltered);
   }, [inventoryData, searchTerm, filterCategory]);
 
-  const handleAddClick = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+  const handleAddClick = () => setIsAddModalOpen(true);
+  const handleCloseAddModal = () => setIsAddModalOpen(false);
+
+  const handleAdjustStock = (product) => {
+    setSelectedProduct(product);
+    setIsAdjustModalOpen(true);
+  };
+  const handleCloseAdjustModal = () => {
+    setSelectedProduct(null);
+    setIsAdjustModalOpen(false);
+  };
 
   const handleSearch = async (term) => {
     setSearchTerm(term);
@@ -143,16 +163,14 @@ const Dashboard = () => {
       try {
         const user = authService.getCurrentUser();
         const storeId = user?.storeId || user?.location;
-        if (!storeId) {
-          console.error('No store ID found for user');
-          return;
-        }
-        // Updated search endpoint to include name, description, and SKU
-        const response = await axios.get(`/api/inventory/search?query=${term}&storeId=${storeId}&fields=name,description,sku`);
+        if (!storeId) return notifyError("No store ID found for user.");
+
+        const response = await axios.get(
+          `/api/inventory/search?query=${term}&storeId=${storeId}&fields=name,description,sku`
+        );
         setInventoryData(response.data);
-        console.log("Search results:", response.data);
       } catch (error) {
-        console.error("Error searching products:", error);
+        notifyError("Search failed. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -165,73 +183,28 @@ const Dashboard = () => {
     try {
       const user = authService.getCurrentUser();
       const storeId = user?.storeId;
-      if (!storeId) {
-        console.error('No store ID found for user');
-        return;
-      }
-      const response = await axios.post('/api/products/add', {
-        ...newProduct,
-        storeId: storeId,
-      });
+      if (!storeId) return notifyError("No store ID found for user.");
 
-      console.log("Product added:", response.data);
-      setIsModalOpen(false);
-
-      // Refresh the inventory data
+      await axios.post("/api/products/add", { ...newProduct, storeId });
+      notifySuccess("Product added successfully!");
+      setIsAddModalOpen(false);
       await fetchInventory();
-
     } catch (error) {
-      console.error("Error adding product:", error);
+      notifyError("Failed to add product.");
     }
   };
 
-  const handleAdjustStock = (product) => {
-    navigate("/stock-adjustment", { state: { product } });
-  };
-
-  // const handleTransfer = (product) => {
-  //   navigate("/transfer", { state: { product } });
-  // // };
- 
-  const handleRemove = async (row) => {
-  const confirmDelete = window.confirm(
-    `Are you sure you want to delete the product "${row.product?.name}"?`
-  );
-
-  if (!confirmDelete) return;
-
-  try {
-    await axios.delete(`/api/products/delete/${encodeURIComponent(row.product.name)}`);
-
-    await fetchInventory();
-    console.log("Product deleted");
-  } catch (error) {
-    console.error("Delete failed:", error);
-  }
-};
-
   return (
-    <div className={styles.dashboardContainer}>
-      <div className={styles.dashboardHeader}>
-        <div>
-          <h1>Inventory Dashboard</h1>
-          <p>Current stock levels and product information</p>
-        </div>
-        <div className={styles.notificationArea}>
-          {/* <h2 className={styles.notificationLabel}>Low Stock</h2> */}
-          <NotificationIcon
-            count={
-              filteredData.filter((item) => item.status === "LOW_STOCK").length
-            }
-            //    onClick={() => {
-            //   const lowStockSection = document.querySelector(`.${styles.lowStockSection}`);
-            //   lowStockSection?.scrollIntoView({ behavior: 'smooth' });
-            // }}
-            onClick={() => navigate("/low-stock-alerts")}
-          />
-        </div>
+    <div className="bg-gray-50 min-h-screen text-gray-700 p-4">
+      {/* Page Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-semibold flex items-center gap-2">
+          <FiPackage className="text-black-600 h-8 w-8" />
+          Inventory Dashboard
+        </h1>
       </div>
-      <div className={styles.filterSection}>
+
+      <div className={styles.seamlessSearchTable}>
         <Card className={styles.filterCard}>
           <div className={styles.filterControls}>
             <div className={styles.searchInput}>
@@ -242,48 +215,66 @@ const Dashboard = () => {
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
-            <div className={styles.categoryFilter}>
-              <select
+            {(hasRole("Manager") || hasRole("Admin")) && (
+              <div className={styles.addProductButton}>
+                <AddProduct
+                  variant="primary"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={handleAddClick}
+                >
+                  Add Product
+                </AddProduct>
+              </div>
+            )}
+            <div>
+              <ShadDropdown
+                items={categories}
                 value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className={styles.categorySelect}
-              >
-                <option value="">All Categories</option>
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => setFilterCategory(value)}
+                placeholder="All Categories"
+              />
             </div>
           </div>
         </Card>
+
+        <Card className="mt-4 rounded-lg shadow-sm p-2">
+          <Table
+            columns={columns}
+            data={filteredData}
+            isLoading={isLoading}
+            emptyMessage="No inventory items found matching your criteria."
+          />
+        </Card>
       </div>
 
-      <Card className={styles.inventoryCard}>
-        <Table
-          columns={columns}
-          data={filteredData}
-          isLoading={isLoading}
-          emptyMessage="No inventory items found matching your criteria."
-        />
-      </Card>
-
-      <div className={styles.dashboardActions}>
-        {(hasRole("Manager") || hasRole("Admin")) && (
-          <Button variant="primary" onClick={handleAddClick}>
-            Add New Product
-          </Button>
-        )}
-      </div>
-
+      {/* Add Product Modal */}
       <AddProductModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
         storeId={authService.getCurrentUser()?.storeId}
         reloadDashboard={fetchInventory}
       />
 
+      {/* Stock Adjustment Modal */}
+      {isAdjustModalOpen && (
+        <StockAdjustmentModal
+          isOpen={isAdjustModalOpen}
+          onClose={handleCloseAdjustModal}
+          product={selectedProduct}
+          reloadDashboard={fetchInventory}
+        />
+      )}
+
+      {/* Toast Notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

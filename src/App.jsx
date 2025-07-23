@@ -17,8 +17,7 @@ import Login from './pages/Login/Login';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import VerifyOTP from './pages/VerifyOTP/VerifyOTP';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
-import Dashboard from './pages/Dashboard/Dashboard';
-import StockAdjustment from './pages/StockAdjustment/StockAdjustment';
+import Dashboard from './pages/Dashboard/Dashboard'
 import Transfer from './pages/Transfer/Transfer';
 import ChangeLog from './pages/ChangeLog/ChangeLog';
 import RestockSuggestions from './pages/RestockSuggestions/RestockSuggestions';
@@ -74,12 +73,6 @@ const App = () => {
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
 
-
-            <Route path="stock-adjustment" element={
-              <ProtectedRoute requiredRoles={["Manager","Admin","Associate","Analyst"]}>
-                <StockAdjustment />
-              </ProtectedRoute>
-            } />
             <Route path="transfer" element={
               <ProtectedRoute requiredRoles={["Manager","Admin"]}>
                 <Transfer />

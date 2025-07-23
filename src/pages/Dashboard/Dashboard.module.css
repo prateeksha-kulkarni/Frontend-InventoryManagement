@@ -92,7 +92,7 @@
 }
 
 .statusGood {
-  background-color: var(--secondary-color);
+  background-color: #2ecc71;
 }
 
 /* Action buttons */

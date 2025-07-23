@@ -1,19 +1,32 @@
-/* Button Component Styles */
+:root {
+  --primary-color: #2563eb;  /* blue-600 */
+  --primary-dark: #1d4ed8;   /* blue-700 */
+  --danger-color: #dc2626;   /* red-600 */
+  --secondary-color: #4b5563; /* gray-700 */
+  --secondary-dark: #374151;  /* darker gray */
+  --font-family: 'Inter', sans-serif;
+  --border-radius: 8px;
+}
+
+/* Base Button */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 500;
+  font-weight: 500; /* matches font-medium */
+  font-size: 0.875rem; /* text-sm */
+  color: var(--text-gray, #374151); /* text-gray-700 */
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  background-color: #f9fafb;
   font-family: var(--font-family);
 }
 
 .button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); /* blue-600 focus */
 }
 
 .button:disabled {
@@ -21,41 +34,21 @@
   cursor: not-allowed;
 }
 
-/* Button Variants */
+/* Variants */
 .button-primary {
   background-color: var(--primary-color);
   color: white;
 }
-
 .button-primary:hover:not(:disabled) {
   background-color: var(--primary-dark);
-}
-
-.button-secondary {
-  background-color: var(--secondary-color);
-  color: white;
-}
-
-.button-secondary:hover:not(:disabled) {
-  background-color: var(--secondary-dark);
 }
 
 .button-danger {
   background-color: var(--danger-color);
   color: white;
 }
-
 .button-danger:hover:not(:disabled) {
-  background-color: #c0392b;
-}
-
-.button-warning {
-  background-color: var(--warning-color);
-  color: white;
-}
-
-.button-warning:hover:not(:disabled) {
-  background-color: #e67e22;
+  background-color: #b91c1c; /* darker red */
 }
 
 .button-outline {
@@ -63,39 +56,29 @@
   border: 1px solid var(--primary-color);
   color: var(--primary-color);
 }
-
 .button-outline:hover:not(:disabled) {
-  background-color: rgba(52, 152, 219, 0.1);
+  background-color: rgba(37, 99, 235, 0.1);
 }
 
-.button-text {
-  background-color: transparent;
-  color: var(--primary-color);
-  padding: 0;
-}
-
-.button-text:hover:not(:disabled) {
-  color: var(--primary-dark);
-  text-decoration: underline;
-}
-
-/* Button Sizes */
+/* Sizes */
 .button-small {
   padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
 }
 
 .button-medium {
   padding: 0.5rem 1rem;
-  font-size: 1rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500;
 }
 
 .button-large {
   padding: 0.75rem 1.5rem;
-  font-size: 1.125rem;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-/* Full Width Button */
+/* Full Width */
 .button-full-width {
   width: 100%;
 }
