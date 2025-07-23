@@ -1,24 +1,22 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
-import { Clock, MapPin, Package } from 'lucide-react'
+import { Clock, MapPin, Package, Plus } from 'lucide-react'
 import axios from '../services/axiosConfig'
 import authService from '../services/authService'
 import { toast } from 'react-toastify'
 import { formatDistanceToNow } from 'date-fns'
 
-const PendingRequests = ({ onCountChange }) => {
+const PendingRequests = ({ onCountChange, onNewRequestClick ,onRefreshHistory}) => {
   const rawUser = authService.getCurrentUser()
   const user = useMemo(() => rawUser, [rawUser?.username])
-
   const [pendingRequests, setPendingRequests] = useState([])
 
   const fetchPendingTransfers = useCallback(async (storeId) => {
     try {
-      console.log('[API] Fetching pending transfers...')
       const res = await axios.get(`/api/transfers/to/${storeId}/dto?status=REQUESTED`)
       setPendingRequests(res.data)
     } catch (err) {
-      console.error("Failed to fetch pending transfers:", err)
       setPendingRequests([])
+      console.error("Failed to fetch pending transfers:", err)
     }
   }, [])
 
@@ -50,6 +48,7 @@ const PendingRequests = ({ onCountChange }) => {
 
       await axios.put(`/api/transfers/${transferId}`, payload)
       toast.success('Transfer approved and inventory updated')
+      onRefreshHistory?.()
       fetchPendingTransfers(user.storeId || user.id)
     } catch (err) {
       toast.error('Failed to accept transfer')
@@ -60,6 +59,7 @@ const PendingRequests = ({ onCountChange }) => {
     try {
       await axios.put(`/api/transfers/${transferId}/reject`)
       toast.success('Transfer rejected successfully')
+      onRefreshHistory?.()
       fetchPendingTransfers(user.storeId || user.id)
     } catch (err) {
       toast.error('Failed to reject transfer')
@@ -68,7 +68,7 @@ const PendingRequests = ({ onCountChange }) => {
 
   return (
     <div className="card">
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-gray-200 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5 text-orange-600" />
           <h2 className="text-xl font-semibold text-gray-900">Pending Requests</h2>
@@ -76,6 +76,13 @@ const PendingRequests = ({ onCountChange }) => {
             {pendingRequests.length}
           </span>
         </div>
+        <button
+          onClick={onNewRequestClick}
+          className="btn-primary flex items-center gap-2 text-sm shadow-sm"
+        >
+          <Plus size={16} />
+          New Request
+        </button>
       </div>
 
       <div className="p-6 space-y-4">

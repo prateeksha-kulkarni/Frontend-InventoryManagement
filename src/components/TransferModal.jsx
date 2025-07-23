@@ -4,7 +4,7 @@ import axios from '../services/axiosConfig'
 import authService from '../services/authService'
 import { toast } from 'react-toastify'
 
-const TransferModal = ({ isOpen, onClose }) => {
+const TransferModal = ({ isOpen, onClose,onRefreshHistory }) => {
   const user = authService.getCurrentUser()
 
   const [formData, setFormData] = useState({
@@ -151,6 +151,7 @@ const TransferModal = ({ isOpen, onClose }) => {
 
       await axios.post('/api/transfers', payload)
       toast.success('Transfer request sent successfully!')
+      onRefreshHistory?.() 
       resetForm()
       setRequestSent(true)
       setTimeout(() => setRequestSent(false), 3000)
