@@ -194,9 +194,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleAdjustStock = (product) => {
-    navigate("/stock-adjustment", { state: { product } });
-  };
+  // const handleAdjustStock = (product) => {
+  //   navigate("/stock-adjustment", { state: { product } });
+  // };
 
   // const handleTransfer = (product) => {
   //   navigate("/transfer", { state: { product } });
@@ -204,20 +204,30 @@ const Dashboard = () => {
  
   const handleRemove = async (row) => {
   const confirmDelete = window.confirm(
-    `Are you sure you want to delete the product "${row.product?.name}"?`
+    `Are you sure you want to delete the product “${row.product?.name}”?`
   );
-
   if (!confirmDelete) return;
 
   try {
-    await axios.delete(`/api/products/delete/${encodeURIComponent(row.product.name)}`);
+    // ✅ Send full product object from the row
+    await axios.post(
+      "/api/products/delete",
+      row.product, // Full ProductEntity will be sent
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
-    await fetchInventory();
-    console.log("Product deleted");
+    await fetchInventory(); // Refresh inventory data
+    console.log("Product deleted successfully");
   } catch (error) {
     console.error("Delete failed:", error);
+    alert("Failed to delete the product. Please try again.");
   }
 };
+
 
   return (
     <div className={styles.dashboardContainer}>
@@ -226,9 +236,9 @@ const Dashboard = () => {
           <h1>Inventory Dashboard</h1>
           <p>Current stock levels and product information</p>
         </div>
-        <div className={styles.notificationArea}>
+        {/* <div className={styles.notificationArea}>
           {/* <h2 className={styles.notificationLabel}>Low Stock</h2> */}
-          <NotificationIcon
+          {/* <NotificationIcon
             count={
               filteredData.filter((item) => item.status === "LOW_STOCK").length
             }
@@ -238,7 +248,7 @@ const Dashboard = () => {
             // }}
             onClick={() => navigate("/low-stock-alerts")}
           />
-        </div>
+        </div> */} 
       </div>
 
       <div className={styles.seamlessSearchTable}>
