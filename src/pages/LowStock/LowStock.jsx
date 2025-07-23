@@ -5,45 +5,39 @@ import Table from '../../components/Table/Table';
 import Button from '../../components/Button/Button';
 import styles from './LowStock.module.css';
 import axios from '../../services/axiosConfig';
+import authService from '../../services/authService';
 
-const LowStockPage = () => {
+const LowStock = () => {
   const [inventoryData, setInventoryData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const response = await axios.get('/api/products/read/1');
-        setInventoryData(response.data);
-      } catch (error) {
-        console.error('Error fetching inventory:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchInventory();
-  }, []);
-
-  const lowStockItems = inventoryData.filter(item => item.status === 'LOW_STOCK');
+  const categories = ['ELECTRONICS', 'CLOTHING', 'FOOD', 'HOME_GOODS', 'OFFICE_SUPPLIES'];
 
   const columns = [
-    { header: 'Product Name', accessor: 'name' },
-    { header: 'Category', accessor: 'category' },
+    {
+      header: 'Product Name',
+      render: (row) => row.product?.name || 'N/A'
+    },
+    {
+      header: 'Category',
+      render: (row) => row.product?.category || 'N/A'
+    },
     { header: 'Quantity', accessor: 'quantity' },
-    { header: 'Threshold', accessor: 'threshold' },
+    { header: 'Threshold', accessor: 'minThreshold' },
     {
       header: 'Status',
       render: (row) => (
         <div className={styles.statusCell}>
           <span
-            className={`${styles.statusIndicator} ${
-              row.status === 'LOW_STOCK'
-                ? styles.statusLow
-                : row.status === 'REORDER_SOON'
+            className={`${styles.statusIndicator} ${row.status === 'LOW_STOCK'
+              ? styles.statusLow
+              : row.status === 'REORDER_SOON'
                 ? styles.statusMedium
                 : styles.statusGood
-            }`}
+              }`}
           ></span>
           {row.status.replace('_', ' ')}
         </div>
@@ -51,24 +45,51 @@ const LowStockPage = () => {
     },
   ];
 
+  useEffect(() => {
+    fetchInventory();
+  }, []);
+
+  const fetchInventory = async () => {
+    setIsLoading(true);
+    try {
+      const user = authService.getCurrentUser();
+      const storeId = user?.storeId;
+      const response = await axios.get(`/api/inventory/store/${storeId}`);
+      setInventoryData(response.data);
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filteredLowStockItems = inventoryData.filter(item => {
+    const isLowStock = item.status === 'LOW_STOCK';
+    const matchesCategory = filterCategory
+      ? item.product?.category === filterCategory
+      : true;
+    return isLowStock && matchesCategory;
+  });
+
   return (
     <div className={styles.LowStockPageContainer}>
       <div className={styles.LowStockPageHeader}>
-        <h2>Low Stock Products</h2>
-        <p>These products have stock levels below their minimum threshold.</p>
-        
-      </div>
+        <div className={styles.LowStockPageHeader}>
+          <h1>Low Stock Products</h1>
+          <p>These products have stock levels below their minimum threshold.</p>
+        </div>
 
-      <Card className={styles.LowStockPagecard}>
-        <Table
-          columns={columns}
-          data={lowStockItems}
-          isLoading={isLoading}
-          emptyMessage="No low stock products."
-        />
-      </Card>
+        <Card className={styles.inventoryCard}>
+          <Table
+            columns={columns}
+            data={filteredLowStockItems}
+            isLoading={isLoading}
+            emptyMessage="No low stock products."
+          />
+        </Card>
+      </div>
     </div>
   );
 };
 
-export default LowStockPage;
+export default LowStock;

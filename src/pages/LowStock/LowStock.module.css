@@ -12,10 +12,13 @@
   margin-bottom: 1.5rem;
 }
 
-.h1 {
+.LowStockPageHeader h1 {
   font-size: 1.8rem;
   margin-bottom: var(--spacing-xs);
   color: var(--dark-color);
+ 
+ 
+
 }
 
 .p {
