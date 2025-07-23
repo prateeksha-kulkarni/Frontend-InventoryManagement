@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Search, Filter, ChevronLeft, ChevronRight, History } from 'lucide-react'
 import axios from "../services/axiosConfig"
 import authService from "../services/authService"
 
 const TransferHistory = ({ onCountsChange }) => {
+  const rawUser = authService.getCurrentUser()
+  const user = useMemo(() => rawUser, [rawUser?.username])
+
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [transfers, setTransfers] = useState([])
   const [page, setPage] = useState(1)
   const rowsPerPage = 10
-  const user = authService.getCurrentUser()
 
   useEffect(() => {
     const fetchTransferHistory = async () => {
       try {
+        console.log('[API] Fetching transfer history...')
         const res = await axios.get(`/api/transfers/history/${user?.storeId || user?.id}`)
         setTransfers(res.data || [])
       } catch (err) {
@@ -21,22 +24,23 @@ const TransferHistory = ({ onCountsChange }) => {
         setTransfers([])
       }
     }
+
     if (user?.storeId || user?.id) fetchTransferHistory()
-  }, [user])
+  }, [user?.storeId])
 
   useEffect(() => {
-    if (typeof onCountsChange === 'function') {
-      const completedToday = transfers.filter(tr =>
-        tr.status === 'COMPLETED' &&
-        new Date(tr.timestamp).toDateString() === new Date().toDateString()
-      ).length
+    const completedToday = transfers.filter(tr =>
+      tr.status === 'COMPLETED' &&
+      new Date(tr.timestamp).toDateString() === new Date().toDateString()
+    ).length
 
-      onCountsChange({
-        total: transfers.length,
-        completedToday
-      })
-    }
-  }, [transfers, onCountsChange])
+    onCountsChange?.({
+      total: transfers.length,
+      completedToday
+    })
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transfers])
 
   const filteredTransfers = transfers.filter(tr => {
     const matchesStatus = statusFilter === 'all' || tr.status?.toLowerCase() === statusFilter
@@ -52,9 +56,9 @@ const TransferHistory = ({ onCountsChange }) => {
   const getStatusBadge = (status) => {
     const statusStyles = {
       requested: 'bg-blue-100 text-blue-800',
-      approved: 'bg-green-100 text-green-800',
+    
       rejected: 'bg-red-100 text-red-800',
-      completed: 'bg-gray-100 text-gray-800'
+      completed: 'bg-green-100 text-green-800'
     }
     return (
       <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusStyles[status.toLowerCase()] || 'bg-gray-200 text-gray-800'}`}>
@@ -93,7 +97,6 @@ const TransferHistory = ({ onCountsChange }) => {
               >
                 <option value="all">All Status</option>
                 <option value="requested">Requested</option>
-                <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
                 <option value="completed">Completed</option>
               </select>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { Clock, MapPin, Package } from 'lucide-react'
 import axios from '../services/axiosConfig'
 import authService from '../services/authService'
@@ -6,11 +6,14 @@ import { toast } from 'react-toastify'
 import { formatDistanceToNow } from 'date-fns'
 
 const PendingRequests = ({ onCountChange }) => {
+  const rawUser = authService.getCurrentUser()
+  const user = useMemo(() => rawUser, [rawUser?.username])
+
   const [pendingRequests, setPendingRequests] = useState([])
-  const user = authService.getCurrentUser()
 
   const fetchPendingTransfers = useCallback(async (storeId) => {
     try {
+      console.log('[API] Fetching pending transfers...')
       const res = await axios.get(`/api/transfers/to/${storeId}/dto?status=REQUESTED`)
       setPendingRequests(res.data)
     } catch (err) {
@@ -23,13 +26,12 @@ const PendingRequests = ({ onCountChange }) => {
     if (user?.storeId || user?.id) {
       fetchPendingTransfers(user.storeId || user.id)
     }
-  }, [user, fetchPendingTransfers])
+  }, [user?.storeId, fetchPendingTransfers])
 
   useEffect(() => {
-    if (typeof onCountChange === 'function') {
-      onCountChange(pendingRequests.length)
-    }
-  }, [pendingRequests, onCountChange])
+    onCountChange?.(pendingRequests.length)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingRequests])
 
   const handleAccept = async (transferId) => {
     try {
