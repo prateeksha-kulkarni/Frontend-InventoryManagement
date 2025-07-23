@@ -1,10 +1,11 @@
+// Converted to Tailwind CSS
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card/Card';
 import Table from '../../components/Table/Table';
 import Input from '../../components/Input/Input';
-import styles from './ChangeLog.module.css';
 import axios from 'axios';
 import authService from '../../services/authService';
+import { FileText } from 'lucide-react';
 
 const ChangeLog = () => {
   const [logData, setLogData] = useState([]);
@@ -25,7 +26,7 @@ const ChangeLog = () => {
         return (
           <div>
             <div>{date.toLocaleDateString()}</div>
-            <div className={styles.timeText}>{date.toLocaleTimeString()}</div>
+            <div className="text-sm text-gray-500">{date.toLocaleTimeString()}</div>
           </div>
         );
       }
@@ -39,29 +40,17 @@ const ChangeLog = () => {
       header: 'Action',
       accessor: 'action',
       render: (row) => {
-        let actionClass = '';
-
-        switch (row.action) {
-          case 'Added':
-            actionClass = styles.actionAdded;
-            break;
-          case 'Removed':
-            actionClass = styles.actionRemoved;
-            break;
-          case 'Transferred':
-            actionClass = styles.actionTransferred;
-            break;
-          case 'Adjusted':
-            actionClass = styles.actionAdjusted;
-            break;
-          default:
-            actionClass = '';
-        }
+        const colorMap = {
+          Added: 'bg-green-100 text-green-700',
+          Removed: 'bg-red-100 text-red-700',
+          Transferred: 'bg-blue-100 text-blue-700',
+          Adjusted: 'bg-yellow-100 text-yellow-700'
+        };
 
         return (
-          <div className={`${styles.actionCell} ${actionClass}`}>
-            <span className={styles.actionBadge}>{row.action}</span>
-            <div className={styles.actionDetails}>{row.details}</div>
+          <div className="flex flex-col">
+            <span className={`inline-block px-2 py-1 rounded-full text-sm font-medium mb-1 w-fit ${colorMap[row.action] || ''}`}>{row.action}</span>
+            <div className="text-sm">{row.details}</div>
           </div>
         );
       }
@@ -72,9 +61,7 @@ const ChangeLog = () => {
       render: (row) => {
         const isNegative = row.quantity < 0;
         return (
-          <div className={`${styles.quantityCell} ${isNegative ? styles.negativeQuantity : styles.positiveQuantity}`}>
-            {row.quantity}
-          </div>
+          <div className={`font-semibold ${isNegative ? 'text-red-600' : 'text-green-600'}`}>{row.quantity}</div>
         );
       }
     },
@@ -84,7 +71,7 @@ const ChangeLog = () => {
       render: (row) => (
         <div>
           <div>{row.userName}</div>
-          <div className={styles.roleText}>{row.userRole}</div>
+          <div className="text-sm text-gray-500">{row.userRole}</div>
         </div>
       )
     }
@@ -102,9 +89,7 @@ const ChangeLog = () => {
         const storeId = user?.storeId;
         const userId = user?.userId;
 
-        const headers = {
-          Authorization: `Bearer ${token}`
-        };
+        const headers = { Authorization: `Bearer ${token}` };
 
         const [transferRes, adjustmentRes] = await Promise.all([
           axios.get('http://localhost:8081/api/transfers/logs', { headers }),
@@ -112,44 +97,35 @@ const ChangeLog = () => {
         ]);
 
         const transfers = transferRes.data
-          .filter((item) =>
+          .filter(item =>
             item.status === 'COMPLETED' &&
             (role === 'ADMIN' || item.fromStore?.storeId === storeId || item.toStore?.storeId === storeId)
           )
-          .map((item) => ({
+          .map(item => ({
             id: item.transferId,
             timestamp: item.timestamp,
             productName: item.product?.name || 'Unknown',
             action: 'Transferred',
-            details: `From ${item.fromStore?.name || 'N/A'} to ${item.toStore?.name || 'N/A'}`,
-            quantity:
-              item.fromStore?.storeId === storeId
-                ? -Math.abs(item.quantity)
-                : Math.abs(item.quantity),
+            details: `From ${item.toStore?.name || 'N/A'} to ${item.fromStore?.name || 'N/A'}`,
+            quantity: item.fromStore?.storeId === storeId ? Math.abs(item.quantity) : -Math.abs(item.quantity),
             userName: item.requestedBy?.name || 'Unknown',
             userRole: 'Manager'
           }));
 
         const adjustments = adjustmentRes.data
-          .filter((item) => (role === 'ADMIN' || item.user?.userId === userId))
-          .map((item) => ({
+          .filter(item => role === 'ADMIN' || item.user?.userId === userId)
+          .map(item => ({
             id: item.adjustmentId,
             timestamp: item.timestamp,
             productName: item.product?.name || 'Unknown',
             action: 'Adjusted',
             details: item.reason || 'Adjustment',
-            quantity:
-              item.changeType === 'ADD'
-                ? Math.abs(item.quantityChange)
-                : -Math.abs(item.quantityChange),
+            quantity: item.changeType === 'ADD' ? Math.abs(item.quantityChange) : -Math.abs(item.quantityChange),
             userName: item.user?.name || 'Unknown',
             userRole: 'Manager'
           }));
 
-        const combinedLogs = [...transfers, ...adjustments].sort(
-          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-        );
-
+        const combinedLogs = [...transfers, ...adjustments].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         setLogData(combinedLogs);
       } catch (error) {
         console.error('Error fetching logs:', error);
@@ -163,10 +139,7 @@ const ChangeLog = () => {
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   const filteredData = logData.filter((item) => {
@@ -180,40 +153,40 @@ const ChangeLog = () => {
 
     const itemDate = new Date(item.timestamp);
     const matchesDateFrom = filters.dateFrom === '' || itemDate >= new Date(filters.dateFrom);
-    const matchesDateTo =
-      filters.dateTo === '' || itemDate <= new Date(`${filters.dateTo}T23:59:59`);
+    const matchesDateTo = filters.dateTo === '' || itemDate <= new Date(`${filters.dateTo}T23:59:59`);
 
     return matchesSearch && matchesAction && matchesDateFrom && matchesDateTo;
   });
 
   return (
-    <div className={styles.changeLogContainer}>
-      <div className={styles.changeLogHeader}>
-        <h1>Change Log</h1>
-        <p>Track all inventory changes and activities</p>
-      </div>
-
-      <Card className={styles.filterCard}>
-        <div className={styles.filterControls}>
-          <div className={styles.searchInput}>
-            <Input
-              type="search"
-              placeholder="Search by product, details or user"
-              name="searchTerm"
-              value={filters.searchTerm}
-              onChange={handleFilterChange}
-            />
+    <div className="px-6 py-8 max-w-screen bg-gray-50">
+      <Card className="p-6 mb-6">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-center w-full">
+            <div className="flex items-center gap-2">
+              <FileText className="w-6 h-6" />
+              <h2 className="text-3xl font-semibold">Change Log</h2>
+            </div>
+            <div className="max-w-sm w-full">
+              <div className="h-4"></div>
+              <Input
+                type="search"
+                placeholder="Search by product, details or user"
+                name="searchTerm"
+                value={filters.searchTerm}
+                onChange={handleFilterChange}
+              />
+            </div>
           </div>
 
-          <div className={styles.filterGroup}>
-            <div className={styles.filterItem}>
-              <label htmlFor="actionType" className={styles.filterLabel}>Action Type</label>
+          <div className="flex flex-wrap gap-4">
+            <div className="min-w-[180px] flex-1">
+              <label className="block text-sm font-medium mb-1">Action Type</label>
               <select
-                id="actionType"
                 name="actionType"
                 value={filters.actionType}
                 onChange={handleFilterChange}
-                className={styles.filterSelect}
+                className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               >
                 <option value="">All Actions</option>
                 {actionTypes.map((action) => (
@@ -222,40 +195,40 @@ const ChangeLog = () => {
               </select>
             </div>
 
-            <div className={styles.filterItem}>
-              <label htmlFor="dateFrom" className={styles.filterLabel}>From Date</label>
+            <div className="min-w-[180px] flex-1">
+              <label className="block text-sm font-medium mb-1">From Date</label>
               <input
                 type="date"
-                id="dateFrom"
                 name="dateFrom"
                 value={filters.dateFrom}
                 onChange={handleFilterChange}
-                className={styles.filterDate}
+                className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
             </div>
 
-            <div className={styles.filterItem}>
-              <label htmlFor="dateTo" className={styles.filterLabel}>To Date</label>
+            <div className="min-w-[180px] flex-1">
+              <label className="block text-sm font-medium mb-1">To Date</label>
               <input
                 type="date"
-                id="dateTo"
                 name="dateTo"
                 value={filters.dateTo}
                 onChange={handleFilterChange}
-                className={styles.filterDate}
+                className="w-full h-10 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
             </div>
           </div>
         </div>
-      </Card>
 
-      <Card className={styles.logCard}>
-        <Table
-          columns={columns}
-          data={filteredData}
-          isLoading={isLoading}
-          emptyMessage="No log entries found matching your criteria."
-        />
+        <div className="mt-6 text-gray-700">
+          <Card>
+            <Table
+              columns={columns}
+              data={filteredData}
+              isLoading={isLoading}
+              emptyMessage="No log entries found matching your criteria."
+            />
+          </Card>
+        </div>
       </Card>
     </div>
   );
