@@ -5,6 +5,14 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 import { Calendar, Store, TrendingUp, Package } from 'lucide-react';
+import ReactHover, { Trigger, Hover } from 'react-hover';
+
+const options = {
+  followCursor: true,
+  shiftX: 20,
+  shiftY: 0,
+};
+
 
 
 const InventoryAnalytics = () => {
@@ -144,24 +152,35 @@ const InventoryAnalytics = () => {
             {/* Table */}
             <div className="bg-white rounded-2xl shadow-lg p-6 overflow-x-auto">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">Inventory Report</h3>
-              <table className="w-full text-sm text-left">
-                <thead className="bg-gray-100 text-gray-700">
+              <table className="w-full text-sm text-left overflow-hidden ">
+                <thead className="bg-gray-100 text-gray-700 ">
                   <tr>
                     <th className="px-4 py-2">Store</th>
                     <th className="px-4 py-2">Product</th>
                     <th className="px-4 py-2">Quantity</th>
                     <th className="px-4 py-2">Threshold</th>
-                    <th className="px-4 py-2 ">
-                      Status
-                      <div className="relative group inline-block">
-                        <span className="text-gray-400 font-bold cursor-pointer border border-gray-300 rounded-full px-2 py-0.5 text-xs"> ?</span>
-                        <div className="absolute z-10 w-56 p-3 text-xs text-white bg-gray-700 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 -top-2 left-5">
-                          <p className="mb-1"><span className="font-semibold text-orange-300">Overstock</span>: Quantity &gt; 2 × Threshold</p>
-                          <p className="mb-1"><span className="font-semibold text-green-300">Healthy</span>: Quantity ≤ 2 × Threshold</p>
-                          <p><span className="font-semibold text-red-300">Understock</span>: Quantity &lt; Threshold</p>
-                        </div>
-                      </div>
-                    </th>
+<th className="px-4 py-2 relative">
+  Status
+  <div className="inline-block relative ml-1">
+    <span className="text-gray-400 font-bold cursor-pointer border border-gray-300 rounded-full px-2 py-0.5 text-xs peer">
+      ?
+    </span>
+    <div
+      className="absolute z-10 w-56 p-3 text-xs text-white bg-gray-700 rounded-lg shadow-lg opacity-0 transition-opacity duration-200 pointer-events-none peer-hover:opacity-100 top-8 left-0"
+    >
+      <p className="mb-1">
+        <span className="font-semibold text-orange-300">Overstock</span>: Quantity &gt; 2 × Threshold
+      </p>
+      <p className="mb-1">
+        <span className="font-semibold text-green-300">Healthy</span>: Quantity ≤ 2 × Threshold
+      </p>
+      <p>
+        <span className="font-semibold text-red-300">Understock</span>: Quantity &lt; Threshold
+      </p>
+    </div>
+  </div>
+</th>
+
 
                     <th className="px-4 py-2">Turnover</th>
                     <th className="px-4 py-2">Sales Rate</th>
@@ -189,50 +208,77 @@ const InventoryAnalytics = () => {
             <div className="space-y-6">
               <div className="bg-white rounded-2xl shadow-lg p-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Stock Levels vs Min Threshold</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={filteredData.map((item, idx) => ({
-                    ...item,
-                    label: `${item.productName} @ ${item.storeName}`
-                  }))} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="label"
-                      interval={0}
-                      tick={({ x, y, payload }) => {
-                        const [line1, line2] = payload.value.split(" @ ");
-                        return (
-                          <g transform={`translate(${x},${y + 10})`}>
-                            <text textAnchor="middle" fill="#666" fontSize={12}>
-                              <tspan x={0} dy="0em">{line1}</tspan>
-                              <tspan x={0} dy="1.2em">{line2}</tspan>
-                            </text>
-                          </g>
-                        );
-                      }}
-                    />
+<ResponsiveContainer width="100%" height={300}>
+  <BarChart
+    data={filteredData.map((item, idx) => ({
+      ...item,
+      label: `${item.productName} @ ${item.storeName}`
+    }))}
+    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+  >
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis
+      dataKey="label"
+      interval={0}
+      tick={({ x, y, payload }) => {
+        const [line1, line2] = payload.value.split(" @ ");
+        return (
+          <g transform={`translate(${x},${y + 10})`}>
+            <text textAnchor="middle" fill="#666" fontSize={12}>
+              <tspan x={0} dy="0em">{line1}</tspan>
+              <tspan x={0} dy="1.2em">{line2}</tspan>
+            </text>
+          </g>
+        );
+      }}
+    />
+    <YAxis
+  label={{
+    value: 'Quantity',
+    angle: -90,
+    position: 'insideLeft',
+    offset: 10,
+    style: { textAnchor: 'middle', fill: '#555', fontSize: 14 }
+  }}
+/>
 
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
 
-                    <Bar dataKey="minThreshold" fill="#8884d8" name="Min Threshold" />
-                    <Bar
-                      dataKey="quantity"
-                      name="Quantity"
-                      // Use a custom fill color based on status
-                      fill="#000"
-                    >
-                      {
-                        filteredData.map((entry, index) => {
-                          let color = '#82ca9d'; // Default: Healthy
-                          if (entry.stockStatus === 'Overstock') color = '#f97316'; // Orange
-                          else if (entry.stockStatus === 'Stockout') color = '#ef4444'; // Red
-                          return <Cell key={`cell-${index}`} fill={color} />;
-                        })
-                      }
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+    {/* ✅ Custom Tooltip */}
+    <Tooltip
+      content={({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+          const item = payload[0].payload;
+          return (
+            <div className="bg-white p-3 rounded shadow border text-sm text-gray-800">
+              <p className="font-semibold">{label}</p>
+              <p>Quantity: <span className="font-medium">{item.quantity}</span></p>
+              <p>Min Threshold: <span className="font-medium">{item.minThreshold}</span></p>
+              <p>Status: <span className={`font-semibold ${getStatusClass(item.stockStatus)}`}>{item.stockStatus}</span></p>
+            </div>
+          );
+        }
+        return null;
+      }}
+    />
+
+
+
+    {/* ✅ Single bar: Quantity only, color-coded */}
+    <Bar
+      dataKey="quantity"
+    >
+      {
+        filteredData.map((entry, index) => {
+          let color = '#82ca9d'; // Healthy
+          if (entry.stockStatus === 'Overstock') color = '#f97316'; // Orange
+          else if (entry.stockStatus === 'Stockout') color = '#ef4444'; // Red
+          return <Cell key={`cell-${index}`} fill={color} />;
+        })
+      }
+    </Bar>
+  </BarChart>
+</ResponsiveContainer>
+
 
               </div>
               {/* <div className="bg-white rounded-2xl shadow-lg p-6 h-64 flex items-center justify-center text-gray-400 border border-dashed">
