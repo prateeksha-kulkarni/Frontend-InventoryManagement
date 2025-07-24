@@ -13,6 +13,7 @@ const StoreSetup = () => {
     name: '',
     address: ''
   });
+
   const [stores, setStores] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isTableLoading, setIsTableLoading] = useState(true);

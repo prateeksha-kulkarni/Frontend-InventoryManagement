@@ -87,6 +87,13 @@
   flex-wrap: wrap;
 }
 
+.formRow {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Form groups matching login input style */
 .formGroup {
   flex: 1;
   display: flex;
