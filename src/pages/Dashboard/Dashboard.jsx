@@ -204,31 +204,24 @@ const Dashboard = () => {
   // // };
  
   const handleRemove = async (row) => {
-  const confirmDelete = window.confirm(
-    `Are you sure you want to delete the product “${row.product?.name}”?`
-  );
-  if (!confirmDelete) return;
-
-  try {
-    // ✅ Send full product object from the row
-    await axios.post(
-      "/api/products/delete",
-      row.product, // Full ProductEntity will be sent
-      {
-        headers: {
-          "Content-Type": "application/json"
+    try {
+      await axios.post(
+        "/api/products/delete",
+        row.product, // Full ProductEntity
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
-      }
-    );
-
-    await fetchInventory(); // Refresh inventory data
-    console.log("Product deleted successfully");
-  } catch (error) {
-    console.error("Delete failed:", error);
-    alert("Failed to delete the product. Please try again.");
-  }
-};
-
+      );
+  
+      await fetchInventory(); // Refresh inventory data
+      toast.success(`Product "${row.product?.name}" deleted successfully`);
+    } catch (error) {
+      console.error("Delete failed:", error);
+      toast.error("Failed to delete the product. Please try again.");
+    }
+  };
 
   return (
     <div className="max-w-[95em] mx-auto p-6">

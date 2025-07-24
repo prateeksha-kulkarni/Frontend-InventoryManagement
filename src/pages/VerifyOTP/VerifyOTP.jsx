@@ -51,7 +51,7 @@ const VerifyOTP = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+      <ToastContainer position="top-right" autoClose={3000} />
 
       <div className={styles.verifyOTPContainer}>
         {/* Left Panel */}

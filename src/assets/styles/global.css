@@ -369,33 +369,3 @@ a:hover {
 /* ===============================
    Toastify Overrides (optional)
 ================================= */
-.Toastify__toast {
-  border-radius: var(--border-radius);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.Toastify__toast--success {
-  background: rgba(34, 197, 94, 0.1);
-  color: #16a34a;
-  border-left: 4px solid #16a34a;
-}
-
-.Toastify__toast--error {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
-  border-left: 4px solid #dc2626;
-}
-
-.Toastify__toast--info {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--text-color);
-  border-left: 4px solid var(--primary-color);
-}
-
-
-:root {
-  --border-radius: 10px;
-  --primary-color: #3b82f6; /* Tailwind blue-500 */
-  --text-color: #1f2937;    /* Tailwind gray-800 */
-}

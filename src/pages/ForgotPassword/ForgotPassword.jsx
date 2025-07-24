@@ -49,7 +49,7 @@ const ForgotPassword = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
+        // theme="colored"
       />
 
       <div className={styles.forgotPasswordContainer}>

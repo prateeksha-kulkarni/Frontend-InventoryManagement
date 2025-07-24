@@ -84,7 +84,7 @@ const ResetPassword = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+      <ToastContainer position="top-right" autoClose={3000} />
 
       <div className={styles.resetPasswordContainer}>
         {/* Left Panel */}
