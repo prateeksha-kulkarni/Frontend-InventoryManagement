@@ -23,6 +23,7 @@ const TransferModal = ({ isOpen, onClose,onRefreshHistory }) => {
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [requestSent, setRequestSent] = useState(false)
+  const [requestedStoreProducts, setRequestedStoreProducts] = useState([])
 
   // Fetch dropdown data
   useEffect(() => {
@@ -67,6 +68,31 @@ const TransferModal = ({ isOpen, onClose,onRefreshHistory }) => {
     }
     fetchInventory()
   }, [formData.sourceStoreId])
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      if (!formData.destinationStoreId) return
+      try {
+        const res = await axios.get(`/api/inventory/store/${formData.destinationStoreId}`)
+        const inventoryData = res.data || []
+        setInventory(inventoryData)
+  
+        // Extract product list from inventory
+        const productList = inventoryData.map(item => ({
+          productId: item.product?.productId,
+          name: item.product?.name,
+          sku: item.product?.sku,
+          quantity: item.quantity
+        }))
+        setRequestedStoreProducts(productList)
+      } catch (err) {
+        setInventory([])
+        setRequestedStoreProducts([])
+      }
+    }
+    fetchInventory()
+  }, [formData.destinationStoreId])
+  
 
   // Lookup available stock at destination store for selected product
   useEffect(() => {
@@ -193,27 +219,6 @@ const TransferModal = ({ isOpen, onClose,onRefreshHistory }) => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="flex items-center gap-2 text-sm font-medium">
-                <Package size={16} /> Select Product
-              </label>
-              <select
-                name="productId"
-                value={formData.productId}
-                onChange={handleChange}
-                className="select-field"
-                required
-              >
-                <option value="">-- Select a product --</option>
-                {inventory.map((inv) => (
-                  <option key={inv.product.productId} value={inv.product.productId}>
-                    {inv.product.name}
-                  </option>
-                ))}
-              </select>
-              {errors.productId && <p className="text-red-500 text-sm">{errors.productId}</p>}
-            </div>
-
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium">
                 <MapPin size={16} /> Requesting From
               </label>
               <select
@@ -234,6 +239,28 @@ const TransferModal = ({ isOpen, onClose,onRefreshHistory }) => {
               </select>
               {errors.destinationStoreId && <p className="text-red-500 text-sm">{errors.destinationStoreId}</p>}
             </div>
+            
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Package size={16} /> Select Product
+              </label>
+              <select
+                name="productId"
+                value={formData.productId}
+                onChange={handleChange}
+                className="select-field"
+                required
+              >
+                <option value="">-- Select a product --</option>
+                {inventory.map((inv) => (
+                  <option key={inv.product.productId} value={inv.product.productId}>
+                    {inv.product.name}
+                  </option>
+                ))}
+              </select>
+              {errors.productId && <p className="text-red-500 text-sm">{errors.productId}</p>}
+            </div>
+
 
             {selectedProduct && formData.destinationStoreId && (
               <div className="bg-gray-50 p-3 rounded-md border text-sm space-y-1">

@@ -109,7 +109,10 @@ const handleRefresh = () => {
     <div>
       <p className="text-sm font-medium text-gray-600">Low Stock</p>
       <p className="text-2xl font-bold text-orange-600">
-        {filteredLowStockItems.length}
+        {/* {filteredLowStockItems.length} */}
+        {
+          filteredLowStockItems.filter(item => (item.quantity / item.minThreshold) * 100 > 20).length
+        }
       </p>
     </div>
     <div className="p-3 bg-orange-100 rounded-lg">

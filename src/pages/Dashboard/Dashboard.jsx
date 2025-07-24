@@ -252,7 +252,7 @@ const Dashboard = () => {
             <div className={styles.searchInput}>
               <Input
                 type="search"
-                placeholder="Search by product name, description, or SKU"
+                placeholder="Search by product name or SKU"
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
               />
