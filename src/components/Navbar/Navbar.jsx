@@ -6,7 +6,10 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '../../context/AuthContext'
 import Logo from '../../assets/images/Logo.png'
-
+import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import axios from '../../services/axiosConfig' // Ensure correct path
+import authService from '../../services/authService' 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', roles: ['Associate', 'Admin', 'MANAGER', 'Analyst'] },
   { name: 'Analytics', href: '/analytics', roles: ['Analyst', 'Manager', 'Admin'] },
@@ -25,6 +28,29 @@ export default function Navbar() {
   const filteredNavigation = navigation.filter(item =>
     item.roles.some(role => hasRole(role))
   )
+  const navigate = useNavigate()
+  const [lowStockCount, setLowStockCount] = useState(0)
+  useEffect(() => {
+    const fetchLowStockCount = async () => {
+      try {
+        const user = authService.getCurrentUser()
+        const storeId = user?.storeId
+
+        if (!storeId) {
+          console.warn("No store ID found for user.")
+          return
+        }
+
+        const response = await axios.get(`/api/inventory/store/${storeId}`)
+        const lowStockItems = response.data.filter(item => item.status === "LOW_STOCK")
+        setLowStockCount(lowStockItems.length)
+      } catch (error) {
+        console.error("Error fetching low stock count:", error)
+      }
+    }
+
+    fetchLowStockCount()
+  }, [])
 
   return (
     <Disclosure as="nav" className="bg-gray-800 sticky top-0 z-50 shadow-md">
@@ -73,14 +99,21 @@ export default function Navbar() {
           {/* Right Side */}
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 space-x-4">
             {/* Notification Icon */}
+             <div className="relative">
             <button
               type="button"
               className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white"
+               onClick={() => navigate("/low-stock-alerts")}
             >
               <span className="sr-only">View notifications</span>
               <BellIcon className="size-6" />
             </button>
-
+             {lowStockCount > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                  {lowStockCount}
+                </span>
+              )}
+            </div>
             {/* User Info */}
             {currentUser && (
               <div className="text-white text-sm font-medium hidden sm:block">

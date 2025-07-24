@@ -4,6 +4,8 @@ import { AlertTriangle, Package, TrendingDown, RefreshCw } from 'lucide-react';
 import axios from '../../services/axiosConfig';
 import authService from '../../services/authService';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Card from '../../components/Card/Card'; // adjust path if needed
+
 
 
 const LowStock = () => {
@@ -41,8 +43,7 @@ const handleRefresh = () => {
   const getStockLevel = (current, min) => {
     const percentage = (current / min) * 100;
     if (percentage <= 20) return { level: 'critical', color: 'bg-red-500', textColor: 'text-red-600' };
-    if (percentage <= 50) return { level: 'low', color: 'bg-orange-500', textColor: 'text-orange-600' };
-    return { level: 'warning', color: 'bg-yellow-500', textColor: 'text-yellow-600' };
+    return { level: 'low', color: 'bg-orange-500', textColor: 'text-orange-600'};
   };
 
   return (
@@ -82,35 +83,45 @@ const handleRefresh = () => {
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Critical Stock</p>
-              <p className="text-2xl font-bold text-red-600">
-                {
-                  filteredLowStockItems.filter(
-                    item => (item.quantity / item.minThreshold) * 100 <= 20
-                  ).length
-                }
-              </p>
-            </div>
-            <div className="p-3 bg-red-100 rounded-lg">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
-            </div>
-          </div>
-        </div>
+        
+       <div className="relative group bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-sm font-medium text-gray-600">Critical Stock</p>
+      <p className="text-2xl font-bold text-red-600">
+        {
+          filteredLowStockItems.filter(item => (item.quantity / item.minThreshold) * 100 <= 20).length
+        }
+      </p>
+    </div>
+    <div className="p-3 bg-red-100 rounded-lg">
+      <AlertTriangle className="w-6 h-6 text-red-600" />
+    </div>
+  </div>
+  <div className="absolute z-10 bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-yellow-50 text-gray-700 text-sm rounded-md px-4 py-2 shadow-lg border border-yellow-200 w-64 text-center">
+    <span className="font-semibold text-red-600">Critical:</span> Stock ≤ 20% of minimum threshold
+  </div>
+</div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Low Stock</p>
-              <p className="text-2xl font-bold text-orange-600">{filteredLowStockItems.length}</p>
-            </div>
-            <div className="p-3 bg-orange-100 rounded-lg">
-              <TrendingDown className="w-6 h-6 text-orange-600" />
-            </div>
-          </div>
-        </div>
+        
+        <div className="relative group bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-sm font-medium text-gray-600">Low Stock</p>
+      <p className="text-2xl font-bold text-orange-600">
+        {filteredLowStockItems.length}
+      </p>
+    </div>
+    <div className="p-3 bg-orange-100 rounded-lg">
+      <TrendingDown className="w-6 h-6 text-orange-600" />
+    </div>
+  </div>
+  {/* Tooltip */}
+  <div className="absolute z-10 bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-yellow-50 text-gray-700 text-sm rounded-md px-4 py-2 shadow-lg border border-yellow-200 w-64 text-center">
+    <span className="font-semibold text-orange-600">Low:</span> Stock above 20% of minimum threshold
+  </div>
+</div>
+
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
@@ -124,6 +135,7 @@ const handleRefresh = () => {
           </div>
         </div>
       </div>
+     
 
       {/* Product List */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
