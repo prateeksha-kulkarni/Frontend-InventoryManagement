@@ -1,315 +1,303 @@
-/*.userRegistrationContainer {*/
-/*  padding: 1.5rem;*/
-/*}*/
-
-/*.userRegistrationHeader {*/
-/*  margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.userRegistrationHeader h1 {*/
-/*  font-size: 1.8rem;*/
-/*  margin-bottom: 0.5rem;*/
-/*  color: #333;*/
-/*}*/
-
-/*.userRegistrationHeader p {*/
-/*  color: #666;*/
-/*  font-size: 1rem;*/
-/*}*/
-
-/*.formCard {*/
-/*  padding: 1.5rem;*/
-/*  margin-bottom: 1.5rem;*/
-/*}*/
-
-/*.registrationForm {*/
-/*  display: grid;*/
-/*  grid-template-columns: 1fr 1fr;*/
-/*  gap: 1.5rem;*/
-/*}*/
-
-/*.formGroup {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  margin-bottom: 0.5rem;*/
-/*}*/
-
-/*.formGroup label {*/
-/*  margin-bottom: 0.5rem;*/
-/*  font-weight: 500;*/
-/*  color: #333;*/
-/*}*/
-
-/*.selectInput {*/
-/*  padding: 0.75rem;*/
-/*  border: 1px solid #ddd;*/
-/*  border-radius: 4px;*/
-/*  font-size: 1rem;*/
-/*  background-color: white;*/
-/*}*/
-
-/*.formActions {*/
-/*  grid-column: span 2;*/
-/*  display: flex;*/
-/*  justify-content: flex-end;*/
-/*  margin-top: 1rem;*/
-/*}*/
-
-/*.errorMessage {*/
-/*  background-color: #ffebee;*/
-/*  color: #c62828;*/
-/*  padding: 0.75rem;*/
-/*  border-radius: 4px;*/
-/*  margin-bottom: 1rem;*/
-/*  border-left: 4px solid #c62828;*/
-/*}*/
-
-/*.successMessage {*/
-/*  background-color: #e8f5e9;*/
-/*  color: #2e7d32;*/
-/*  padding: 0.75rem;*/
-/*  border-radius: 4px;*/
-/*  margin-bottom: 1rem;*/
-/*  border-left: 4px solid #2e7d32;*/
-/*}*/
-
-/*!* Location input styles *!*/
-/*.locationInputContainer {*/
-/*  display: flex;*/
-/*  gap: 0.5rem;*/
-/*  margin-bottom: 0.75rem;*/
-/*}*/
-
-/*.locationInput {*/
-/*  flex: 1;*/
-/*  padding: 0.75rem;*/
-/*  border: 1px solid #ddd;*/
-/*  border-radius: 4px;*/
-/*  font-size: 1rem;*/
-/*}*/
-
-/*.addLocationBtn {*/
-/*  min-width: 80px;*/
-/*}*/
-
-/*.locationsList {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  gap: 0.5rem;*/
-/*  margin-bottom: 1rem;*/
-/*}*/
-
-/*.locationItem {*/
-/*  display: flex;*/
-/*  justify-content: space-between;*/
-/*  align-items: center;*/
-/*  padding: 0.5rem 0.75rem;*/
-/*  background-color: #f5f5f5;*/
-/*  border-radius: 4px;*/
-/*  border-left: 3px solid #2196f3;*/
-/*}*/
-
-/*.removeLocationBtn {*/
-/*  background: none;*/
-/*  border: none;*/
-/*  color: #f44336;*/
-/*  cursor: pointer;*/
-/*  font-size: 1rem;*/
-/*  padding: 0.25rem 0.5rem;*/
-/*  border-radius: 50%;*/
-/*}*/
-
-/*.removeLocationBtn:hover {*/
-/*  background-color: rgba(244, 67, 54, 0.1);*/
-/*}*/
-
-/*.locationError {*/
-/*  color: #f44336;*/
-/*  font-size: 0.875rem;*/
-/*  margin-top: 0.25rem;*/
-/*  margin-bottom: 0.75rem;*/
-/*}*/
-
-/*!* Responsive adjustments *!*/
-/*@media (max-width: 768px) {*/
-/*  .registrationForm {*/
-/*    grid-template-columns: 1fr;*/
-/*  }*/
-
-/*  .formActions {*/
-/*    grid-column: 1;*/
-/*  }*/
-/*}*/
-
-
+/* ====== Container Styling ====== */
 .userRegistrationContainer {
-  padding: 1.5rem;
+  min-height: 100vh;
+  background: #f9fafb; /* bg-gray-50 */
+  padding: 40px 20px 40px 40px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-.userRegistrationHeader {
-  margin-bottom: 1.5rem;
+.pageHeader {
+  max-width: 700px;
+  margin: 0 0 2rem 0;
+  text-align: left;
+  padding-left: 0;
 }
 
-.userRegistrationHeader h1 {
-  font-size: 1.8rem;
+.contentWrapper {
+  max-width: 700px;
+  margin: 0 0 0 0;
+}
+
+/* ====== Heading and Subheading ====== */
+.heading {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 600; /* font-semibold */
+  color: #374151; /* text-gray-700 */
   margin-bottom: 0.5rem;
-  color: #333;
+  text-align: left;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.userRegistrationHeader p {
-  color: #666;
-  font-size: 1rem;
+.subheading {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600; /* font-semibold */
+  color: #374151; /* text-gray-700 */
+  margin-bottom: 0;
+  text-align: left;
+  line-height: 1.5;
 }
 
-.formCard {
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+/* ====== Form Wrapper ====== */
+.formWrapper {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  border: 1px solid #e5e7eb;
 }
 
-.registrationForm {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.formGroup {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0.5rem;
-}
-
-.formGroup label {
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #333;
-}
-
-/* Updated select input styling */
-.selectInput {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: white;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-}
-
-.selectInput:focus {
-  outline: none;
-  border-color: #2196f3;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
-}
-
-.selectInput option {
-  background-color: #fff;
-  color: #333;
-}
-
-.selectInput option:checked {
-  background-color: #e3f2fd; /* soft highlight */
-  color: #000;
-}
-
-.selectInput option:hover {
-  background-color: #f1f1f1;
-}
-
-/* Form action buttons */
-.formActions {
-  grid-column: span 2;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-/* Feedback messages */
-.errorMessage {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 0.75rem;
-  border-radius: 4px;
+/* ====== Feedback Messages ====== */
+.errorMessage,
+.successMessage {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: 8px;
   margin-bottom: 1rem;
-  border-left: 4px solid #c62828;
+}
+
+.errorMessage {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
 }
 
 .successMessage {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #2e7d32;
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
 }
 
-/* Location input styles */
-.locationInputContainer {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.locationInput {
-  flex: 1;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.addLocationBtn {
-  min-width: 80px;
-}
-
-.locationsList {
+/* ====== Form Styling ====== */
+.registrationForm {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
 }
 
-.locationItem {
+.formRow {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0.75rem;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  border-left: 3px solid #2196f3;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.removeLocationBtn {
+.formGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px; /* Ensure consistent minimum width */
+}
+
+.formGroup label {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #374151; /* text-gray-700 */
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #374151; /* text-gray-700 */
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+/* ====== Store Section Styling ====== */
+.storeSection {
+  width: 100%;
+  min-width: 100%;
+}
+
+.storeSection label {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #374151; /* text-gray-700 */
+  display: block;
+}
+
+.storeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.storeRow select {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #374151; /* text-gray-700 */
+  background-color: white;
+}
+
+.storeActions {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.emptyBtnSpace {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+}
+
+/* ====== Password Field and Eye Toggle ====== */
+.passwordContainer {
+  position: relative;
+  width: 100%;
+}
+
+.passwordContainer input {
+  width: 100%;
+  padding-right: 2.5rem;
+  box-sizing: border-box;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
-  color: #f44336;
   cursor: pointer;
+  color: #374151; /* text-gray-700 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eyeButton:hover {
+  color: #1f2937; /* darker gray on hover */
+}
+
+/* ====== Generate Password Button ====== */
+.generatePasswordBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #6b7280; /* Keep grey for differentiation */
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.generatePasswordBtn:hover {
+  background-color: #4b5563; /* Darker grey on hover */
+}
+
+/* ====== Add/Remove Store Buttons ====== */
+.addStoreBtn,
+.removeStoreBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2563eb; /* bg-blue-600 */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.375rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.addStoreBtn:hover,
+.removeStoreBtn:hover {
+  background-color: #1d4ed8; /* bg-blue-700 */
+}
+
+.removeStoreBtn {
+  background-color: #dc2626; /* Keep red for remove action */
+}
+
+.removeStoreBtn:hover {
+  background-color: #b91c1c; /* Darker red on hover */
+}
+
+/* ====== Submit Button ====== */
+.submitContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.registerBtn {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.75rem 2rem;
   font-size: 1rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 50%;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.removeLocationBtn:hover {
-  background-color: rgba(244, 67, 54, 0.1);
+.registerBtn:hover:enabled {
+  background-color: #1d4ed8;
 }
 
-.locationError {
-  color: #f44336;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  margin-bottom: 0.75rem;
+.registerBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* Responsive adjustments */
+/* ====== Responsive Design ====== */
 @media (max-width: 768px) {
-  .registrationForm {
-    grid-template-columns: 1fr;
+  .userRegistrationContainer {
+    padding: 20px;
   }
 
-  .formActions {
-    grid-column: 1;
+  .pageHeader {
+    margin-left: 0;
+  }
+
+  .contentWrapper {
+    margin-left: 0;
+  }
+
+  .formRow {
+    flex-direction: column;
+  }
+
+  .formGroup {
+    min-width: 100%;
+  }
+
+  .storeRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .storeActions {
+    align-self: flex-end;
+    margin-top: 0.5rem;
   }
 }
