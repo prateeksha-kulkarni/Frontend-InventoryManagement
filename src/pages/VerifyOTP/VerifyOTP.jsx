@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
-import Card from '../../components/Card/Card';
 import styles from './VerifyOTP.module.css';
 import authService from '../../services/authService';
+import LeftPanel from '../../components/LeftPanel/LeftPanel';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -37,9 +37,7 @@ const VerifyOTP = () => {
 
       if (result.valid || result.message?.toLowerCase().includes("verified")) {
         toast.success('✅ OTP verified successfully!');
-        setTimeout(() => {
-          navigate('/reset-password');
-        }, 1500);
+        setTimeout(() => navigate('/reset-password'), 1500);
       } else {
         toast.error(result.message || '❌ Invalid OTP. Please try again.');
       }
@@ -52,52 +50,57 @@ const VerifyOTP = () => {
   };
 
   return (
+    <>
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+
       <div className={styles.verifyOTPContainer}>
-        <ToastContainer position="top-right" autoClose={3000} />
+        {/* Left Panel */}
+        <LeftPanel
+          title="Verify Your OTP"
+          description="Enter the 6-digit OTP sent to your email to continue."
+        />
 
-        <div className={styles.verifyOTPWrapper}>
-          <Card className={styles.verifyOTPCard}>
-            <h2 className={styles.verifyOTPTitle}>Enter OTP</h2>
+        {/* Right Panel */}
+        <div className={styles.verifyOTPSection}>
+          <h1 className={styles.verifyOTPTitle}>Enter OTP</h1>
+          <p className={styles.verifyOTPSubtitle}>
+            We’ve sent a 6-digit OTP to your registered email.
+          </p>
 
-            <p className={styles.verifyOTPInfo}>
-              Please enter the 6-digit OTP sent to your email address.
-            </p>
+          <form onSubmit={handleSubmit} className={styles.verifyOTPForm}>
+            <Input
+              label="OTP"
+              type="text"
+              id="otp"
+              name="otp"
+              value={otp}
+              onChange={handleChange}
+              required
+              placeholder="Enter 6-digit OTP"
+              maxLength={6}
+              pattern="[0-9]{6}"
+              title="Please enter a 6-digit number"
+            />
 
-            <form onSubmit={handleSubmit} className={styles.verifyOTPForm}>
-              <Input
-                  label="OTP"
-                  type="text"
-                  id="otp"
-                  name="otp"
-                  value={otp}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter 6-digit OTP"
-                  maxLength={6}
-                  pattern="[0-9]{6}"
-                  title="Please enter a 6-digit number"
-              />
+            <Button
+              type="submit"
+              variant="primary"
+              fullWidth
+              disabled={loading || otp.length !== 6}
+            >
+              {loading ? 'Verifying...' : 'Verify OTP'}
+            </Button>
 
-              <Button
-                  type="submit"
-                  variant="primary"
-                  fullWidth
-                  disabled={loading || otp.length !== 6}
-              >
-                {loading ? 'Verifying...' : 'Verify OTP'}
-              </Button>
-
-              <div className={styles.resendOTPLink}>
-                <Link to="/forgot-password">Resend OTP</Link>
-              </div>
-
-              <div className={styles.backToLoginLink}>
-                <Link to="/login">Back to Login</Link>
-              </div>
-            </form>
-          </Card>
+            <div className={styles.resendOTPLink}>
+              <Link to="/forgot-password">Resend OTP</Link>
+            </div>
+            <div className={styles.backToLoginLink}>
+              <Link to="/login">Back to Login</Link>
+            </div>
+          </form>
         </div>
       </div>
+    </>
   );
 };
 

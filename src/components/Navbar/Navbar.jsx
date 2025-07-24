@@ -117,7 +117,7 @@ export default function Navbar() {
             {/* User Info */}
             {currentUser && (
               <div className="text-white text-sm font-medium hidden sm:block">
-                {currentUser.name} ({currentUser.role})
+                {currentUser.name}
               </div>
             )}
 

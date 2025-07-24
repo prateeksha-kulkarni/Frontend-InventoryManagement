@@ -135,7 +135,7 @@ const App = () => {
 
         </Routes>
       </Router>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} theme="light"/>
 
     </AuthProvider>
   );

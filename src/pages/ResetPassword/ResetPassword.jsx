@@ -3,12 +3,11 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
-import Card from '../../components/Card/Card';
 import styles from './ResetPassword.module.css';
 import authService from '../../services/authService';
+import LeftPanel from '../../components/LeftPanel/LeftPanel';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -32,21 +31,19 @@ const ResetPassword = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const validatePasswordRules = (password) => {
-    return {
-      length: password.length >= 8,
-      upper: /[A-Z]/.test(password),
-      lower: /[a-z]/.test(password),
-      number: /[0-9]/.test(password),
-      special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-    };
-  };
+  const validatePasswordRules = (password) => ({
+    length: password.length >= 8,
+    upper: /[A-Z]/.test(password),
+    lower: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+  });
 
   const validatePasswords = () => {
     const rules = validatePasswordRules(formData.password);
@@ -86,107 +83,121 @@ const ResetPassword = () => {
   const rules = validatePasswordRules(formData.password);
 
   return (
-      <div className={styles.resetPasswordContainer}>
-        <ToastContainer position="top-right" autoClose={3000} />
-        <div className={styles.resetPasswordWrapper}>
-          <Card className={styles.resetPasswordCard}>
-            <h2 className={styles.resetPasswordTitle}>Create New Password</h2>
-            <p className={styles.resetPasswordInfo}>
-              Please enter your new password below.
-            </p>
+    <>
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
-            <form onSubmit={handleSubmit} className={styles.resetPasswordForm}>
-              <div className={styles.passwordField}>
-                <Input
-                    label="New Password"
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter new password"
-                    minLength={8}
-                />
-                <span
-                    className={styles.eyeIcon}
-                    onClick={() => setShowPassword(!showPassword)}
-                >
+      <div className={styles.resetPasswordContainer}>
+        {/* Left Panel */}
+        <LeftPanel
+          title="Reset Your Password"
+          description="Create a strong password to secure your account."
+        />
+
+        {/* Right Section */}
+        <div className={styles.resetPasswordSection}>
+          <h2 className={styles.resetPasswordTitle}>Create New Password</h2>
+          <p className={styles.resetPasswordInfo}>
+            Please enter your new password below.
+          </p>
+
+          <form onSubmit={handleSubmit} className={styles.resetPasswordForm}>
+            {/* Password Field */}
+            <div className={styles.passwordField}>
+              <Input
+                label="New Password"
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Enter new password"
+                minLength={8}
+              />
+              <span
+                className={styles.eyeIcon}
+                onClick={() => setShowPassword(!showPassword)}
+              >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
 
-                {formData.password && (
-                    <ul className={styles.validationPopup}>
-                      <li className={rules.length ? styles.valid : ''}>
+              {formData.password && (
+                <ul className={styles.validationPopup}>
+                  <li className={rules.length ? styles.valid : ''}>
                     <span className={styles.circleIcon}>
                       {rules.length ? '✔' : ''}
                     </span>
-                        At least 8 characters
-                      </li>
-                      <li className={rules.upper ? styles.valid : ''}>
+                    At least 8 characters
+                  </li>
+                  <li className={rules.upper ? styles.valid : ''}>
                     <span className={styles.circleIcon}>
                       {rules.upper ? '✔' : ''}
                     </span>
-                        At least one uppercase letter
-                      </li>
-                      <li className={rules.lower ? styles.valid : ''}>
+                    At least one uppercase letter
+                  </li>
+                  <li className={rules.lower ? styles.valid : ''}>
                     <span className={styles.circleIcon}>
                       {rules.lower ? '✔' : ''}
                     </span>
-                        At least one lowercase letter
-                      </li>
-                      <li className={rules.number ? styles.valid : ''}>
+                    At least one lowercase letter
+                  </li>
+                  <li className={rules.number ? styles.valid : ''}>
                     <span className={styles.circleIcon}>
                       {rules.number ? '✔' : ''}
                     </span>
-                        At least one number
-                      </li>
-                      <li className={rules.special ? styles.valid : ''}>
+                    At least one number
+                  </li>
+                  <li className={rules.special ? styles.valid : ''}>
                     <span className={styles.circleIcon}>
                       {rules.special ? '✔' : ''}
                     </span>
-                        At least one special character
-                      </li>
-                    </ul>
-                )}
-              </div>
+                    At least one special character
+                  </li>
+                </ul>
+              )}
+            </div>
 
-              <div className={styles.passwordField}>
-                <Input
-                    label="Confirm Password"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    placeholder="Confirm new password"
-                    minLength={8}
-                />
-                <span
-                    className={styles.eyeIcon}
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
+            {/* Confirm Password Field */}
+            <div className={styles.passwordField}>
+              <Input
+                label="Confirm Password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                placeholder="Confirm new password"
+                minLength={8}
+              />
+              <span
+                className={styles.eyeIcon}
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+              >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </span>
-              </div>
+            </div>
 
-              <Button
-                  type="submit"
-                  variant="primary"
-                  fullWidth
-                  disabled={loading || !formData.password || !formData.confirmPassword}
-              >
-                {loading ? 'Resetting Password...' : 'Reset Password'}
-              </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              fullWidth
+              disabled={
+                loading || !formData.password || !formData.confirmPassword
+              }
+            >
+              {loading ? 'Resetting Password...' : 'Reset Password'}
+            </Button>
 
-              <div className={styles.backToLoginLink}>
-                <Link to="/login">Back to Login</Link>
-              </div>
-            </form>
-          </Card>
+            <div className={styles.backToLoginLink}>
+              <Link to="/login">Back to Login</Link>
+            </div>
+          </form>
         </div>
       </div>
+    </>
   );
 };
 

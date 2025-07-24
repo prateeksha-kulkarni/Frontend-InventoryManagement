@@ -15,6 +15,7 @@ import ShadDropdown from "../../components/Ui/ShadDropdown";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiPackage } from "react-icons/fi";
+import { Calendar, Store, TrendingUp, Package } from 'lucide-react';
 
 const Dashboard = () => {
   const [inventoryData, setInventoryData] = useState([]);
@@ -233,7 +234,8 @@ const Dashboard = () => {
     <div className="max-w-[95em] mx-auto p-6">
       <div className={styles.dashboardHeader}>
         <div>
-          <h1 className="text-gray-900 font-bold">Inventory Dashboard</h1>
+          
+          <h1 className="text-3xl font-bold text-gray-900 mb-8 flex items-center"><Package className="mr-3" />Inventory Dashboard</h1>
           <p>Current stock levels and product information</p>
         </div>
         {/* <div className={styles.notificationArea}>

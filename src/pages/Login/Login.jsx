@@ -7,6 +7,7 @@ import logo from '../../assets/images/logo1.jpg';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LeftPanel from '../../components/LeftPanel/LeftPanel';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -53,17 +54,10 @@ const Login = () => {
         {/* Login Main Container */}
         <div className={styles.loginContainer}>
           {/* Left Logo Section */}
-          <div className={styles.imageSection}>
-            <div className={styles.logoCircle}>
-              <img src={logo} alt="Company Logo" className={styles.logoImage} />
-            </div>
-            <div className={styles.welcomeContent}>
-              <h2>StockPilot</h2>
-              <p>
-                Access your professional dashboard and manage your account with our secure login portal.
-              </p>
-            </div>
-          </div>
+          <LeftPanel
+              title="StockPilot"
+              description="Access your professional dashboard and manage your account with our secure login portal."
+          />
 
           {/* Right Form Section */}
           <div className={styles.loginSection}>
