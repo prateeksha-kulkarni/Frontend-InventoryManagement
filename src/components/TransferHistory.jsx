@@ -1,9 +1,21 @@
-import React, { useEffect, useState, useMemo } from 'react'
-import { Search, Filter, ChevronLeft, ChevronRight, History } from 'lucide-react'
-import axios from "../services/axiosConfig"
-import authService from "../services/authService"
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useImperativeHandle,
+  forwardRef
+} from 'react'
+import {
+  Search,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  History
+} from 'lucide-react'
+import axios from '../services/axiosConfig'
+import authService from '../services/authService'
 
-const TransferHistory = ({ onCountsChange }) => {
+const TransferHistory = forwardRef(({ onCountsChange }, ref) => {
   const rawUser = authService.getCurrentUser()
   const user = useMemo(() => rawUser, [rawUser?.username])
 
@@ -13,19 +25,24 @@ const TransferHistory = ({ onCountsChange }) => {
   const [page, setPage] = useState(1)
   const rowsPerPage = 10
 
-  useEffect(() => {
-    const fetchTransferHistory = async () => {
-      try {
-        console.log('[API] Fetching transfer history...')
-        const res = await axios.get(`/api/transfers/history/${user?.storeId || user?.id}`)
-        setTransfers(res.data || [])
-      } catch (err) {
-        console.error('Failed to fetch transfer history:', err)
-        setTransfers([])
-      }
+  const fetchTransferHistory = async () => {
+    try {
+      const res = await axios.get(`/api/transfers/history/${user?.storeId || user?.id}`)
+      setTransfers(res.data || [])
+    } catch (err) {
+      console.error('Failed to fetch transfer history:', err)
+      setTransfers([])
     }
+  }
 
-    if (user?.storeId || user?.id) fetchTransferHistory()
+  useImperativeHandle(ref, () => ({
+    refresh: fetchTransferHistory
+  }))
+
+  useEffect(() => {
+    if (user?.storeId || user?.id) {
+      fetchTransferHistory()
+    }
   }, [user?.storeId])
 
   useEffect(() => {
@@ -56,7 +73,6 @@ const TransferHistory = ({ onCountsChange }) => {
   const getStatusBadge = (status) => {
     const statusStyles = {
       requested: 'bg-blue-100 text-blue-800',
-    
       rejected: 'bg-red-100 text-red-800',
       completed: 'bg-green-100 text-green-800'
     }
@@ -69,38 +85,36 @@ const TransferHistory = ({ onCountsChange }) => {
 
   return (
     <div className="card">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <History className="w-5 h-5 text-blue-600" />
-            <h2 className="text-xl font-semibold text-gray-900">Transfer History</h2>
+      <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <History className="w-5 h-5 text-blue-600" />
+          <h2 className="text-xl font-semibold text-gray-900">Transfer History</h2>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search product or store..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+            />
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search product"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-
-            <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <select
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-white"
-              >
-                <option value="all">All Status</option>
-                <option value="requested">Requested</option>
-                <option value="rejected">Rejected</option>
-                <option value="completed">Completed</option>
-              </select>
-            </div>
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }}
+              className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg appearance-none bg-white"
+            >
+              <option value="all">All Status</option>
+              <option value="requested">Requested</option>
+              <option value="rejected">Rejected</option>
+              <option value="completed">Completed</option>
+            </select>
           </div>
         </div>
       </div>
@@ -137,17 +151,15 @@ const TransferHistory = ({ onCountsChange }) => {
       <div className="px-6 py-4 border-t border-gray-200">
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-700">
-            Showing <span className="font-medium">{(page - 1) * rowsPerPage + 1}</span>
-            {' '}to{' '}
-            <span className="font-medium">{Math.min(page * rowsPerPage, filteredTransfers.length)}</span>
-            {' '}of{' '}
+            Showing <span className="font-medium">{(page - 1) * rowsPerPage + 1}</span> to{' '}
+            <span className="font-medium">{Math.min(page * rowsPerPage, filteredTransfers.length)}</span> of{' '}
             <span className="font-medium">{filteredTransfers.length}</span> results
           </p>
           <div className="flex gap-2">
-            <button className="btn-secondary flex items-center gap-1 text-sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+            <button className="btn-secondary text-sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
               <ChevronLeft size={16} /> Prev
             </button>
-            <button className="btn-secondary flex items-center gap-1 text-sm" onClick={() => setPage(p => Math.min(Math.ceil(filteredTransfers.length / rowsPerPage), p + 1))} disabled={page * rowsPerPage >= filteredTransfers.length}>
+            <button className="btn-secondary text-sm" onClick={() => setPage(p => Math.min(Math.ceil(filteredTransfers.length / rowsPerPage), p + 1))} disabled={page * rowsPerPage >= filteredTransfers.length}>
               Next <ChevronRight size={16} />
             </button>
           </div>
@@ -155,6 +167,6 @@ const TransferHistory = ({ onCountsChange }) => {
       </div>
     </div>
   )
-}
+})
 
 export default TransferHistory
