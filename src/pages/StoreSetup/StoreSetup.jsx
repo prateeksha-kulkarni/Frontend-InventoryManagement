@@ -79,12 +79,12 @@ const StoreSetup = () => {
   };
 
   return (
-      <div className={styles.storeSetupContainer}>
+      <div className="bg-gray-50 min-h-screen p-6 max-w-[95em] mx-auto">
         <ToastContainer position="top-right" autoClose={3000} />
 
         <div className={styles.storeSetupHeader}>
           <div>
-            <h1>Store Setup</h1>
+            <h1 className='text-3xl text-gray-900 font-bold'>Store Setup</h1>
             <p>Add and manage store locations</p>
           </div>
           <Button onClick={() => setIsModalOpen(true)}>Add Store</Button>

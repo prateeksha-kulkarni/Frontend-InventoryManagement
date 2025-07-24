@@ -58,7 +58,7 @@ const Login = () => {
               <img src={logo} alt="Company Logo" className={styles.logoImage} />
             </div>
             <div className={styles.welcomeContent}>
-              <h2>Welcome Back</h2>
+              <h2>StockPilot</h2>
               <p>
                 Access your professional dashboard and manage your account with our secure login portal.
               </p>
@@ -67,7 +67,7 @@ const Login = () => {
 
           {/* Right Form Section */}
           <div className={styles.loginSection}>
-            <h1 className={styles.loginTitle}>Stockpilot</h1>
+            <h1 className={styles.loginTitle}>SignIn</h1>
             <p className={styles.loginSubtitle}>Enter your credentials to continue</p>
 
             <form onSubmit={handleSubmit} className={styles.form}>

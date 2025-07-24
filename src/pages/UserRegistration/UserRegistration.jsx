@@ -341,11 +341,11 @@ const UserRegistration = () => {
   // );
 
   return (
-      <div className={styles.userRegistrationContainer}>
+      <div className="min-h-screen p-6">
         <div className={styles.contentWrapper}>
           {/* Header Section - Outside the form box */}
           <div className={styles.pageHeader}>
-            <h1 className={styles.heading}>User Registration</h1>
+            <h1 className="text-3xl text-gray-900 font-bold text-center">User Registration</h1>
             {/*<p className={styles.subheading}>*/}
             {/*  Create a new user account by filling out the form below. All required fields are marked with an asterisk (*).*/}
             {/*</p>*/}

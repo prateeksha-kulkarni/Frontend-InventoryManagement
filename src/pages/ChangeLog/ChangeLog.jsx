@@ -159,7 +159,7 @@ const ChangeLog = () => {
   });
 
   return (
-    <div className="px-6 py-8 max-w-screen bg-gray-50">
+    <div className="px-6 py-8 max-w-[95em] bg-gray-50 mx-auto">
       <Card className="p-6 mb-6">
         <div className="flex flex-col gap-6">
           <div className="flex justify-between items-center w-full">

@@ -47,7 +47,7 @@ const handleRefresh = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 min-h-screen mx-auto max-w-[95em]">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">

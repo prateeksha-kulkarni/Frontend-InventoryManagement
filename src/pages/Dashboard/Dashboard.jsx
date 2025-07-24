@@ -230,10 +230,10 @@ const Dashboard = () => {
 
 
   return (
-    <div className={styles.dashboardContainer}>
+    <div className="max-w-[95em] mx-auto p-6">
       <div className={styles.dashboardHeader}>
         <div>
-          <h1>Inventory Dashboard</h1>
+          <h1 className="text-gray-900 font-bold">Inventory Dashboard</h1>
           <p>Current stock levels and product information</p>
         </div>
         {/* <div className={styles.notificationArea}>
