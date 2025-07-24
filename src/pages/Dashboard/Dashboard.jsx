@@ -190,18 +190,65 @@ const Dashboard = () => {
       setIsAddModalOpen(false);
       await fetchInventory();
     } catch (error) {
-      notifyError("Failed to add product.");
+      console.error("Error adding product:", error);
     }
   };
 
+  // const handleAdjustStock = (product) => {
+  //   navigate("/stock-adjustment", { state: { product } });
+  // };
+
+  // const handleTransfer = (product) => {
+  //   navigate("/transfer", { state: { product } });
+  // // };
+ 
+  const handleRemove = async (row) => {
+  const confirmDelete = window.confirm(
+    `Are you sure you want to delete the product “${row.product?.name}”?`
+  );
+  if (!confirmDelete) return;
+
+  try {
+    // ✅ Send full product object from the row
+    await axios.post(
+      "/api/products/delete",
+      row.product, // Full ProductEntity will be sent
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    await fetchInventory(); // Refresh inventory data
+    console.log("Product deleted successfully");
+  } catch (error) {
+    console.error("Delete failed:", error);
+    alert("Failed to delete the product. Please try again.");
+  }
+};
+
+
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-700 p-4">
-      {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold flex items-center gap-2">
-          <FiPackage className="text-black-600 h-8 w-8" />
-          Inventory Dashboard
-        </h1>
+    <div className={styles.dashboardContainer}>
+      <div className={styles.dashboardHeader}>
+        <div>
+          <h1>Inventory Dashboard</h1>
+          <p>Current stock levels and product information</p>
+        </div>
+        {/* <div className={styles.notificationArea}>
+          {/* <h2 className={styles.notificationLabel}>Low Stock</h2> */}
+          {/* <NotificationIcon
+            count={
+              filteredData.filter((item) => item.status === "LOW_STOCK").length
+            }
+            //    onClick={() => {
+            //   const lowStockSection = document.querySelector(`.${styles.lowStockSection}`);
+            //   lowStockSection?.scrollIntoView({ behavior: 'smooth' });
+            // }}
+            onClick={() => navigate("/low-stock-alerts")}
+          />
+        </div> */} 
       </div>
 
       <div className={styles.seamlessSearchTable}>
