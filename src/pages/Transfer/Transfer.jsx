@@ -3,6 +3,8 @@ import { ArrowUpDown, Clock, CheckCircle } from 'lucide-react'
 import TransferModal from '../../components/TransferModal'
 import PendingRequests from '../../components/PendingRequests'
 import TransferHistory from '../../components/TransferHistory'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Transfer() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -25,6 +27,8 @@ function Transfer() {
   }
 
   return (
+    <>
+
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-[95em] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col gap-2">
@@ -58,6 +62,8 @@ function Transfer() {
         onRefreshHistory={refreshHistory}
       />
     </div>
+    <ToastContainer position="top-right" autoClose={3000} theme="light"/>
+    </>
   )
 }
 
