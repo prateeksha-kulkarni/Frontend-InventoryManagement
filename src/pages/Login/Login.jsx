@@ -1,94 +1,109 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/Button/Button';
-import Input from '../../components/Input/Input';
-import Card from '../../components/Card/Card';
 import styles from './Login.module.css';
-import bgImage from '../../assets/images/Store.jpg'; // Adjust the path as necessary
+import logo from '../../assets/images/logo1.jpg';
+import { Eye, EyeOff } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import LeftPanel from '../../components/LeftPanel/LeftPanel';
+
 const Login = () => {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
-    role: 'Associate'
+    role: 'Associate',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCredentials(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setCredentials(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-
     try {
       await login(credentials);
+      toast.success('Login successful!');
       navigate('/dashboard');
     } catch (err) {
-      setError('Invalid credentials. Please try again.');
-      console.error(err);
+      toast.error('Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-      <div className={styles.loginContainer} style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 'var(--spacing-md)',
-      }}>
-        <div className={styles.loginWrapper}>
-          <div className={styles.loginHeader}>
-            <h1>Inventory Management System</h1>
-            <p>Store-level inventory control and management</p>
-          </div>
+      <>
+        {/* Toast Container */}
+        <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            closeOnClick
+            pauseOnHover
+            draggable
+        />
 
-          <Card className={styles.loginCard}>
-            <h2 className={styles.loginTitle}>Login</h2>
+        {/* Login Main Container */}
+        <div className={styles.loginContainer}>
+          {/* Left Logo Section */}
+          <LeftPanel
+              title="StockPilot"
+              description="Access your professional dashboard and manage your account with our secure login portal."
+          />
 
-            {error && <div className={styles.errorMessage}>{error}</div>}
+          {/* Right Form Section */}
+          <div className={styles.loginSection}>
+            <h1 className={styles.loginTitle}>SignIn</h1>
+            <p className={styles.loginSubtitle}>Enter your credentials to continue</p>
 
-            <form onSubmit={handleSubmit} className={styles.loginForm}>
-              <Input
-                  label="Username"
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={credentials.username}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter any username"
-              />
+            <form onSubmit={handleSubmit} className={styles.form}>
+              {/* Username */}
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter your Username"
+                    value={credentials.username}
+                    onChange={handleChange}
+                    required
+                    className={styles.input}
+                />
+              </div>
 
-              <Input
-                  label="Password"
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={credentials.password}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter any password"
-              />
+              {/* Password with Eye */}
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Password</label>
+                <div className={styles.passwordContainer}>
+                  <input
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
+                      placeholder="Enter your Password"
+                      value={credentials.password}
+                      onChange={handleChange}
+                      required
+                      className={styles.input}
+                  />
+                  <span
+                      className={styles.eyeIcon}
+                      onClick={() => setShowPassword(prev => !prev)}
+                  >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </span>
+                </div>
+              </div>
 
+              {/* Role Selection */}
               <div className={styles.roleSelector}>
-                <label>Login as:</label>
+                <label className={styles.label}>Select Role</label>
                 <div className={styles.roleOptions}>
                   {['Associate', 'Analyst', 'Manager', 'Admin'].map(role => (
                       <label key={role} className={styles.roleOption}>
@@ -105,24 +120,25 @@ const Login = () => {
                 </div>
               </div>
 
+              {/* Submit */}
               <Button
                   type="submit"
-                  variant="primary"
                   fullWidth
                   disabled={loading}
+                  className={styles.signInButton}
               >
-                {loading ? 'Logging in...' : 'Login'}
+                {loading ? 'Signing in...' : 'Sign In'}
               </Button>
 
-              <div className={styles.forgotPasswordLink}>
-                <Link to="/forgot-password">Forgot Password?</Link>
+              {/* Forgot Password */}
+              <div className={styles.forgotPassword}>
+                <a href="/forgot-password">Forgot your password?</a>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
-      </div>
+      </>
   );
 };
 
 export default Login;
-
